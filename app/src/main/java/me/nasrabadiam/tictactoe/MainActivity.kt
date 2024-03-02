@@ -63,8 +63,11 @@ private fun MainScreenContent(
     ) {
         Log.d("TTT", "MainScreen: gameResult=$gameResult")
 
-        if (!gameResult?.toString().isNullOrEmpty()){
-            Text(text = "$gameResult Wins")
+        if (!gameResult?.toString().isNullOrEmpty()) {
+            Text(
+                text = "$gameResult Wins",
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
         TicTacToeGameBoard(
             cellsData = cellsData,

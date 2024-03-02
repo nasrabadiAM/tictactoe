@@ -24,6 +24,7 @@ class GameUseCase(
         private set
 
     fun onCellClicked(index: Int) {
+        if (gameResult.value != null) return
         val copiedCells = cellsList
         if (index >= copiedCells.size || copiedCells[index].value.isNotEmpty()) return
         copiedCells[index] = copiedCells[index].copy(value = currentPlayer)

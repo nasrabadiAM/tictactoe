@@ -100,7 +100,7 @@ class GameTests {
      * X - D - D
      */
     @Test
-    fun whenXWinsVerticallyShouldEndsTheGame(): Unit = with(composeRule) {
+    fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
 
         clickOnCell(0, 0) // X
@@ -112,6 +112,9 @@ class GameTests {
         clickOnCell(0, 2) // X
 
         onNode(hasText("X Wins")).isDisplayed()
+
+        clickOnCell(2, 2) // should not show O on 2,2, because the game is finished!
+        assertCountEquals(Players.O.toString(), 2)
     }
 
     private fun ComposeContentTestRule.assertCountEquals(
