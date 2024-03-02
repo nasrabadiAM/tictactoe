@@ -1,6 +1,7 @@
 package me.nasrabadiam.tictactoe.game.utlis
 
 import me.nasrabadiam.tictactoe.game.Cell
+import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import kotlin.math.sqrt
 
 public fun listOfEmptyCells(size: Int): List<Cell> {
@@ -11,5 +12,18 @@ public fun listOfEmptyCells(size: Int): List<Cell> {
 }
 
 public fun <T> Collection<T>.getBoardSize(): Int {
-    return sqrt(this.size.toDouble()).toInt()
+    return getBoardSize(this.size)
+}
+
+public fun getBoardSize(cellCount: Int): Int {
+    return sqrt(cellCount.toDouble()).toInt()
+}
+
+public fun Collection<Cell>.getCellIndex(row: Int, col: Int): Int {
+    return getCellIndex(row, col, this.size)
+}
+
+public fun getCellIndex(row: Int, col: Int, cellCounts: Int = DEFAULT_BOARD_CELL_COUNT): Int {
+    val boardSize = getBoardSize(cellCounts)
+    return row * boardSize + col
 }

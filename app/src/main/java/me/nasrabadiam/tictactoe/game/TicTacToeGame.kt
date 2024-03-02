@@ -80,7 +80,7 @@ private fun GameCell(
             .size(48.dp)
             .padding(8.dp)
             .clickable { onClick.invoke(cell.index) }
-            .semantics { testTag = "cell" },
+            .semantics { testTag = "cell_${cell.index}" },
         text = cell.value
     )
 }
@@ -100,7 +100,7 @@ private fun VerticalDivider() {
 @Composable
 fun TicTacToePreview() {
     TicTacToeGameBoard(
-        cellsData = listOfEmptyCells(DEFAULT_BOARD_SIZE),
+        cellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT),
         onCellClicked = {},
         modifier = Modifier
             .wrapContentSize()

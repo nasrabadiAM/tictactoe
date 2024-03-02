@@ -6,14 +6,17 @@ import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
-import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_SIZE
+import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.Players
+import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
+import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +27,8 @@ class GameTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+
+    private val listOfEmptyCells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
 
     @Test
     @Ignore
@@ -36,8 +41,9 @@ class GameTests {
     @Test
     fun displayGameCells(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
-
-        onAllNodes(hasTestTag(CELL_TEST_TAG)).assertCountEquals(DEFAULT_BOARD_SIZE)
+        for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
+            onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
+        }
     }
 
     @Test
@@ -64,7 +70,7 @@ class GameTests {
     fun whenClickOnCellShouldChangeTurnEveryTime(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
 
-        repeat(DEFAULT_BOARD_SIZE) {
+        repeat(DEFAULT_BOARD_CELL_COUNT) {
             clickOnFirstEmptyCell()
 
             val xCounts = (it / 2) + 1
@@ -86,6 +92,26 @@ class GameTests {
         clickOnXCell()
 
         assertCountEquals(Players.X.toString(), 1)
+    }
+
+    /**
+     * X - D - D
+     * X - D - D
+     * X - D - D
+     */
+    @Test
+    fun whenXWinsVerticallyShouldEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        clickOnCell(0, 0) // X
+        clickOnCell(1, 0) // O
+
+        clickOnCell(0, 1) // X
+        clickOnCell(1, 1) // O
+
+        clickOnCell(0, 2) // X
+
+        onNode(hasText("X Wins")).isDisplayed()
     }
 
     private fun ComposeContentTestRule.assertCountEquals(
@@ -117,7 +143,25 @@ class GameTests {
             .performClick()
     }
 
+    private fun ComposeContentTestRule.clickOnCell(
+        col: Int,
+        row: Int
+    ) {
+        val cellIndex = listOfEmptyCells.getCellIndex(row = row, col = col)
+        onNode(hasTestTag(GAME_BOARD_TEST_TAG))
+            .onChildren()
+            .filter(hasClickAction())
+            .filter(hasTestTag(getCellTestTag(cellIndex)))
+            .onFirst()
+            .performClick()
+    }
+
+    private fun getCellTestTag(index: Int): String {
+        return CELL_TEST_TAG + "_$index"
+    }
+
     companion object {
+        private const val RESULT_TEST_TAG = "Result"
         private const val CELL_TEST_TAG = "cell"
         private const val GRID_TEST_TAG = "grid"
         private const val GAME_BOARD_TEST_TAG = "game_board"
