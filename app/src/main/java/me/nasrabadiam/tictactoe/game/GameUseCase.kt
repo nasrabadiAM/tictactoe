@@ -30,7 +30,7 @@ class GameUseCase(
         copiedCells[index] = copiedCells[index].copy(value = currentPlayer)
         _cells.update { copiedCells }
         changePlayerTurn()
-        checkGameResult()
+        checkGameResultAndNotifyIfChanged()
     }
 
     private fun changePlayerTurn() {
@@ -41,19 +41,33 @@ class GameUseCase(
         }
     }
 
-    private fun checkGameResult() {
+    private fun checkGameResultAndNotifyIfChanged() {
         val boardSize = cellsList.getBoardSize()
+        var columnLastValue: String? = null
         for (columnIndex in 0 until boardSize) {
-            var lastValue: String? = null
+            var rowLastValue: String? = null
+
             for (rowIndex in 0 until boardSize) {
                 val value = cellsList[getCellIndex(rowIndex, columnIndex)].value
                 if (value.isNotEmpty()) {
-                    if (lastValue == null) {
-                        lastValue = value
+                    if (rowLastValue == null) {
+                        rowLastValue = value
+                        if (columnLastValue == null) {
+                            columnLastValue = value
+                        } else if (columnLastValue != value) {
+                            columnLastValue = null
+                        } else if (columnIndex == boardSize - 1) {
+                            val player = if (Players.X.toString() == columnLastValue) {
+                                Players.X
+                            } else {
+                                Players.O
+                            }
+                            _gameResult.update { player }
+                        }
                         continue
-                    } else if (lastValue == value) {
+                    } else if (rowLastValue == value) {
                         if (rowIndex == boardSize - 1) {
-                            val player = if (Players.X.toString() == lastValue) {
+                            val player = if (Players.X.toString() == rowLastValue) {
                                 Players.X
                             } else {
                                 Players.O

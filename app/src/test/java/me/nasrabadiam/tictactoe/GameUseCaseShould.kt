@@ -83,7 +83,6 @@ class GameUseCaseShould {
     @Test
     fun emitGameResultWhenXFillsSecondColumn() = runTest {
         val xColumn = 1
-
         useCase.onCellClicked(getCellIndex(row = 0, col = xColumn)) // X
         useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
@@ -112,17 +111,33 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun emitGameResultWhenOFillsFirstColumn() = runTest {
-        useCase.onCellClicked(getCellIndex(row = 0, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
-        assertEquals(null, useCase.gameResult.value)
-
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
+    fun emitGameResultWhenXFillsFirstRow() = runTest {
+        val xRow = 0
+        useCase.onCellClicked(getCellIndex(row = xRow, col = 0)) // X
         useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
+        useCase.onCellClicked(getCellIndex(row = xRow, col = 1)) // X
+        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
+        assertEquals(Players.X, useCase.gameResult.value)
+    }
+
+    @Test
+    fun emitGameResultWhenOFillsFirstColumn() = runTest {
+        val oColumn = 0
+        useCase.onCellClicked(getCellIndex(row = 0, col = 1)) // X
+        useCase.onCellClicked(getCellIndex(row = 0, col = oColumn)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
+        useCase.onCellClicked(getCellIndex(row = 1, col = oColumn)) // O
+        assertEquals(null, useCase.gameResult.value)
+
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // O
+        useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // O
         assertEquals(Players.O, useCase.gameResult.value)
     }
 }

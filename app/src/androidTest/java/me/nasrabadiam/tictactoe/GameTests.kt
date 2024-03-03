@@ -103,16 +103,44 @@ class GameTests {
     fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
 
-        clickOnCell(0, 0) // X
-        clickOnCell(1, 0) // O
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 1, row = 0) // O
 
-        clickOnCell(0, 1) // X
-        clickOnCell(1, 1) // O
+        clickOnCell(col = 0, row = 1) // X
+        clickOnCell(col = 1, row = 1) // O
 
-        clickOnCell(0, 2) // X
+        clickOnCell(col = 0, row = 2) // X
 
+        // assert showing winner
         onNode(hasText("X Wins")).isDisplayed()
 
+        // assert game ends
+        clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
+        assertCountEquals(Players.O.toString(), 2)
+    }
+
+    /**
+     * X - X - X
+     * D - D - D
+     * D - D - D
+     */
+    @Test
+    fun whenXWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        val rowIndex = 0
+        clickOnCell(col = 0, row = rowIndex) // X
+        clickOnCell(col = 1, row = 1) // O
+
+        clickOnCell(col = 1, row = rowIndex) // X
+        clickOnCell(col = 0, row = 1) // O
+
+        clickOnCell(col = 2, row = rowIndex) // X
+
+        // assert showing winner
+        onNode(hasText("X Wins")).assertIsDisplayed()
+
+        // assert game ends
         clickOnCell(2, 2) // should not show O on 2,2, because the game is finished!
         assertCountEquals(Players.O.toString(), 2)
     }
@@ -164,7 +192,6 @@ class GameTests {
     }
 
     companion object {
-        private const val RESULT_TEST_TAG = "Result"
         private const val CELL_TEST_TAG = "cell"
         private const val GRID_TEST_TAG = "grid"
         private const val GAME_BOARD_TEST_TAG = "game_board"
