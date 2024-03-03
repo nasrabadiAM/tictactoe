@@ -81,6 +81,7 @@ private fun GameCell(
             .padding(8.dp)
             .clickable { onClick.invoke(cell.index) }
             .semantics { testTag = "cell_${cell.index}" },
+        color = MaterialTheme.colorScheme.onBackground,
         text = cell.getShowingValue()
     )
 }
