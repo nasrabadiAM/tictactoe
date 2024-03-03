@@ -5,7 +5,7 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Players
+import me.nasrabadiam.tictactoe.game.Player
 import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
 import org.junit.Test
 
@@ -18,14 +18,14 @@ class GameUseCaseShould {
         val index = 0
         useCase.onCellClicked(index)
         val clickedItem = useCase.cells.first()[index]
-        assertEquals(Players.X.toString(), clickedItem.value)
+        assertEquals(Player.X, clickedItem.value)
     }
 
     @Test
     fun changePlayerTurnItemValueWhenClicked() = runTest {
         val index = 0
         useCase.onCellClicked(index)
-        assertEquals(Players.O.toString(), useCase.currentPlayer)
+        assertEquals(Player.O, useCase.currentPlayer)
     }
 
     @Test
@@ -35,8 +35,8 @@ class GameUseCaseShould {
             useCase.onCellClicked(index)
         }
         val clickedCell = useCase.cells.first()[index]
-        assertEquals(Players.X.toString(), clickedCell.value)
-        assertEquals(Players.O.toString(), useCase.currentPlayer)
+        assertEquals(Player.X, clickedCell.value)
+        assertEquals(Player.O, useCase.currentPlayer)
     }
 
     @Test
@@ -44,15 +44,15 @@ class GameUseCaseShould {
         val index = 8
         useCase.onCellClicked(index)
         val clickedItem = useCase.cells.first()[index]
-        assertEquals(Players.X.toString(), clickedItem.value)
+        assertEquals(Player.X, clickedItem.value)
     }
 
     @Test
     fun changePlayerTurnItemValueWhenClickedAndStarterIsO() = runTest {
         val index = 0
-        val useCase = GameUseCase(starterPlayer = Players.O)
+        val useCase = GameUseCase(starterPlayer = Player.O)
         useCase.onCellClicked(index)
-        assertEquals(Players.X.toString(), useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer)
     }
 
     @Test
@@ -62,7 +62,7 @@ class GameUseCaseShould {
         useCase.onCellClicked(index)
         val cells = useCase.cells.first()
         assertTrue(cells.isEmpty())
-        assertEquals(Players.X.toString(), useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer)
     }
 
     @Test
@@ -77,7 +77,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Players.X, useCase.gameResult.value)
+        assertEquals(Player.X, useCase.gameResult.value)
     }
 
     @Test
@@ -92,7 +92,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Players.X, useCase.gameResult.value)
+        assertEquals(Player.X, useCase.gameResult.value)
     }
 
     @Test
@@ -107,7 +107,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Players.X, useCase.gameResult.value)
+        assertEquals(Player.X, useCase.gameResult.value)
     }
 
     @Test
@@ -122,7 +122,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(Players.X, useCase.gameResult.value)
+        assertEquals(Player.X, useCase.gameResult.value)
     }
 
     @Test
@@ -138,6 +138,6 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // O
-        assertEquals(Players.O, useCase.gameResult.value)
+        assertEquals(Player.O, useCase.gameResult.value)
     }
 }

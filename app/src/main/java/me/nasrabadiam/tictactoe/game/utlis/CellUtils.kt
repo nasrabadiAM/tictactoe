@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 public fun listOfEmptyCells(size: Int): List<Cell> {
     val listOf = mutableListOf<Cell>()
     return listOf.apply {
-        repeat(size) { add(Cell(it, "")) }
+        repeat(size) { add(Cell(it)) }
     }
 }
 

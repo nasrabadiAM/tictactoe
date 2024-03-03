@@ -81,7 +81,7 @@ private fun GameCell(
             .padding(8.dp)
             .clickable { onClick.invoke(cell.index) }
             .semantics { testTag = "cell_${cell.index}" },
-        text = cell.value
+        text = cell.getShowingValue()
     )
 }
 

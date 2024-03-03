@@ -9,7 +9,7 @@ import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 
 class GameUseCase(
     boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
-    starterPlayer: Players = Players.X
+    starterPlayer: Player = Player.X
 ) {
     private val _cells: MutableStateFlow<List<Cell>> =
         MutableStateFlow(listOfEmptyCells(boardSize))
@@ -17,16 +17,16 @@ class GameUseCase(
     val cells: StateFlow<List<Cell>> = _cells
     private val cellsList get() = _cells.value.toMutableList()
 
-    private val _gameResult: MutableStateFlow<Players?> = MutableStateFlow(null)
-    val gameResult: StateFlow<Players?> = _gameResult
+    private val _gameResult: MutableStateFlow<Player?> = MutableStateFlow(null)
+    val gameResult: StateFlow<Player?> = _gameResult
 
-    internal var currentPlayer: String = starterPlayer.toString()
+    internal var currentPlayer: Player = starterPlayer
         private set
 
     fun onCellClicked(index: Int) {
         if (gameResult.value != null) return
         val copiedCells = cellsList
-        if (index >= copiedCells.size || copiedCells[index].value.isNotEmpty()) return
+        if (index >= copiedCells.size || copiedCells[index].value != null) return
         copiedCells[index] = copiedCells[index].copy(value = currentPlayer)
         _cells.update { copiedCells }
         changePlayerTurn()
@@ -34,22 +34,22 @@ class GameUseCase(
     }
 
     private fun changePlayerTurn() {
-        currentPlayer = if (currentPlayer == Players.X.toString()) {
-            Players.O.toString()
+        currentPlayer = if (currentPlayer == Player.X) {
+            Player.O
         } else {
-            Players.X.toString()
+            Player.X
         }
     }
 
     private fun checkGameResultAndNotifyIfChanged() {
         val boardSize = cellsList.getBoardSize()
-        var columnLastValue: String? = null
+        var columnLastValue: Player? = null
         for (columnIndex in 0 until boardSize) {
-            var rowLastValue: String? = null
+            var rowLastValue: Player? = null
 
             for (rowIndex in 0 until boardSize) {
                 val value = cellsList[getCellIndex(rowIndex, columnIndex)].value
-                if (value.isNotEmpty()) {
+                if (value != null) {
                     if (rowLastValue == null) {
                         rowLastValue = value
                         if (columnLastValue == null) {
@@ -57,20 +57,20 @@ class GameUseCase(
                         } else if (columnLastValue != value) {
                             columnLastValue = null
                         } else if (columnIndex == boardSize - 1) {
-                            val player = if (Players.X.toString() == columnLastValue) {
-                                Players.X
+                            val player = if (Player.X == columnLastValue) {
+                                Player.X
                             } else {
-                                Players.O
+                                Player.O
                             }
                             _gameResult.update { player }
                         }
                         continue
                     } else if (rowLastValue == value) {
                         if (rowIndex == boardSize - 1) {
-                            val player = if (Players.X.toString() == rowLastValue) {
-                                Players.X
+                            val player = if (Player.X == rowLastValue) {
+                                Player.X
                             } else {
-                                Players.O
+                                Player.O
                             }
                             _gameResult.update { player }
                         }

@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import me.nasrabadiam.tictactoe.game.Cell
 import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Players
+import me.nasrabadiam.tictactoe.game.Player
 import me.nasrabadiam.tictactoe.game.TicTacToeGameBoard
 import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
@@ -51,7 +51,7 @@ fun MainScreen(gameUseCase: GameUseCase) {
 @Composable
 private fun MainScreenContent(
     cellsData: List<Cell>,
-    gameResult: Players?,
+    gameResult: Player?,
     onCellClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,7 +83,7 @@ fun MainScreenPreview() {
         val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
         MainScreenContent(
             cellsData = cells,
-            gameResult = Players.X,
+            gameResult = Player.X,
             onCellClicked = {}
         )
     }

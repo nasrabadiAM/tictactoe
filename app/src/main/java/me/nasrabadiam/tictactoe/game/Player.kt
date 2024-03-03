@@ -1,5 +1,5 @@
 package me.nasrabadiam.tictactoe.game
 
-enum class Players {
+enum class Player {
     X, O
 }

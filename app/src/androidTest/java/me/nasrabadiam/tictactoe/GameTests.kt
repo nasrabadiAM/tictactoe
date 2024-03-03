@@ -14,7 +14,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Players
+import me.nasrabadiam.tictactoe.game.Player
 import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
 import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 import org.junit.Ignore
@@ -52,7 +52,7 @@ class GameTests {
 
         clickOnFirstEmptyCell()
 
-        assertCountEquals(Players.X.toString(), 1)
+        assertCountEquals(Player.X.toString(), 1)
     }
 
     @Test
@@ -62,8 +62,8 @@ class GameTests {
         clickOnFirstEmptyCell()
         clickOnFirstEmptyCell()
 
-        assertCountEquals(Players.X.toString(), 1)
-        assertCountEquals(Players.O.toString(), 1)
+        assertCountEquals(Player.X.toString(), 1)
+        assertCountEquals(Player.O.toString(), 1)
     }
 
     @Test
@@ -74,10 +74,10 @@ class GameTests {
             clickOnFirstEmptyCell()
 
             val xCounts = (it / 2) + 1
-            assertCountEquals(Players.X.toString(), xCounts)
+            assertCountEquals(Player.X.toString(), xCounts)
 
             val oCounts = (it + 1) / 2
-            assertCountEquals(Players.O.toString(), oCounts)
+            assertCountEquals(Player.O.toString(), oCounts)
         }
     }
 
@@ -87,11 +87,11 @@ class GameTests {
 
         clickOnFirstEmptyCell()
 
-        assertCountEquals(Players.X.toString(), 1)
+        assertCountEquals(Player.X.toString(), 1)
 
         clickOnXCell()
 
-        assertCountEquals(Players.X.toString(), 1)
+        assertCountEquals(Player.X.toString(), 1)
     }
 
     /**
@@ -116,7 +116,7 @@ class GameTests {
 
         // assert game ends
         clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
-        assertCountEquals(Players.O.toString(), 2)
+        assertCountEquals(Player.O.toString(), 2)
     }
 
     /**
@@ -142,7 +142,7 @@ class GameTests {
 
         // assert game ends
         clickOnCell(2, 2) // should not show O on 2,2, because the game is finished!
-        assertCountEquals(Players.O.toString(), 2)
+        assertCountEquals(Player.O.toString(), 2)
     }
 
     private fun ComposeContentTestRule.assertCountEquals(
@@ -160,7 +160,7 @@ class GameTests {
         onNode(hasTestTag(GAME_BOARD_TEST_TAG))
             .onChildren()
             .filter(hasClickAction())
-            .filter(hasText(Players.X.toString()))
+            .filter(hasText(Player.X.toString()))
             .onFirst()
             .performClick()
     }
