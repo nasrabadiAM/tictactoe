@@ -1,7 +1,6 @@
 package me.nasrabadiam.tictactoe
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -39,7 +38,6 @@ fun MainScreen(gameUseCase: GameUseCase) {
             initial = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
         )
         val gameResult = gameUseCase.gameResult.collectAsState()
-        Log.d("TTT", "MainScreen: gameResult=$gameResult")
         MainScreenContent(
             cellsData = cells.value,
             gameResult = gameResult.value,
@@ -61,8 +59,6 @@ private fun MainScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        Log.d("TTT", "MainScreen: gameResult=$gameResult")
-
         if (!gameResult?.toString().isNullOrEmpty()) {
             Text(
                 text = "$gameResult Wins",
