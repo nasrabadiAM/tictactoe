@@ -80,21 +80,22 @@ class GameTests {
     }
 
     /**
-     * X - D - D
-     * X - D - D
-     * X - D - D
+     * X - M - M
+     * X - M - M
+     * X - M - M
      */
     @Test
     fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
 
-        clickOnCell(col = 0, row = 0) // X
+        val colIndex  = 0
+        clickOnCell(col = colIndex, row = 0) // X
         clickOnCell(col = 1, row = 0) // O
 
-        clickOnCell(col = 0, row = 1) // X
+        clickOnCell(col = colIndex, row = 1) // X
         clickOnCell(col = 1, row = 1) // O
 
-        clickOnCell(col = 0, row = 2) // X
+        clickOnCell(col = colIndex, row = 2) // X
 
         // assert showing winner
         onNode(hasText(X_WINS_RESULT_STRING)).isDisplayed()
@@ -106,8 +107,8 @@ class GameTests {
 
     /**
      * X - X - X
-     * D - D - D
-     * D - D - D
+     * M - M - M
+     * M - M - M
      */
     @Test
     fun whenXWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
@@ -131,9 +132,9 @@ class GameTests {
     }
 
     /**
-     * X - D - D
-     * D - X - D
-     * D - D - X
+     * X - M - M
+     * M - X - M
+     * M - M - X
      */
     @Test
     fun whenXWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
@@ -153,6 +154,87 @@ class GameTests {
         // assert game ends
         clickOnCell(col = 1, row = 0) // should not show O on 1,0, because the game is finished!
         assertCountEquals(Player.O.toString(), 2)
+    }
+
+
+    /**
+     * M - M - O
+     * M - M - O
+     * M - M - O
+     */
+    @Test
+    fun whenOWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        val colIndex = 2
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = colIndex, row = 0) // O
+
+        clickOnCell(col = 0, row = 1) // X
+        clickOnCell(col = colIndex, row = 1) // O
+
+        clickOnCell(col = 1, row = 1) // X
+        clickOnCell(col = colIndex, row = 2) // O
+
+        // assert showing winner
+        onNode(hasText(O_WINS_RESULT_STRING)).isDisplayed()
+
+        // assert game ends
+        clickOnCell(col = 2, row = 1) // should not show X on 2,1, because the game is finished!
+        assertCountEquals(Player.X.toString(), 3)
+    }
+
+    /**
+     * M - M - M
+     * O - O - O
+     * M - M - M
+     */
+    @Test
+    fun whenOWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        val rowIndex = 1
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 0, row = rowIndex) // O
+
+        clickOnCell(col = 1, row = 0) // X
+        clickOnCell(col = 1, row = rowIndex) // O
+
+        clickOnCell(col = 2, row = 2) // X
+        clickOnCell(col = 2, row = rowIndex) // O
+
+        // assert showing winner
+        onNode(hasText(O_WINS_RESULT_STRING)).assertIsDisplayed()
+
+        // assert game ends
+        clickOnCell(col = 0, row = 2) // should not show X on 0,2, because the game is finished!
+        assertCountEquals(Player.X.toString(), 3)
+    }
+
+    /**
+     * M - M - O
+     * M - O - M
+     * O - M - M
+     */
+    @Test
+    fun whenOWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 2, row = 0) // O
+
+        clickOnCell(col = 0, row = 1) // X
+        clickOnCell(col = 1, row = 1) // O
+
+        clickOnCell(col = 2, row = 2) // X
+        clickOnCell(col = 0, row = 2) // O
+
+        // assert showing winner
+        onNode(hasText(O_WINS_RESULT_STRING)).assertIsDisplayed()
+
+        // assert game ends
+        clickOnCell(col = 1, row = 0) // should not show X on 1,0, because the game is finished!
+        assertCountEquals(Player.X.toString(), 3)
     }
 
     private fun ComposeContentTestRule.assertCountEquals(
@@ -206,5 +288,6 @@ class GameTests {
         private const val GRID_TEST_TAG = "grid"
         private const val GAME_BOARD_TEST_TAG = "game_board"
         private const val X_WINS_RESULT_STRING = "X Wins"
+        private const val O_WINS_RESULT_STRING = "O Wins"
     }
 }
