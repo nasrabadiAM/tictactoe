@@ -3,8 +3,8 @@ package me.nasrabadiam.tictactoe.game
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.nasrabadiam.tictactoe.game.utlis.getBoardSize
-import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
+import me.nasrabadiam.tictactoe.game.utlis.getColumnIndex
+import me.nasrabadiam.tictactoe.game.utlis.getRowIndex
 import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 
 class GameUseCase(
@@ -42,46 +42,36 @@ class GameUseCase(
     }
 
     private fun checkGameResultAndNotifyIfChanged() {
-        val boardSize = cellsList.getBoardSize()
-        var columnLastValue: Player? = null
-        for (columnIndex in 0 until boardSize) {
-            var rowLastValue: Player? = null
+        val hashMap = mutableMapOf<String, Player?>()
+        cellsList.forEachIndexed { index, cell ->
+            val rowKey = getRowKey(cellsList.getRowIndex(index))
+            val colKey = getColKey(cellsList.getColumnIndex(index))
+            if (!hashMap.containsKey(rowKey)) {
+                hashMap[rowKey] = cell.value
+            }
+            if (!hashMap.containsKey(colKey)) {
+                hashMap[colKey] = cell.value
+            }
 
-            for (rowIndex in 0 until boardSize) {
-                val value = cellsList[getCellIndex(rowIndex, columnIndex)].value
-                if (value != null) {
-                    if (rowLastValue == null) {
-                        rowLastValue = value
-                        if (columnLastValue == null) {
-                            columnLastValue = value
-                        } else if (columnLastValue != value) {
-                            columnLastValue = null
-                        } else if (columnIndex == boardSize - 1) {
-                            val player = if (Player.X == columnLastValue) {
-                                Player.X
-                            } else {
-                                Player.O
-                            }
-                            _gameResult.update { player }
-                        }
-                        continue
-                    } else if (rowLastValue == value) {
-                        if (rowIndex == boardSize - 1) {
-                            val player = if (Player.X == rowLastValue) {
-                                Player.X
-                            } else {
-                                Player.O
-                            }
-                            _gameResult.update { player }
-                        }
-                        continue
-                    } else {
-                        break
-                    }
-                } else {
-                    break
-                }
+            if (hashMap[rowKey] != cell.value) {
+                hashMap[rowKey] = null
+            }
+            if (hashMap[colKey] != cell.value) {
+                hashMap[colKey] = null
             }
         }
+        val result = hashMap.entries.mapNotNull { it.value }
+
+        if (result.isNotEmpty()) {
+            _gameResult.update { result[0] }
+        }
+    }
+
+    private fun getRowKey(rowIndex: Int): String {
+        return "row_$rowIndex"
+    }
+
+    private fun getColKey(colIndex: Int): String {
+        return "col_$colIndex"
     }
 }
