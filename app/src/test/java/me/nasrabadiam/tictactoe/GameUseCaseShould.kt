@@ -161,6 +161,38 @@ class GameUseCaseShould {
         assertEquals(Player.X, useCase.gameResult.value)
     }
 
+
+    /**
+     * X Cross tests
+     */
+    @Test
+    fun emitGameResultWhenXFillsLeftToRightCross() = runTest {
+        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
+        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
+        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
+        assertEquals(Player.X, useCase.gameResult.value)
+    }
+
+    @Test
+    fun emitGameResultWhenXFillsRightToLeftCross() = runTest {
+        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
+        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
+        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
+        assertEquals(Player.X, useCase.gameResult.value)
+    }
+
     /**
      * O Column tests
      */

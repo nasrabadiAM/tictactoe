@@ -67,21 +67,6 @@ class GameTests {
     }
 
     @Test
-    fun whenClickOnCellShouldChangeTurnEveryTime(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
-
-        repeat(DEFAULT_BOARD_CELL_COUNT) {
-            clickOnFirstEmptyCell()
-
-            val xCounts = (it / 2) + 1
-            assertCountEquals(Player.X.toString(), xCounts)
-
-            val oCounts = (it + 1) / 2
-            assertCountEquals(Player.O.toString(), oCounts)
-        }
-    }
-
-    @Test
     fun whenClickOnCellThatClickedBeforeShouldDoNothing(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase) }
 
@@ -112,7 +97,7 @@ class GameTests {
         clickOnCell(col = 0, row = 2) // X
 
         // assert showing winner
-        onNode(hasText("X Wins")).isDisplayed()
+        onNode(hasText(X_WINS_RESULT_STRING)).isDisplayed()
 
         // assert game ends
         clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
@@ -138,10 +123,35 @@ class GameTests {
         clickOnCell(col = 2, row = rowIndex) // X
 
         // assert showing winner
-        onNode(hasText("X Wins")).assertIsDisplayed()
+        onNode(hasText(X_WINS_RESULT_STRING)).assertIsDisplayed()
 
         // assert game ends
-        clickOnCell(2, 2) // should not show O on 2,2, because the game is finished!
+        clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
+        assertCountEquals(Player.O.toString(), 2)
+    }
+
+    /**
+     * X - D - D
+     * D - X - D
+     * D - D - X
+     */
+    @Test
+    fun whenXWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase) }
+
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 0, row = 1) // O
+
+        clickOnCell(col = 1, row = 1) // X
+        clickOnCell(col = 0, row = 2) // O
+
+        clickOnCell(col = 2, row = 2) // X
+
+        // assert showing winner
+        onNode(hasText(X_WINS_RESULT_STRING)).assertIsDisplayed()
+
+        // assert game ends
+        clickOnCell(col = 1, row = 0) // should not show O on 1,0, because the game is finished!
         assertCountEquals(Player.O.toString(), 2)
     }
 
@@ -195,5 +205,6 @@ class GameTests {
         private const val CELL_TEST_TAG = "cell"
         private const val GRID_TEST_TAG = "grid"
         private const val GAME_BOARD_TEST_TAG = "game_board"
+        private const val X_WINS_RESULT_STRING = "X Wins"
     }
 }

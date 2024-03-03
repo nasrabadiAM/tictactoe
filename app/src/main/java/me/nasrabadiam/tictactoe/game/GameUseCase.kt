@@ -42,28 +42,46 @@ class GameUseCase(
     }
 
     private fun checkGameResultAndNotifyIfChanged() {
-        val hashMap = mutableMapOf<String, Player?>()
+        val cellsMap = mutableMapOf<String, Player?>()
         cellsList.forEachIndexed { index, cell ->
-            val rowKey = getRowKey(cellsList.getRowIndex(index))
-            val colKey = getColKey(cellsList.getColumnIndex(index))
-            if (!hashMap.containsKey(rowKey)) {
-                hashMap[rowKey] = cell.value
-            }
-            if (!hashMap.containsKey(colKey)) {
-                hashMap[colKey] = cell.value
+            val rowIndex = cellsList.getRowIndex(index)
+            val colIndex = cellsList.getColumnIndex(index)
+
+            // Row
+            val rowKey = getRowKey(rowIndex)
+            cellsMap.putInMap(rowKey, cell)
+
+            // Column
+            val colKey = getColKey(colIndex)
+            cellsMap.putInMap(colKey, cell)
+
+            // Left to right cross
+            getFirstCrossKey(rowIndex, colIndex)?.let { key ->
+                cellsMap.putInMap(key, cell)
             }
 
-            if (hashMap[rowKey] != cell.value) {
-                hashMap[rowKey] = null
-            }
-            if (hashMap[colKey] != cell.value) {
-                hashMap[colKey] = null
+            // Right to left cross
+            getSecondCrossKey(rowIndex, colIndex)?.let { key ->
+                cellsMap.putInMap(key, cell)
+                println("rowIndex = $rowIndex, colIndex=$colIndex, key=$key")
             }
         }
-        val result = hashMap.entries.mapNotNull { it.value }
+        val result = cellsMap.entries.mapNotNull { it.value }
 
         if (result.isNotEmpty()) {
             _gameResult.update { result[0] }
+        }
+    }
+
+    private fun MutableMap<String, Player?>.putInMap(
+        key: String,
+        cell: Cell
+    ) {
+        if (!containsKey(key)) {
+            this[key] = cell.value
+        }
+        if (this[key] != cell.value) {
+            this[key] = null
         }
     }
 
@@ -73,5 +91,25 @@ class GameUseCase(
 
     private fun getColKey(colIndex: Int): String {
         return "col_$colIndex"
+    }
+
+    private fun getFirstCrossKey(rowIndex: Int, colIndex: Int): String? {
+        return if (rowIndex == colIndex) {
+            "first_cross"
+        } else {
+            null
+        }
+    }
+
+    private fun getSecondCrossKey(rowIndex: Int, colIndex: Int): String? {
+        return if (
+            (rowIndex == 0 && colIndex == 2) ||
+            (rowIndex == 1 && colIndex == 1) ||
+            (rowIndex == 2 && colIndex == 0)
+        ) {
+            "second_cross"
+        } else {
+            null
+        }
     }
 }
