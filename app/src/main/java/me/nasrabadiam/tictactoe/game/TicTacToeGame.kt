@@ -19,7 +19,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import me.nasrabadiam.tictactoe.game.Player.O
+import me.nasrabadiam.tictactoe.game.Player.X
 import me.nasrabadiam.tictactoe.game.utlis.getBoardSize
 import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 
@@ -79,6 +83,7 @@ private fun GameCell(
         modifier = Modifier
             .size(48.dp)
             .padding(8.dp)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable { onClick.invoke(cell.index) }
             .semantics { testTag = "cell_${cell.index}" },
         color = MaterialTheme.colorScheme.onBackground,
@@ -97,14 +102,37 @@ private fun VerticalDivider() {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
-fun TicTacToePreview() {
+fun TicTacToePreview(
+    @PreviewParameter(GameBoardDataProvider::class) cellsData: List<Cell>
+) {
     TicTacToeGameBoard(
-        cellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT),
+        cellsData = cellsData,
         onCellClicked = {},
         modifier = Modifier
             .wrapContentSize()
             .padding(8.dp)
     )
+}
+
+class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
+
+    override val values: Sequence<List<Cell>>
+        get() {
+            val mixedCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+                if (it.index % 2 == 0) {
+                    it.copy(value = O)
+                } else {
+                    it.copy(value = X)
+                }
+            }
+            val xCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+                it.copy(value = X)
+            }
+            val oCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+                it.copy(value = X)
+            }
+            return sequenceOf(mixedCellsData, oCellsData, xCellsData)
+        }
 }
