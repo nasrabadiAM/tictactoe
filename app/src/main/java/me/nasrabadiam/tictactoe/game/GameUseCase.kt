@@ -17,8 +17,8 @@ class GameUseCase(
     val cells: StateFlow<List<Cell>> = _cells
     private val cellsList get() = _cells.value.toMutableList()
 
-    private val _gameResult: MutableStateFlow<Player?> = MutableStateFlow(null)
-    val gameResult: StateFlow<Player?> = _gameResult
+    private val _gameResult: MutableStateFlow<GameResult?> = MutableStateFlow(null)
+    val gameResult: StateFlow<GameResult?> = _gameResult
 
     internal var currentPlayer: Player = starterPlayer
         private set
@@ -42,35 +42,40 @@ class GameUseCase(
     }
 
     private fun checkGameResultAndNotifyIfChanged() {
-        val cellsMap = mutableMapOf<String, Player?>()
+        val winnerMap = mutableMapOf<String, Player?>()
         cellsList.forEachIndexed { index, cell ->
             val rowIndex = cellsList.getRowIndex(index)
             val colIndex = cellsList.getColumnIndex(index)
 
             // Row
             val rowKey = getRowKey(rowIndex)
-            cellsMap.putInMap(rowKey, cell)
+            winnerMap.putInMap(rowKey, cell)
 
             // Column
             val colKey = getColKey(colIndex)
-            cellsMap.putInMap(colKey, cell)
+            winnerMap.putInMap(colKey, cell)
 
             // Left to right cross
             getFirstCrossKey(rowIndex, colIndex)?.let { key ->
-                cellsMap.putInMap(key, cell)
+                winnerMap.putInMap(key, cell)
             }
 
             // Right to left cross
             getSecondCrossKey(rowIndex, colIndex)?.let { key ->
-                cellsMap.putInMap(key, cell)
-                println("rowIndex = $rowIndex, colIndex=$colIndex, key=$key")
+                winnerMap.putInMap(key, cell)
             }
         }
-        val result = cellsMap.entries.mapNotNull { it.value }
+        val nonNullWinnerMap = winnerMap.entries.mapNotNull { it.value }
 
-        if (result.isNotEmpty()) {
-            _gameResult.update { result[0] }
+        if (nonNullWinnerMap.isNotEmpty()) {
+            _gameResult.update { GameResult.EndWithWinner(nonNullWinnerMap[0]) }
+        } else if (allCellsFilled()) {
+            _gameResult.update { GameResult.Draw }
         }
+    }
+
+    private fun allCellsFilled(): Boolean {
+        return cellsList.all { it.value != null }
     }
 
     private fun MutableMap<String, Player?>.putInMap(

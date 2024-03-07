@@ -14,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.nasrabadiam.tictactoe.game.Cell
 import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.GameResult
+import me.nasrabadiam.tictactoe.game.GameResult.Draw
+import me.nasrabadiam.tictactoe.game.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.Player
 import me.nasrabadiam.tictactoe.game.TicTacToeGameBoard
@@ -49,7 +52,7 @@ fun MainScreen(gameUseCase: GameUseCase) {
 @Composable
 private fun MainScreenContent(
     cellsData: List<Cell>,
-    gameResult: Player?,
+    gameResult: GameResult?,
     onCellClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,12 +62,15 @@ private fun MainScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        if (!gameResult?.toString().isNullOrEmpty()) {
-            Text(
-                text = "$gameResult Wins",
-                color = MaterialTheme.colorScheme.onBackground
-            )
+        val result = when (gameResult) {
+            is Draw -> "Draw"
+            is EndWithWinner -> "${gameResult.player} Wins"
+            else -> ""
         }
+        Text(
+            text = result,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         TicTacToeGameBoard(
             cellsData = cellsData,
             onCellClicked = onCellClicked
@@ -79,7 +85,7 @@ fun MainScreenPreview() {
         val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
         MainScreenContent(
             cellsData = cells,
-            gameResult = Player.X,
+            gameResult = EndWithWinner(Player.X),
             onCellClicked = {}
         )
     }

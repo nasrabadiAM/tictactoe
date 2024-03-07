@@ -4,6 +4,8 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import me.nasrabadiam.tictactoe.game.GameResult.Draw
+import me.nasrabadiam.tictactoe.game.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.Player
 import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
@@ -80,7 +82,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
@@ -95,7 +97,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
@@ -110,7 +112,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     /**
@@ -128,7 +130,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
@@ -143,7 +145,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
@@ -158,9 +160,8 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
-
 
     /**
      * X Cross tests
@@ -176,7 +177,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
@@ -190,7 +191,7 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
-        assertEquals(Player.X, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     /**
@@ -209,7 +210,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
@@ -225,7 +226,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // X
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
@@ -241,7 +242,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // X
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     /**
@@ -260,7 +261,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
         useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
@@ -276,7 +277,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
         useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
@@ -292,9 +293,8 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
         useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
-
 
     /**
      * O Cross tests
@@ -311,7 +311,7 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
@@ -326,6 +326,28 @@ class GameUseCaseShould {
 
         useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
         useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // O
-        assertEquals(Player.O, useCase.gameResult.value)
+        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+    }
+
+    @Test
+    fun emitDrawGameResultWhenNoOneWins() = runTest {
+        useCase.onCellClicked(getCellIndex(col = 0, row = 0)) // X
+        useCase.onCellClicked(getCellIndex(col = 2, row = 0)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(col = 1, row = 1)) // X
+        useCase.onCellClicked(getCellIndex(col = 0, row = 1)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(col = 0, row = 2)) // X
+        useCase.onCellClicked(getCellIndex(col = 2, row = 2)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(col = 2, row = 1)) // X
+        useCase.onCellClicked(getCellIndex(col = 1, row = 0)) // O
+        assertEquals(null, useCase.gameResult.value)
+
+        useCase.onCellClicked(getCellIndex(col = 1, row = 2)) // X
+        assertEquals(Draw, useCase.gameResult.value)
     }
 }
