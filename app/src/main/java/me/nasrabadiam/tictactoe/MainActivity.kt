@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,7 +46,8 @@ fun MainScreen(gameUseCase: GameUseCase) {
         MainScreenContent(
             cellsData = cells.value,
             gameResult = gameResult.value,
-            onCellClicked = gameUseCase::onCellClicked
+            onCellClicked = gameUseCase::clickOnCell,
+            onRestartClicked = gameUseCase::restartGame
         )
     }
 }
@@ -54,6 +57,7 @@ private fun MainScreenContent(
     cellsData: List<Cell>,
     gameResult: GameResult?,
     onCellClicked: (Int) -> Unit,
+    onRestartClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -67,10 +71,15 @@ private fun MainScreenContent(
             is EndWithWinner -> "${gameResult.player} Wins"
             else -> ""
         }
-        Text(
-            text = result,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        Row {
+            Button(onClick = onRestartClicked) {
+                Text(text = "Restart")
+            }
+            Text(
+                text = result,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
         TicTacToeGameBoard(
             cellsData = cellsData,
             onCellClicked = onCellClicked
@@ -86,7 +95,8 @@ fun MainScreenPreview() {
         MainScreenContent(
             cellsData = cells,
             gameResult = EndWithWinner(Player.X),
-            onCellClicked = {}
+            onCellClicked = {},
+            onRestartClicked = {},
         )
     }
 }

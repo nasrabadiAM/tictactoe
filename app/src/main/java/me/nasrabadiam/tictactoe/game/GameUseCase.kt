@@ -8,8 +8,8 @@ import me.nasrabadiam.tictactoe.game.utlis.getRowIndex
 import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
 
 class GameUseCase(
-    boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
-    starterPlayer: Player = Player.X
+    private val boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
+    private val starterPlayer: Player = Player.X
 ) {
     private val _cells: MutableStateFlow<List<Cell>> =
         MutableStateFlow(listOfEmptyCells(boardSize))
@@ -23,7 +23,7 @@ class GameUseCase(
     internal var currentPlayer: Player = starterPlayer
         private set
 
-    fun onCellClicked(index: Int) {
+    fun clickOnCell(index: Int) {
         if (gameResult.value != null) return
         val copiedCells = cellsList
         if (index >= copiedCells.size || copiedCells[index].value != null) return
@@ -31,6 +31,13 @@ class GameUseCase(
         _cells.update { copiedCells }
         changePlayerTurn()
         checkGameResultAndNotifyIfChanged()
+    }
+
+    fun restartGame() {
+        val newCellList = listOfEmptyCells(boardSize)
+        _cells.update { newCellList }
+        _gameResult.update { null }
+        currentPlayer = starterPlayer
     }
 
     private fun changePlayerTurn() {
@@ -69,13 +76,13 @@ class GameUseCase(
 
         if (nonNullWinnerMap.isNotEmpty()) {
             _gameResult.update { GameResult.EndWithWinner(nonNullWinnerMap[0]) }
-        } else if (allCellsFilled()) {
+        } else if (hasNotAnyEmptyCell()) {
             _gameResult.update { GameResult.Draw }
         }
     }
 
-    private fun allCellsFilled(): Boolean {
-        return cellsList.all { it.value != null }
+    private fun hasNotAnyEmptyCell(): Boolean {
+        return cellsList.any { it.value == null }.not()
     }
 
     private fun MutableMap<String, Player?>.putInMap(

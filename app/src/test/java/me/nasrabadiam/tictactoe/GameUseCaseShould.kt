@@ -18,7 +18,7 @@ class GameUseCaseShould {
     @Test
     fun updateItemValueWhenClicked() = runTest {
         val index = 0
-        useCase.onCellClicked(index)
+        useCase.clickOnCell(index)
         val clickedItem = useCase.cells.first()[index]
         assertEquals(Player.X, clickedItem.value)
     }
@@ -26,7 +26,7 @@ class GameUseCaseShould {
     @Test
     fun changePlayerTurnItemValueWhenClicked() = runTest {
         val index = 0
-        useCase.onCellClicked(index)
+        useCase.clickOnCell(index)
         assertEquals(Player.O, useCase.currentPlayer)
     }
 
@@ -34,7 +34,7 @@ class GameUseCaseShould {
     fun doNothingWhenACellWithValueClicked() = runTest {
         val index = 0
         repeat(2) {
-            useCase.onCellClicked(index)
+            useCase.clickOnCell(index)
         }
         val clickedCell = useCase.cells.first()[index]
         assertEquals(Player.X, clickedCell.value)
@@ -44,7 +44,7 @@ class GameUseCaseShould {
     @Test
     fun update8thItemValueOfCellsWhenClicked() = runTest {
         val index = 8
-        useCase.onCellClicked(index)
+        useCase.clickOnCell(index)
         val clickedItem = useCase.cells.first()[index]
         assertEquals(Player.X, clickedItem.value)
     }
@@ -53,7 +53,7 @@ class GameUseCaseShould {
     fun changePlayerTurnItemValueWhenClickedAndStarterIsO() = runTest {
         val index = 0
         val useCase = GameUseCase(starterPlayer = Player.O)
-        useCase.onCellClicked(index)
+        useCase.clickOnCell(index)
         assertEquals(Player.X, useCase.currentPlayer)
     }
 
@@ -61,9 +61,12 @@ class GameUseCaseShould {
     fun doNothingWhenCellsIsEmpty() = runTest {
         val index = 0
         val useCase = GameUseCase(boardSize = 0)
-        useCase.onCellClicked(index)
+        useCase.clickOnCell(index)
         val cells = useCase.cells.first()
-        assertTrue(cells.isEmpty())
+        assertTrue(
+            "Cells must be empty, but it's not.",
+            cells.isEmpty()
+        )
         assertEquals(Player.X, useCase.currentPlayer)
     }
 
@@ -73,45 +76,45 @@ class GameUseCaseShould {
     @Test
     fun emitGameResultWhenXFillsFirstColumn() = runTest {
         val xColumn = 0
-        useCase.onCellClicked(getCellIndex(row = 0, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenXFillsSecondColumn() = runTest {
         val xColumn = 1
-        useCase.onCellClicked(getCellIndex(row = 0, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenXFillsThirdColumn() = runTest {
         val xColumn = 2
-        useCase.onCellClicked(getCellIndex(row = 0, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = xColumn)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
@@ -121,45 +124,45 @@ class GameUseCaseShould {
     @Test
     fun emitGameResultWhenXFillsFirstRow() = runTest {
         val xRow = 0
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenXFillsSecondRow() = runTest {
         val xRow = 1
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenXFillsThirdRow() = runTest {
         val xRow = 2
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = xRow, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
@@ -168,29 +171,29 @@ class GameUseCaseShould {
      */
     @Test
     fun emitGameResultWhenXFillsLeftToRightCross() = runTest {
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenXFillsRightToLeftCross() = runTest {
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
         assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
     }
 
@@ -200,48 +203,48 @@ class GameUseCaseShould {
     @Test
     fun emitGameResultWhenOFillsFirstColumn() = runTest {
         val oColumn = 0
-        useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenOFillsSecondColumn() = runTest {
         val oColumn = 1
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenOFillsThirdColumn() = runTest {
         val oColumn = 2
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = oColumn)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = oColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
@@ -251,48 +254,48 @@ class GameUseCaseShould {
     @Test
     fun emitGameResultWhenOFillsFirstRow() = runTest {
         val oRow = 0
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenOFillsSecondRow() = runTest {
         val oRow = 1
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenOFillsThirdRow() = runTest {
         val oRow = 2
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = oRow, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
@@ -301,53 +304,110 @@ class GameUseCaseShould {
      */
     @Test
     fun emitGameResultWhenOFillsLeftToRightCross() = runTest {
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitGameResultWhenOFillsRightToLeftCross() = runTest {
-        useCase.onCellClicked(getCellIndex(row = 1, col = 2)) // X
-        useCase.onCellClicked(getCellIndex(row = 0, col = 2)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 1, col = 0)) // X
-        useCase.onCellClicked(getCellIndex(row = 1, col = 1)) // O
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(row = 2, col = 1)) // X
-        useCase.onCellClicked(getCellIndex(row = 2, col = 0)) // O
+        useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // O
         assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
     }
 
     @Test
     fun emitDrawGameResultWhenNoOneWins() = runTest {
-        useCase.onCellClicked(getCellIndex(col = 0, row = 0)) // X
-        useCase.onCellClicked(getCellIndex(col = 2, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(col = 1, row = 1)) // X
-        useCase.onCellClicked(getCellIndex(col = 0, row = 1)) // O
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(col = 0, row = 2)) // X
-        useCase.onCellClicked(getCellIndex(col = 2, row = 2)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(col = 2, row = 1)) // X
-        useCase.onCellClicked(getCellIndex(col = 1, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
         assertEquals(null, useCase.gameResult.value)
 
-        useCase.onCellClicked(getCellIndex(col = 1, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X
         assertEquals(Draw, useCase.gameResult.value)
+    }
+
+    @Test
+    fun resetGameCellsWhenClickedOnRestartButton() = runTest {
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // O
+
+        useCase.restartGame()
+
+        val cells = useCase.cells.first()
+        assertTrue(
+            "All cells should be empty after restart but they aren't," +
+                " non empty cells=${cells.filter { it.value != null }}",
+            cells.all { it.value == null }
+        )
+    }
+
+    @Test
+    fun resetGameResultWhenClickedOnRestartButton() = runTest {
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X
+
+        useCase.restartGame()
+
+        val gameResult = useCase.gameResult.value
+        assertTrue(
+            "Game Result should by empty when game has been reset," +
+                " but it is -> gameResult=$gameResult",
+            gameResult == null
+        )
+    }
+
+    @Test
+    fun resetGameCurrentPlayerToStarterPlayerWhenClickedOnRestartButton() = runTest {
+        // Starter player here is X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        // Current player here is O
+
+        useCase.restartGame()
+
+        val currentPlayer = useCase.currentPlayer
+        assertTrue(
+            "Current Player must be restart to starter player, " +
+                "when we restart the game but it is -> currentPlayer=$currentPlayer",
+            currentPlayer == Player.X
+        )
     }
 }
