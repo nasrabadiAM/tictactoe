@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.Player
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,14 +21,6 @@ class GameTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-
-    @Test
-    @Ignore
-    fun displayGameBoard(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
-
-        onNode(hasTestTag(GRID_TEST_TAG)).assertIsDisplayed()
-    }
 
     @Test
     fun displayGameCells(): Unit = with(composeRule) {

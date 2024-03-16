@@ -1,23 +1,26 @@
 package me.nasrabadiam.tictactoe.game
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -44,16 +47,52 @@ private fun GameGrid(
 ) {
     val boardSize = cellsData.getBoardSize()
 
-    Column(modifier.testTag("game_board")) {
+    val gridColor = MaterialTheme.colorScheme.onBackground
+    Column(
+        modifier = modifier
+            .aspectRatio(1f)
+            .fillMaxWidth()
+            .drawBehind(gameGrid(boardSize, gridColor))
+            .testTag("game_board")
+    ) {
         (0 until boardSize).forEach { index ->
             GameRow(
                 cellsData = cellsData,
                 rowIndex = index,
                 boardSize = boardSize,
                 onCellClicked = onCellClicked,
-                modifier = Modifier.wrapContentHeight()
+                modifier = Modifier
+                    .aspectRatio(3f)
+                    .fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun gameGrid(
+    boardSize: Int,
+    gridColor: Color
+): DrawScope.() -> Unit = {
+    val canvasWidth = size.width
+    val canvasHeight = size.height
+    val horizontalLineY = canvasHeight / 3
+    val verticalLineX = canvasWidth / 3
+    val lineStrokeWidth = 1.dp.toPx()
+
+    for (lineNumber in 1 until boardSize) {
+        drawLine(
+            start = Offset(x = 0.dp.toPx(), y = lineNumber * horizontalLineY),
+            end = Offset(x = canvasWidth, y = lineNumber * horizontalLineY),
+            color = gridColor,
+            strokeWidth = lineStrokeWidth
+        )
+        drawLine(
+            start = Offset(x = lineNumber * verticalLineX, y = 0.dp.toPx()),
+            end = Offset(x = lineNumber * verticalLineX, y = canvasHeight),
+            color = gridColor,
+            strokeWidth = lineStrokeWidth
+        )
     }
 }
 
@@ -77,29 +116,26 @@ private fun GameRow(
 @Composable
 private fun GameCell(
     cell: Cell,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Text(
-        modifier = Modifier
-            .size(48.dp)
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable { onClick.invoke(cell.index) }
-            .semantics { testTag = "cell_${cell.index}" },
-        color = MaterialTheme.colorScheme.onBackground,
-        text = cell.getShowingValue()
-    )
-}
-
-@Composable
-private fun VerticalDivider() {
     Box(
-        modifier = Modifier
-            .height(36.dp)
-            .width(2.dp)
-            .semantics { testTag = "grid" }
-            .background(MaterialTheme.colorScheme.onBackground)
-    )
+        modifier
+            .padding(4.dp)
+            .aspectRatio(1f)
+            .clickable { onClick.invoke(cell.index) },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .semantics { testTag = "cell_${cell.index}" },
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            text = cell.getShowingValue()
+        )
+
+    }
 }
 
 @Preview(showSystemUi = true)

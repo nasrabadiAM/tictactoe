@@ -4,5 +4,5 @@ data class Cell(
     val index: Int,
     val value: Player? = null
 ) {
-    fun getShowingValue(): String = value?.toString() ?: ""
+    fun getShowingValue(): String = value?.toString() ?: " "
 }
