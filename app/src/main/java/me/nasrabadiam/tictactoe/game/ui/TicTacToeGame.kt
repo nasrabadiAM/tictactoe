@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.game.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,10 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import me.nasrabadiam.tictactoe.game.Player.O
-import me.nasrabadiam.tictactoe.game.Player.X
-import me.nasrabadiam.tictactoe.game.utlis.getBoardSize
-import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.model.Cell
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.Player.O
+import me.nasrabadiam.tictactoe.game.model.Player.X
+import me.nasrabadiam.tictactoe.game.model.utlis.getBoardSize
+import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 
 @Composable
 fun TicTacToeGameBoard(
@@ -124,18 +126,16 @@ private fun GameCell(
         modifier
             .padding(4.dp)
             .aspectRatio(1f)
-            .clickable { onClick.invoke(cell.index) },
+            .clickable { onClick.invoke(cell.index) }
+            .semantics { testTag = "cell_${cell.index}" },
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier
-                .semantics { testTag = "cell_${cell.index}" },
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onBackground,
             text = cell.getShowingValue()
         )
-
     }
 }
 

@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.game.model
 
 sealed class GameResult {
     data class EndWithWinner(val player: Player) : GameResult()

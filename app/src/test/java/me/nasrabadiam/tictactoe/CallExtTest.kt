@@ -1,10 +1,10 @@
 package me.nasrabadiam.tictactoe
 
 import junit.framework.TestCase.assertEquals
-import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
-import me.nasrabadiam.tictactoe.game.utlis.getColumnIndex
-import me.nasrabadiam.tictactoe.game.utlis.getRowIndex
-import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.utlis.getColumnIndex
+import me.nasrabadiam.tictactoe.game.model.utlis.getRowIndex
+import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import org.junit.Test
 
 class CallExtTest {

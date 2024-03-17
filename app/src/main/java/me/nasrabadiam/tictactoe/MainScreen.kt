@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe.ui
+package me.nasrabadiam.tictactoe
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,15 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import me.nasrabadiam.tictactoe.game.Cell
-import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
-import me.nasrabadiam.tictactoe.game.GameResult
-import me.nasrabadiam.tictactoe.game.GameResult.Draw
-import me.nasrabadiam.tictactoe.game.GameResult.EndWithWinner
+import me.nasrabadiam.tictactoe.game.model.Cell
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.GameResult
+import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
+import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Player
-import me.nasrabadiam.tictactoe.game.TicTacToeGameBoard
-import me.nasrabadiam.tictactoe.game.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.model.Player.X
+import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
+import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
@@ -164,7 +164,7 @@ fun MainScreenPreview(
         val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
         MainScreenContent(
             cellsData = cells,
-            gameResult = EndWithWinner(Player.X),
+            gameResult = EndWithWinner(X),
             onCellClicked = {},
             onRestartClicked = {},
             isExpandedScreen = isExpandedScreen

@@ -9,8 +9,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
-import me.nasrabadiam.tictactoe.game.Player.X
-import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
+import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 
 internal fun ComposeContentTestRule.assertCountEquals(
     text: String,
@@ -18,27 +17,8 @@ internal fun ComposeContentTestRule.assertCountEquals(
 ) {
     onNode(hasTestTag(GAME_BOARD_TEST_TAG))
         .onChildren()
-        .filter(hasClickAction())
         .filter(hasText(text))
         .assertCountEquals(counts)
-}
-
-internal fun ComposeContentTestRule.clickOnXCell() {
-    onNode(hasTestTag(GAME_BOARD_TEST_TAG))
-        .onChildren()
-        .filter(hasClickAction())
-        .filter(hasText(X.toString()))
-        .onFirst()
-        .performClick()
-}
-
-internal fun ComposeContentTestRule.clickOnFirstEmptyCell() {
-    onNode(hasTestTag(GAME_BOARD_TEST_TAG))
-        .onChildren()
-        .filter(hasClickAction())
-        .filter(hasText(""))
-        .onFirst()
-        .performClick()
 }
 
 internal fun ComposeContentTestRule.clickOnCell(
@@ -59,7 +39,6 @@ internal fun getCellTestTag(index: Int): String {
 }
 
 internal const val CELL_TEST_TAG = "cell"
-internal const val GRID_TEST_TAG = "grid"
 internal const val GAME_BOARD_TEST_TAG = "game_board"
 internal const val RESTART_GAME_BUTTON_TEXT = "Restart"
 internal const val X_WINS_RESULT_STRING = "X Wins"

@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.game.model
 
 data class Cell(
     val index: Int,

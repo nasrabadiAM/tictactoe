@@ -4,11 +4,11 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.nasrabadiam.tictactoe.game.GameResult.Draw
-import me.nasrabadiam.tictactoe.game.GameResult.EndWithWinner
+import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
+import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Player
-import me.nasrabadiam.tictactoe.game.utlis.getCellIndex
+import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import org.junit.Test
 
 class GameUseCaseShould {

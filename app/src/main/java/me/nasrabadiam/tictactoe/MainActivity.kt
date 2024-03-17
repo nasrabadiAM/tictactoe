@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe.ui
+package me.nasrabadiam.tictactoe
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

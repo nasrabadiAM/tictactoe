@@ -2,7 +2,7 @@ package me.nasrabadiam.tictactoe
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Player
+import me.nasrabadiam.tictactoe.game.model.Player
 import org.junit.Rule
 import org.junit.Test
 
@@ -12,22 +12,23 @@ class GameClickTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+    private val isExpandedScreen = false
 
     @Test
     fun whenClickOnCellsShouldDrawItem(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
-        clickOnFirstEmptyCell()
+        clickOnCell(0, 0)
 
         assertCountEquals(Player.X.toString(), 1)
     }
 
     @Test
     fun whenClickOnSecondCellShouldChangeTurn(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
-        clickOnFirstEmptyCell()
-        clickOnFirstEmptyCell()
+        clickOnCell(0, 0)
+        clickOnCell(1, 1)
 
         assertCountEquals(Player.X.toString(), 1)
         assertCountEquals(Player.O.toString(), 1)
@@ -35,13 +36,13 @@ class GameClickTests {
 
     @Test
     fun whenClickOnCellThatClickedBeforeShouldDoNothing(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
-        clickOnFirstEmptyCell()
+        clickOnCell(0, 0)
 
         assertCountEquals(Player.X.toString(), 1)
 
-        clickOnXCell()
+        clickOnCell(0, 0)
 
         assertCountEquals(Player.X.toString(), 1)
     }

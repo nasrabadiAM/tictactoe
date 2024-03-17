@@ -1,7 +1,7 @@
-package me.nasrabadiam.tictactoe.game.utlis
+package me.nasrabadiam.tictactoe.game.model.utlis
 
-import me.nasrabadiam.tictactoe.game.Cell
-import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.Cell
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import kotlin.math.sqrt
 
 public fun listOfEmptyCells(size: Int): List<Cell> {

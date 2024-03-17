@@ -1,6 +1,6 @@
-package me.nasrabadiam.tictactoe.game.utlis
+package me.nasrabadiam.tictactoe.game.model.utlis
 
-import me.nasrabadiam.tictactoe.game.Cell
+import me.nasrabadiam.tictactoe.game.model.Cell
 
 fun List<Cell>.getRowIndex(listIndex: Int): Int {
     val boardSize = getBoardSize()

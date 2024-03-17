@@ -9,9 +9,9 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import me.nasrabadiam.tictactoe.game.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.Player
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.Player
 import org.junit.Rule
 import org.junit.Test
 
@@ -21,10 +21,11 @@ class GameTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+    private val isExpandedScreen = false
 
     @Test
     fun displayGameCells(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
         for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
             onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
         }
@@ -32,14 +33,14 @@ class GameTests {
 
     @Test
     fun displayRestartButton(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase = gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
         onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
     }
 
     @Test
     fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase = gameUseCase) }
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
