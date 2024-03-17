@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,7 @@ import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
 import me.nasrabadiam.tictactoe.game.model.utlis.getBoardSize
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.ui.AutoSizeText
 
 @Composable
 fun TicTacToeGameBoard(
@@ -130,11 +130,13 @@ private fun GameCell(
             .semantics { testTag = "cell_${cell.index}" },
         contentAlignment = Alignment.Center
     ) {
-        Text(
+
+        val displayLargeStyle = MaterialTheme.typography.headlineSmall
+        AutoSizeText(
+            text = cell.getShowingValue(),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.displayLarge,
+            style = displayLargeStyle,
             color = MaterialTheme.colorScheme.onBackground,
-            text = cell.getShowingValue()
         )
     }
 }
