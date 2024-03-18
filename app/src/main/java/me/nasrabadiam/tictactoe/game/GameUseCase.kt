@@ -24,6 +24,15 @@ class GameUseCase(
     private val _gameResult: MutableStateFlow<GameResult?> = MutableStateFlow(null)
     val gameResult: StateFlow<GameResult?> = _gameResult
 
+    private val _xScore: MutableStateFlow<Int> = MutableStateFlow(0)
+    val xScore: StateFlow<Int> = _xScore
+
+    private val _oScore: MutableStateFlow<Int> = MutableStateFlow(0)
+    val oScore: StateFlow<Int> = _oScore
+
+    private val _drawCount: MutableStateFlow<Int> = MutableStateFlow(0)
+    val drawCount: StateFlow<Int> = _drawCount
+
     internal var currentPlayer: Player = starterPlayer
         private set
 
@@ -79,9 +88,20 @@ class GameUseCase(
         val nonNullWinnerMap = winnerMap.entries.mapNotNull { it.value }
 
         if (nonNullWinnerMap.isNotEmpty()) {
-            _gameResult.update { GameResult.EndWithWinner(nonNullWinnerMap[0]) }
+            val winner = nonNullWinnerMap[0]
+            updateWinnerScore(winner)
+            _gameResult.update { GameResult.EndWithWinner(winner) }
         } else if (hasNotAnyEmptyCell()) {
+            _drawCount.update { drawCount.value + 1 }
             _gameResult.update { GameResult.Draw }
+        }
+    }
+
+    private fun updateWinnerScore(winner: Player) {
+        if (winner == Player.X) {
+            _xScore.update { xScore.value + 1 }
+        } else {
+            _oScore.update { oScore.value + 1 }
         }
     }
 

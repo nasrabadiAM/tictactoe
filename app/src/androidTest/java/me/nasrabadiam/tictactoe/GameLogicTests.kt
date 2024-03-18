@@ -40,7 +40,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
-        assertCountEquals(Player.O.toString(), 2)
+        assertPlayersCountEquals(Player.O.toString(), 2)
     }
 
     /**
@@ -66,7 +66,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
-        assertCountEquals(Player.O.toString(), 2)
+        assertPlayersCountEquals(Player.O.toString(), 2)
     }
 
     /**
@@ -91,7 +91,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 1, row = 0) // should not show O on 1,0, because the game is finished!
-        assertCountEquals(Player.O.toString(), 2)
+        assertPlayersCountEquals(Player.O.toString(), 2)
     }
 
     /**
@@ -118,7 +118,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 2, row = 1) // should not show X on 2,1, because the game is finished!
-        assertCountEquals(Player.X.toString(), 3)
+        assertPlayersCountEquals(Player.X.toString(), 3)
     }
 
     /**
@@ -145,7 +145,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 0, row = 2) // should not show X on 0,2, because the game is finished!
-        assertCountEquals(Player.X.toString(), 3)
+        assertPlayersCountEquals(Player.X.toString(), 3)
     }
 
     /**
@@ -171,7 +171,7 @@ class GameLogicTests {
 
         // assert game ends
         clickOnCell(col = 1, row = 0) // should not show X on 1,0, because the game is finished!
-        assertCountEquals(Player.X.toString(), 3)
+        assertPlayersCountEquals(Player.X.toString(), 3)
     }
 
     /**
@@ -201,7 +201,7 @@ class GameLogicTests {
         onNode(hasText(DRAW_RESULT_STRING)).assertIsDisplayed()
 
         // assert game ends
-        assertCountEquals(Player.X.toString(), 5)
-        assertCountEquals(Player.O.toString(), 4)
+        assertPlayersCountEquals(Player.X.toString(), 5)
+        assertPlayersCountEquals(Player.O.toString(), 4)
     }
 }

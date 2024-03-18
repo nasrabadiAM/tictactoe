@@ -4,9 +4,9 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
-import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import org.junit.Test
@@ -409,5 +409,52 @@ class GameUseCaseShould {
                 "when we restart the game but it is -> currentPlayer=$currentPlayer",
             currentPlayer == Player.X
         )
+    }
+
+    @Test
+    fun emitXScoreWhenItWins() {
+        val xColumn = 1
+        useCase.clickOnCell(getCellIndex(row = 0, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = xColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X wins
+        assertEquals(1, useCase.xScore.value)
+    }
+
+    @Test
+    fun emitOScoreWhenItWins() {
+        useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // O wins
+
+        assertEquals(1, useCase.oScore.value)
+    }
+
+    @Test
+    fun emitDrawCountWhenItDraws() = with(useCase) {
+
+        clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        clickOnCell(getCellIndex(col = 2, row = 0)) // O
+
+        clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        clickOnCell(getCellIndex(col = 0, row = 1)) // O
+
+        clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        clickOnCell(getCellIndex(col = 2, row = 2)) // O
+
+        clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        clickOnCell(getCellIndex(col = 1, row = 0)) // O
+
+        clickOnCell(getCellIndex(col = 1, row = 2)) // X -> Draw
+
+        assertEquals(1, useCase.drawCount.value)
     }
 }

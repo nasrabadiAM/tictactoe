@@ -18,15 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
-import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player.X
-import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
@@ -36,9 +36,15 @@ fun MainScreen(gameUseCase: GameUseCase, isExpandedScreen: Boolean) {
             initial = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
         )
         val gameResult = gameUseCase.gameResult.collectAsState()
+        val xScore = gameUseCase.xScore.collectAsState()
+        val oScore = gameUseCase.oScore.collectAsState()
+        val drawCount = gameUseCase.drawCount.collectAsState()
         MainScreenContent(
             cellsData = cells.value,
             gameResult = gameResult.value,
+            xScore = xScore.value,
+            oScore = oScore.value,
+            drawCount = drawCount.value,
             onCellClicked = gameUseCase::clickOnCell,
             onRestartClicked = gameUseCase::restartGame,
             isExpandedScreen = isExpandedScreen,
@@ -50,6 +56,9 @@ fun MainScreen(gameUseCase: GameUseCase, isExpandedScreen: Boolean) {
 private fun MainScreenContent(
     cellsData: List<Cell>,
     gameResult: GameResult?,
+    xScore: Int,
+    oScore: Int,
+    drawCount: Int,
     onCellClicked: (Int) -> Unit,
     onRestartClicked: () -> Unit,
     isExpandedScreen: Boolean,
@@ -60,6 +69,9 @@ private fun MainScreenContent(
         HorizontalScreen(
             modifier,
             gameResult,
+            xScore,
+            oScore,
+            drawCount,
             onRestartClicked,
             cellsData,
             onCellClicked
@@ -68,6 +80,9 @@ private fun MainScreenContent(
         VerticalScreen(
             modifier,
             gameResult,
+            xScore,
+            oScore,
+            drawCount,
             onRestartClicked,
             cellsData,
             onCellClicked
@@ -79,6 +94,9 @@ private fun MainScreenContent(
 private fun VerticalScreen(
     modifier: Modifier,
     gameResult: GameResult?,
+    xScore: Int,
+    oScore: Int,
+    drawCount: Int,
     onRestartClicked: () -> Unit,
     cellsData: List<Cell>,
     onCellClicked: (Int) -> Unit
@@ -98,6 +116,9 @@ private fun VerticalScreen(
             Button(onClick = onRestartClicked) {
                 Text(text = "Restart")
             }
+            Text(text = xScore.toString())
+            Text(text = drawCount.toString())
+            Text(text = oScore.toString())
             Text(
                 text = result,
                 color = MaterialTheme.colorScheme.onBackground
@@ -115,6 +136,9 @@ private fun VerticalScreen(
 private fun HorizontalScreen(
     modifier: Modifier,
     gameResult: GameResult?,
+    xScore: Int,
+    oScore: Int,
+    drawCount: Int,
     onRestartClicked: () -> Unit,
     cellsData: List<Cell>,
     onCellClicked: (Int) -> Unit
@@ -134,6 +158,9 @@ private fun HorizontalScreen(
             Button(onClick = onRestartClicked) {
                 Text(text = "Restart")
             }
+            Text(text = xScore.toString())
+            Text(text = drawCount.toString())
+            Text(text = oScore.toString())
             Text(
                 text = result,
                 color = MaterialTheme.colorScheme.onBackground
@@ -165,6 +192,9 @@ fun MainScreenPreview(
         MainScreenContent(
             cellsData = cells,
             gameResult = EndWithWinner(X),
+            xScore = 1,
+            oScore = 2,
+            drawCount = 0,
             onCellClicked = {},
             onRestartClicked = {},
             isExpandedScreen = isExpandedScreen

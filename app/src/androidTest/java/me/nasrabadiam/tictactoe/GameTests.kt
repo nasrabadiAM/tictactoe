@@ -61,8 +61,8 @@ class GameTests {
         restartButton.performClick()
 
         // assert game cells should be empty
-        assertCountEquals(Player.X.toString(), 0)
-        assertCountEquals(Player.O.toString(), 0)
+        assertPlayersCountEquals(Player.X.toString(), 0)
+        assertPlayersCountEquals(Player.O.toString(), 0)
 
         // assert any game result not to be shown
         onNode(hasText(DRAW_RESULT_STRING)).assertIsNotDisplayed()

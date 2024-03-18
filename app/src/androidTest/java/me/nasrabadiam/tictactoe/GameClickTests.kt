@@ -20,7 +20,7 @@ class GameClickTests {
 
         clickOnCell(0, 0)
 
-        assertCountEquals(Player.X.toString(), 1)
+        assertPlayersCountEquals(Player.X.toString(), 1)
     }
 
     @Test
@@ -30,8 +30,8 @@ class GameClickTests {
         clickOnCell(0, 0)
         clickOnCell(1, 1)
 
-        assertCountEquals(Player.X.toString(), 1)
-        assertCountEquals(Player.O.toString(), 1)
+        assertPlayersCountEquals(Player.X.toString(), 1)
+        assertPlayersCountEquals(Player.O.toString(), 1)
     }
 
     @Test
@@ -40,10 +40,10 @@ class GameClickTests {
 
         clickOnCell(0, 0)
 
-        assertCountEquals(Player.X.toString(), 1)
+        assertPlayersCountEquals(Player.X.toString(), 1)
 
         clickOnCell(0, 0)
 
-        assertCountEquals(Player.X.toString(), 1)
+        assertPlayersCountEquals(Player.X.toString(), 1)
     }
 }

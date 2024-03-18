@@ -11,13 +11,21 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 
-internal fun ComposeContentTestRule.assertCountEquals(
+internal fun ComposeContentTestRule.assertPlayersCountEquals(
     text: String,
     counts: Int
 ) {
     onNode(hasTestTag(GAME_BOARD_TEST_TAG))
         .onChildren()
         .filter(hasText(text))
+        .assertCountEquals(counts)
+}
+
+internal fun ComposeContentTestRule.assertCountEquals(
+    text: String,
+    counts: Int
+) {
+    onAllNodes(hasText(text))
         .assertCountEquals(counts)
 }
 
