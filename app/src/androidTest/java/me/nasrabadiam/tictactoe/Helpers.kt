@@ -21,14 +21,6 @@ internal fun ComposeContentTestRule.assertPlayersCountEquals(
         .assertCountEquals(counts)
 }
 
-internal fun ComposeContentTestRule.assertCountEquals(
-    text: String,
-    counts: Int
-) {
-    onAllNodes(hasText(text))
-        .assertCountEquals(counts)
-}
-
 internal fun ComposeContentTestRule.clickOnCell(
     col: Int,
     row: Int
@@ -49,6 +41,7 @@ internal fun getCellTestTag(index: Int): String {
 internal const val CELL_TEST_TAG = "cell"
 internal const val GAME_BOARD_TEST_TAG = "game_board"
 internal const val RESTART_GAME_BUTTON_TEXT = "Restart"
+internal const val REPLAY_GAME_BUTTON_TEXT = "Again"
 internal const val X_WINS_RESULT_STRING = "X Wins"
 internal const val O_WINS_RESULT_STRING = "O Wins"
 internal const val DRAW_RESULT_STRING = "Draw"

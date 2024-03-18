@@ -2,7 +2,6 @@ package me.nasrabadiam.tictactoe
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
@@ -19,7 +18,7 @@ class GameUseCaseShould {
     fun updateItemValueWhenClicked() = runTest {
         val index = 0
         useCase.clickOnCell(index)
-        val clickedItem = useCase.cells.first()[index]
+        val clickedItem = useCase.cells.value[index]
         assertEquals(Player.X, clickedItem.value)
     }
 
@@ -36,7 +35,7 @@ class GameUseCaseShould {
         repeat(2) {
             useCase.clickOnCell(index)
         }
-        val clickedCell = useCase.cells.first()[index]
+        val clickedCell = useCase.cells.value[index]
         assertEquals(Player.X, clickedCell.value)
         assertEquals(Player.O, useCase.currentPlayer)
     }
@@ -45,7 +44,7 @@ class GameUseCaseShould {
     fun update8thItemValueOfCellsWhenClicked() = runTest {
         val index = 8
         useCase.clickOnCell(index)
-        val clickedItem = useCase.cells.first()[index]
+        val clickedItem = useCase.cells.value[index]
         assertEquals(Player.X, clickedItem.value)
     }
 
@@ -62,7 +61,7 @@ class GameUseCaseShould {
         val index = 0
         val useCase = GameUseCase(boardSize = 0)
         useCase.clickOnCell(index)
-        val cells = useCase.cells.first()
+        val cells = useCase.cells.value
         assertTrue(
             "Cells must be empty, but it's not.",
             cells.isEmpty()
@@ -355,18 +354,22 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun resetGameCellsWhenClickedOnRestartButton() = runTest {
+    fun resetGameCellsAndScoresWhenClickedOnRestartButton() = runTest {
         useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X
         useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // O
 
         useCase.restartGame()
 
-        val cells = useCase.cells.first()
+        val cells = useCase.cells.value
         assertTrue(
             "All cells should be empty after restart but they aren't," +
                 " non empty cells=${cells.filter { it.value != null }}",
             cells.all { it.value == null }
         )
+
+        assertEquals(0, useCase.xScore.value)
+        assertEquals(0, useCase.drawCount.value)
+        assertEquals(0, useCase.oScore.value)
     }
 
     @Test
@@ -439,22 +442,53 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun emitDrawCountWhenItDraws() = with(useCase) {
+    fun emitDrawCountWhenItDraws() = runTest {
 
-        clickOnCell(getCellIndex(col = 0, row = 0)) // X
-        clickOnCell(getCellIndex(col = 2, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
 
-        clickOnCell(getCellIndex(col = 1, row = 1)) // X
-        clickOnCell(getCellIndex(col = 0, row = 1)) // O
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
 
-        clickOnCell(getCellIndex(col = 0, row = 2)) // X
-        clickOnCell(getCellIndex(col = 2, row = 2)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
 
-        clickOnCell(getCellIndex(col = 2, row = 1)) // X
-        clickOnCell(getCellIndex(col = 1, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
 
-        clickOnCell(getCellIndex(col = 1, row = 2)) // X -> Draw
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X -> Draw
 
         assertEquals(1, useCase.drawCount.value)
+    }
+
+
+    @Test
+    fun resetGameCellsWhenClickedOnReplayButton() = runTest {
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X -> Draw
+
+        useCase.replayGame()
+
+        val cells = useCase.cells.value
+        assertTrue(
+            "All cells should be empty after restart but they aren't," +
+                " non empty cells=${cells.filter { it.value != null }}",
+            cells.all { it.value == null }
+        )
+
+        assertEquals(0, useCase.xScore.value)
+        assertEquals(1, useCase.drawCount.value)
+        assertEquals(0, useCase.oScore.value)
     }
 }

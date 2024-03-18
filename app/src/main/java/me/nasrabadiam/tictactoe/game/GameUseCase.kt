@@ -50,7 +50,18 @@ class GameUseCase(
         val newCellList = listOfEmptyCells(boardSize)
         _cells.update { newCellList }
         _gameResult.update { null }
+
+        _xScore.update { 0 }
+        _oScore.update { 0 }
+        _drawCount.update { 0 }
+
         currentPlayer = starterPlayer
+    }
+
+    fun replayGame() {
+        val newCellList = listOfEmptyCells(boardSize)
+        _cells.update { newCellList }
+        _gameResult.update { null }
     }
 
     private fun changePlayerTurn() {

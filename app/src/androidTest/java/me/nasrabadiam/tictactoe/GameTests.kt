@@ -39,6 +39,56 @@ class GameTests {
     }
 
     @Test
+    fun displayReplayButtonWhenOneGameFinished(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+
+        onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
+
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 2, row = 0) // O
+
+        clickOnCell(col = 1, row = 1) // X
+        clickOnCell(col = 0, row = 1) // O
+
+        clickOnCell(col = 0, row = 2) // X
+        clickOnCell(col = 2, row = 2) // O
+
+        clickOnCell(col = 2, row = 1) // X
+        clickOnCell(col = 1, row = 0) // O
+
+        clickOnCell(col = 1, row = 2) // X  -> Draw
+
+        onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsDisplayed()
+    }
+
+    @Test
+    fun restartGameBoardWhenClickOnReplayButton(): Unit = with(composeRule) {
+        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+
+        clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = 2, row = 0) // O
+
+        clickOnCell(col = 1, row = 1) // X
+        clickOnCell(col = 0, row = 1) // O
+
+        clickOnCell(col = 0, row = 2) // X
+        clickOnCell(col = 2, row = 2) // O
+
+        clickOnCell(col = 2, row = 1) // X
+        clickOnCell(col = 1, row = 0) // O
+
+        clickOnCell(col = 1, row = 2) // X  -> Draw
+
+        onNodeWithText(REPLAY_GAME_BUTTON_TEXT).performClick()
+
+        onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
+
+        // assert game cells should be empty
+        assertPlayersCountEquals(Player.X.toString(), 0)
+        assertPlayersCountEquals(Player.O.toString(), 0)
+    }
+
+    @Test
     fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
         setContent { MainScreen(gameUseCase, isExpandedScreen) }
 
@@ -68,5 +118,7 @@ class GameTests {
         onNode(hasText(DRAW_RESULT_STRING)).assertIsNotDisplayed()
         onNode(hasText(X_WINS_RESULT_STRING)).assertIsNotDisplayed()
         onNode(hasText(O_WINS_RESULT_STRING)).assertIsNotDisplayed()
+        // all scores should disappear
+        onNode(hasText("1")).assertIsNotDisplayed()
     }
 }

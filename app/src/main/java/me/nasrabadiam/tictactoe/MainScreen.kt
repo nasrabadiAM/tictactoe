@@ -47,6 +47,7 @@ fun MainScreen(gameUseCase: GameUseCase, isExpandedScreen: Boolean) {
             drawCount = drawCount.value,
             onCellClicked = gameUseCase::clickOnCell,
             onRestartClicked = gameUseCase::restartGame,
+            onReplayClicked = gameUseCase::replayGame,
             isExpandedScreen = isExpandedScreen,
         )
     }
@@ -61,6 +62,7 @@ private fun MainScreenContent(
     drawCount: Int,
     onCellClicked: (Int) -> Unit,
     onRestartClicked: () -> Unit,
+    onReplayClicked: () -> Unit,
     isExpandedScreen: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -73,6 +75,7 @@ private fun MainScreenContent(
             oScore,
             drawCount,
             onRestartClicked,
+            onReplayClicked,
             cellsData,
             onCellClicked
         )
@@ -84,6 +87,7 @@ private fun MainScreenContent(
             oScore,
             drawCount,
             onRestartClicked,
+            onReplayClicked,
             cellsData,
             onCellClicked
         )
@@ -98,6 +102,7 @@ private fun VerticalScreen(
     oScore: Int,
     drawCount: Int,
     onRestartClicked: () -> Unit,
+    onReplayClicked: () -> Unit,
     cellsData: List<Cell>,
     onCellClicked: (Int) -> Unit
 ) {
@@ -115,6 +120,11 @@ private fun VerticalScreen(
         ) {
             Button(onClick = onRestartClicked) {
                 Text(text = "Restart")
+            }
+            if (gameResult != null) {
+                Button(onClick = onReplayClicked) {
+                    Text(text = "Again")
+                }
             }
             Text(text = xScore.toString())
             Text(text = drawCount.toString())
@@ -140,6 +150,7 @@ private fun HorizontalScreen(
     oScore: Int,
     drawCount: Int,
     onRestartClicked: () -> Unit,
+    onReplayClicked: () -> Unit,
     cellsData: List<Cell>,
     onCellClicked: (Int) -> Unit
 ) {
@@ -157,6 +168,11 @@ private fun HorizontalScreen(
         ) {
             Button(onClick = onRestartClicked) {
                 Text(text = "Restart")
+            }
+            if (gameResult != null) {
+                Button(onClick = onReplayClicked) {
+                    Text(text = "Again")
+                }
             }
             Text(text = xScore.toString())
             Text(text = drawCount.toString())
@@ -197,6 +213,7 @@ fun MainScreenPreview(
             drawCount = 0,
             onCellClicked = {},
             onRestartClicked = {},
+            onReplayClicked = {},
             isExpandedScreen = isExpandedScreen
         )
     }
