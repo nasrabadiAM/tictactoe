@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -68,44 +70,45 @@ private fun MainScreenContent(
 ) {
 
     if (isExpandedScreen) {
-        HorizontalScreen(
+        HorizontalGameScreen(
             modifier,
             gameResult,
             xScore,
             oScore,
             drawCount,
+            cellsData,
+            onCellClicked,
             onRestartClicked,
             onReplayClicked,
-            cellsData,
-            onCellClicked
         )
     } else {
-        VerticalScreen(
+        VerticalGameScreen(
             modifier,
             gameResult,
             xScore,
             oScore,
             drawCount,
+            cellsData,
+            onCellClicked,
             onRestartClicked,
             onReplayClicked,
-            cellsData,
-            onCellClicked
         )
     }
 }
 
 @Composable
-private fun VerticalScreen(
+private fun VerticalGameScreen(
     modifier: Modifier,
     gameResult: GameResult?,
     xScore: Int,
     oScore: Int,
     drawCount: Int,
+    cellsData: List<Cell>,
+    onCellClicked: (Int) -> Unit,
     onRestartClicked: () -> Unit,
     onReplayClicked: () -> Unit,
-    cellsData: List<Cell>,
-    onCellClicked: (Int) -> Unit
 ) {
+    val isExpandedScreen = false
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,47 +116,42 @@ private fun VerticalScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        val result = getResultString(gameResult)
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(onClick = onRestartClicked) {
-                Text(text = "Restart")
-            }
-            if (gameResult != null) {
-                Button(onClick = onReplayClicked) {
-                    Text(text = "Again")
-                }
-            }
-            Text(text = xScore.toString())
-            Text(text = drawCount.toString())
-            Text(text = oScore.toString())
-            Text(
-                text = result,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
+        ScoresSection(
+            xScore,
+            drawCount,
+            oScore,
+            isExpandedScreen
+        )
+
         TicTacToeGameBoard(
             cellsData = cellsData,
             onCellClicked = onCellClicked,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+        )
+        ButtonsSection(
+            gameResult,
+            onRestartClicked,
+            onReplayClicked,
+            isExpandedScreen
         )
     }
 }
 
 @Composable
-private fun HorizontalScreen(
+private fun HorizontalGameScreen(
     modifier: Modifier,
     gameResult: GameResult?,
     xScore: Int,
     oScore: Int,
     drawCount: Int,
+    cellsData: List<Cell>,
+    onCellClicked: (Int) -> Unit,
     onRestartClicked: () -> Unit,
     onReplayClicked: () -> Unit,
-    cellsData: List<Cell>,
-    onCellClicked: (Int) -> Unit
 ) {
+    val isExpandedScreen = true
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -161,33 +159,136 @@ private fun HorizontalScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        val result = getResultString(gameResult)
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = onRestartClicked) {
-                Text(text = "Restart")
-            }
-            if (gameResult != null) {
-                Button(onClick = onReplayClicked) {
-                    Text(text = "Again")
-                }
-            }
-            Text(text = xScore.toString())
-            Text(text = drawCount.toString())
-            Text(text = oScore.toString())
-            Text(
-                text = result,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
+        ScoresSection(
+            xScore,
+            drawCount,
+            oScore,
+            isExpandedScreen
+        )
         TicTacToeGameBoard(
             cellsData = cellsData,
             onCellClicked = onCellClicked,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+        )
+        ButtonsSection(
+            gameResult,
+            onRestartClicked,
+            onReplayClicked,
+            isExpandedScreen
         )
     }
+}
+
+@Composable
+private fun ButtonsSection(
+    gameResult: GameResult?,
+    onRestartClicked: () -> Unit,
+    onReplayClicked: () -> Unit,
+    isExpandedScreen: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val result = getResultString(gameResult)
+    if (isExpandedScreen) {
+        Column(
+            modifier = modifier.padding(
+                vertical = 8.dp,
+                horizontal = 32.dp
+            ),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+        }
+    } else {
+        Row(
+            modifier = modifier.padding(
+                vertical = 32.dp,
+                horizontal = 8.dp
+            ),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+        }
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    result: String,
+    onRestartClicked: () -> Unit,
+    gameResult: GameResult?,
+    onReplayClicked: () -> Unit
+) {
+    Text(
+        text = result,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+    Button(onClick = onRestartClicked) {
+        Text(text = "Restart")
+    }
+    if (gameResult != null) {
+        Button(onClick = onReplayClicked) {
+            Text(text = "Again")
+        }
+    }
+}
+
+@Composable
+private fun ScoresSection(
+    xScore: Int,
+    drawCount: Int,
+    oScore: Int,
+    isExpandedScreen: Boolean,
+    modifier: Modifier = Modifier
+) {
+    if (isExpandedScreen) {
+        Column(
+            verticalArrangement = Arrangement.SpaceAround,
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(
+                    vertical = 8.dp,
+                    horizontal = 32.dp
+                )
+        ) {
+            Scores(xScore, drawCount, oScore)
+        }
+    } else {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(
+                    vertical = 32.dp,
+                    horizontal = 8.dp
+                )
+        ) {
+            Scores(xScore, drawCount, oScore)
+        }
+    }
+}
+
+@Composable
+private fun Scores(xScore: Int, drawCount: Int, oScore: Int) {
+
+    Text(
+        modifier = Modifier.padding(4.dp),
+        text = "X: $xScore",
+        color = MaterialTheme.colorScheme.onBackground
+    )
+    Text(
+        modifier = Modifier.padding(4.dp),
+        text = "Draw: $drawCount",
+        color = MaterialTheme.colorScheme.onBackground
+    )
+    Text(
+        modifier = Modifier.padding(4.dp),
+        text = "O: $oScore",
+        color = MaterialTheme.colorScheme.onBackground
+    )
 }
 
 private fun getResultString(gameResult: GameResult?) = when (gameResult) {

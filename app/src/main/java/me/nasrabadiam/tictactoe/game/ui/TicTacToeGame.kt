@@ -1,5 +1,6 @@
 package me.nasrabadiam.tictactoe.game.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -53,8 +55,21 @@ private fun GameGrid(
     val gridColor = MaterialTheme.colorScheme.onBackground
     Column(
         modifier = modifier
-            .aspectRatio(1f)
-            .fillMaxWidth()
+            .layout { measurable, constraints ->
+                // Determine the minimum dimension for square layout
+                val minDimension = minOf(constraints.maxWidth, constraints.maxHeight)
+                val placeable = measurable.measure(
+                    constraints.copy(
+                        maxWidth = minDimension,
+                        maxHeight = minDimension,
+                        minHeight = minDimension,
+                        minWidth = minDimension
+                    )
+                )
+                layout(minDimension, minDimension) {
+                    placeable.place(x = 0, y = 0)
+                }
+            }
             .drawBehind(gameGrid(boardSize, gridColor))
             .testTag("game_board")
     ) {

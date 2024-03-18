@@ -34,7 +34,7 @@ class GameScoreTests {
         clickOnCell(col = 2, row = rowIndex) // X
 
         // assert showing winner
-        onNode(hasText("1")).assertIsDisplayed()
+        onNode(hasText("X: 1")).assertIsDisplayed()
     }
 
     @Test
@@ -51,7 +51,7 @@ class GameScoreTests {
         clickOnCell(col = 2, row = rowIndex) // X wins
 
         // assert showing x score
-        onNode(hasText("1")).assertIsDisplayed()
+        onNode(hasText("X: 1")).assertIsDisplayed()
 
         // replay game
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).performClick()
@@ -67,7 +67,8 @@ class GameScoreTests {
         clickOnCell(col = colIndex, row = 2) // O wins
 
         // assert showing scores
-        onAllNodes(hasText("1")).assertCountEquals(2)  // one for X and one for O
+        onNode(hasText("X: 1")).assertIsDisplayed()
+        onNode(hasText("O: 1")).assertIsDisplayed()
     }
 
     @Test
@@ -88,6 +89,6 @@ class GameScoreTests {
 
         clickOnCell(col = 1, row = 2) // X
 
-        onNode(hasText("1")).assertIsDisplayed() // X and O Draw
+        onNode(hasText("Draw: 1")).assertIsDisplayed() // X and O Draw
     }
 }

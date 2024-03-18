@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import me.nasrabadiam.tictactoe.game.GameUseCase
@@ -17,8 +18,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
-            val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
+            val windowSizeClass = calculateWindowSizeClass(this)
+            val widthSizeClass = windowSizeClass.widthSizeClass
+            val heightSizeClass = windowSizeClass.heightSizeClass
+            val isExpandedScreen =
+                widthSizeClass == WindowWidthSizeClass.Expanded || heightSizeClass == WindowHeightSizeClass.Compact
 
             MainScreen(gameUseCase, isExpandedScreen)
         }
