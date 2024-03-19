@@ -461,7 +461,6 @@ class GameUseCaseShould {
         assertEquals(1, useCase.drawCount.value)
     }
 
-
     @Test
     fun resetGameCellsWhenClickedOnReplayButton() = runTest {
         useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
@@ -491,4 +490,97 @@ class GameUseCaseShould {
         assertEquals(1, useCase.drawCount.value)
         assertEquals(0, useCase.oScore.value)
     }
+
+    ////////
+    // Turn change Tests
+    ////////
+    @Test
+    fun changeTheCurrentPlayerToOWhenOWins() = runTest {
+        val oColumn = 1
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O wins
+
+        useCase.replayGame()
+
+        assertEquals(Player.O, useCase.currentPlayer)
+    }
+
+    @Test
+    fun changeTheCurrentPlayerToXWhenXWins() = runTest {
+        val oColumn = 1
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X wins
+
+        useCase.replayGame()
+
+        assertEquals(Player.X, useCase.currentPlayer)
+    }
+
+    @Test
+    fun changeTheCurrentPlayerToOWhenGameWithXStarterDraw() = runTest {
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // X -> Draw
+
+        useCase.replayGame()
+
+        assertEquals(Player.O, useCase.currentPlayer)
+    }
+
+    @Test
+    fun changeTheCurrentPlayerToXWhenGameWithOStarterDraw() = runTest {
+        val oColumn = 1
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O wins
+
+        useCase.replayGame()
+
+        useCase.clickOnCell(getCellIndex(col = 2, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 0)) // X
+
+        useCase.clickOnCell(getCellIndex(col = 0, row = 1)) // O
+        useCase.clickOnCell(getCellIndex(col = 1, row = 1)) // X
+
+        useCase.clickOnCell(getCellIndex(col = 2, row = 2)) // O
+        useCase.clickOnCell(getCellIndex(col = 0, row = 2)) // X
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 0)) // O
+        useCase.clickOnCell(getCellIndex(col = 2, row = 1)) // X
+
+        useCase.clickOnCell(getCellIndex(col = 1, row = 2)) // O -> Draw
+
+        useCase.replayGame()
+
+        assertEquals(Player.X, useCase.currentPlayer)
+    }
+    ////////
+    // Turn change Tests
+    ////////
 }

@@ -102,6 +102,7 @@ class GameUseCase(
             val winner = nonNullWinnerMap[0]
             updateWinnerScore(winner)
             _gameResult.update { GameResult.EndWithWinner(winner) }
+            changePlayerTurn()
         } else if (hasNotAnyEmptyCell()) {
             _drawCount.update { drawCount.value + 1 }
             _gameResult.update { GameResult.Draw }
