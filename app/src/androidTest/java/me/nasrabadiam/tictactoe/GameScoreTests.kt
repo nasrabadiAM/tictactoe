@@ -58,12 +58,13 @@ class GameScoreTests {
 
         // it is o turn
         val colIndex = 2
-        clickOnCell(col = colIndex, row = 0) // O
         clickOnCell(col = 0, row = 0) // X
+        clickOnCell(col = colIndex, row = 0) // O
 
-        clickOnCell(col = colIndex, row = 1) // O
         clickOnCell(col = 0, row = 1) // X
+        clickOnCell(col = colIndex, row = 1) // O
 
+        clickOnCell(col = 1, row = 1) // X
         clickOnCell(col = colIndex, row = 2) // O wins
 
         // assert showing scores
