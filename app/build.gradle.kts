@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -63,6 +64,9 @@ dependencies {
     implementation(libs.coroutines)
     implementation(libs.androidx.window)
     implementation(libs.materialWindow)
+
+    ksp(libs.kotlin.inject.ksp)
+    implementation(libs.kotlin.inject.runtime)
 
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)

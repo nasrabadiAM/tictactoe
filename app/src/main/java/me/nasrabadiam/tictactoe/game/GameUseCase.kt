@@ -3,6 +3,7 @@ package me.nasrabadiam.tictactoe.game
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import me.nasrabadiam.tictactoe.di.scopes.AppScope
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameResult
@@ -10,7 +11,10 @@ import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.getColumnIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.getRowIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.tatarka.inject.annotations.Inject
 
+@Inject
+@AppScope
 class GameUseCase(
     private val boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
     private val starterPlayer: Player = Player.X
