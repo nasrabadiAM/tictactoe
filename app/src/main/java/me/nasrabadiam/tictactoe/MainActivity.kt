@@ -1,30 +1,32 @@
 package me.nasrabadiam.tictactoe
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.di.ApplicationComponent
+import me.nasrabadiam.tictactoe.di.scopes.ActivityScope
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
 
 class MainActivity : ComponentActivity() {
 
-    private val gameUseCase = GameUseCase()
-
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            val windowSizeClass = calculateWindowSizeClass(this)
-            val widthSizeClass = windowSizeClass.widthSizeClass
-            val heightSizeClass = windowSizeClass.heightSizeClass
-            val isExpandedScreen =
-                widthSizeClass == WindowWidthSizeClass.Expanded || heightSizeClass == WindowHeightSizeClass.Compact
-
-            MainScreen(gameUseCase, isExpandedScreen)
-        }
+        val activityComponent = ActivityComponent::class.create(activity = this)
+        setContent { activityComponent.app() }
     }
+}
+
+fun ApplicationComponent.Companion.from(activity: Activity): ApplicationComponent =
+    (activity.applicationContext as TicTacToeApplication).appComponent
+
+@Component
+@ActivityScope
+abstract class ActivityComponent(
+    @get:Provides val activity: ComponentActivity,
+    @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity)
+) {
+    abstract val app: App
 }
