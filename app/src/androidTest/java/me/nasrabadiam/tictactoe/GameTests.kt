@@ -9,6 +9,7 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import me.nasrabadiam.tictactoe.WindowClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.Player
@@ -21,11 +22,11 @@ class GameTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-    private val isExpandedScreen = false
+    private val windowClass = COMPACT
 
     @Test
     fun displayGameCells(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
         for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
             onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
         }
@@ -33,14 +34,14 @@ class GameTests {
 
     @Test
     fun displayRestartButton(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
     }
 
     @Test
     fun displayReplayButtonWhenOneGameFinished(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
 
@@ -63,7 +64,7 @@ class GameTests {
 
     @Test
     fun restartGameBoardWhenClickOnReplayButton(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -90,7 +91,7 @@ class GameTests {
 
     @Test
     fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import me.nasrabadiam.tictactoe.WindowClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
 import org.junit.Rule
@@ -15,7 +16,7 @@ class GameLogicTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-    private val isExpandedScreen = false
+    private val windowClass = COMPACT
 
     /**
      * X - M - M
@@ -24,7 +25,7 @@ class GameLogicTests {
      */
     @Test
     fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         val colIndex = 0
         clickOnCell(col = colIndex, row = 0) // X
@@ -50,7 +51,7 @@ class GameLogicTests {
      */
     @Test
     fun whenXWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X
@@ -76,7 +77,7 @@ class GameLogicTests {
      */
     @Test
     fun whenXWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 0, row = 1) // O
@@ -101,7 +102,7 @@ class GameLogicTests {
      */
     @Test
     fun whenOWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         val colIndex = 2
         clickOnCell(col = 0, row = 0) // X
@@ -128,7 +129,7 @@ class GameLogicTests {
      */
     @Test
     fun whenOWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         val rowIndex = 1
         clickOnCell(col = 0, row = 0) // X
@@ -155,7 +156,7 @@ class GameLogicTests {
      */
     @Test
     fun whenOWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -181,7 +182,7 @@ class GameLogicTests {
      */
     @Test
     fun whenOAndXDrawShouldShowDrawAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, isExpandedScreen) }
+        setContent { MainScreen(gameUseCase, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

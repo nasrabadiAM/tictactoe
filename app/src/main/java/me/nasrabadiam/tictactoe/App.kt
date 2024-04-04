@@ -15,21 +15,36 @@ typealias App = @Composable () -> Unit
 @Inject
 @Composable
 fun App(gameUseCase: GameUseCase) {
-    val isExpandedScreen = isExpandedScreen()
+    val windowSizeClass = getWindowSizeClass()
 
-    MainScreen(gameUseCase, isExpandedScreen)
+    MainScreen(gameUseCase, windowSizeClass)
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-private fun isExpandedScreen(
-): Boolean {
+private fun getWindowSizeClass(): WindowClass {
     val activity = LocalContext.current as Activity
 
     val windowSizeClass = calculateWindowSizeClass(activity)
 
     val widthSizeClass = windowSizeClass.widthSizeClass
     val heightSizeClass = windowSizeClass.heightSizeClass
-    return widthSizeClass == WindowWidthSizeClass.Expanded ||
-        heightSizeClass == WindowHeightSizeClass.Compact
+
+    return when {
+        heightSizeClass == WindowHeightSizeClass.Compact && widthSizeClass == WindowWidthSizeClass.Compact -> {
+            WindowClass.COMPACT
+        }
+
+        widthSizeClass != WindowWidthSizeClass.Compact -> {
+            WindowClass.EXPANDED
+        }
+
+        else -> {
+            WindowClass.NORMAL
+        }
+    }
+}
+
+enum class WindowClass {
+    NORMAL, EXPANDED, COMPACT
 }

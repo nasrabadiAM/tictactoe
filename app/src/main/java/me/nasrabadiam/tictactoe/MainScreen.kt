@@ -20,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import me.nasrabadiam.tictactoe.WindowClass.COMPACT
+import me.nasrabadiam.tictactoe.WindowClass.EXPANDED
+import me.nasrabadiam.tictactoe.WindowClass.NORMAL
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
@@ -32,7 +35,7 @@ import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
-fun MainScreen(gameUseCase: GameUseCase, isExpandedScreen: Boolean) {
+fun MainScreen(gameUseCase: GameUseCase, windowSizeClass: WindowClass) {
     TicTacToeTheme {
         val cells = gameUseCase.cells.collectAsState(
             initial = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
@@ -50,7 +53,7 @@ fun MainScreen(gameUseCase: GameUseCase, isExpandedScreen: Boolean) {
             onCellClicked = gameUseCase::clickOnCell,
             onRestartClicked = gameUseCase::restartGame,
             onReplayClicked = gameUseCase::replayGame,
-            isExpandedScreen = isExpandedScreen,
+            windowSizeClass = windowSizeClass,
         )
     }
 }
@@ -65,12 +68,11 @@ private fun MainScreenContent(
     onCellClicked: (Int) -> Unit,
     onRestartClicked: () -> Unit,
     onReplayClicked: () -> Unit,
-    isExpandedScreen: Boolean,
+    windowSizeClass: WindowClass,
     modifier: Modifier = Modifier
 ) {
-
-    if (isExpandedScreen) {
-        HorizontalGameScreen(
+    when (windowSizeClass) {
+        NORMAL -> VerticalGameScreen(
             modifier,
             gameResult,
             xScore,
@@ -81,8 +83,20 @@ private fun MainScreenContent(
             onRestartClicked,
             onReplayClicked,
         )
-    } else {
-        VerticalGameScreen(
+
+        EXPANDED -> HorizontalGameScreen(
+            modifier,
+            gameResult,
+            xScore,
+            oScore,
+            drawCount,
+            cellsData,
+            onCellClicked,
+            onRestartClicked,
+            onReplayClicked,
+        )
+
+        COMPACT -> CompactGameScreen(
             modifier,
             gameResult,
             xScore,
@@ -177,6 +191,41 @@ private fun HorizontalGameScreen(
             onRestartClicked,
             onReplayClicked,
             isExpandedScreen
+        )
+    }
+}
+
+@Composable
+private fun CompactGameScreen(
+    modifier: Modifier,
+    gameResult: GameResult?,
+    xScore: Int,
+    oScore: Int,
+    drawCount: Int,
+    cellsData: List<Cell>,
+    onCellClicked: (Int) -> Unit,
+    onRestartClicked: () -> Unit,
+    onReplayClicked: () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
+        Column {
+            Scores(xScore, drawCount, oScore)
+            val result = getResultString(gameResult)
+
+            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+        }
+        TicTacToeGameBoard(
+            cellsData = cellsData,
+            onCellClicked = onCellClicked,
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
         )
     }
 }
@@ -301,29 +350,27 @@ private fun getResultString(gameResult: GameResult?) = when (gameResult) {
 @Preview(showSystemUi = true, device = Devices.TABLET)
 @Composable
 fun MainScreenPreview(
-    @PreviewParameter(IsExpandedScreenDataProvider::class) isExpandedScreen: Boolean
+    @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: WindowClass
 
 ) {
-    TicTacToeTheme {
-        val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
-        MainScreenContent(
-            cellsData = cells,
-            gameResult = EndWithWinner(X),
-            xScore = 1,
-            oScore = 2,
-            drawCount = 0,
-            onCellClicked = {},
-            onRestartClicked = {},
-            onReplayClicked = {},
-            isExpandedScreen = isExpandedScreen
-        )
-    }
+    val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
+    MainScreenContent(
+        cellsData = cells,
+        gameResult = EndWithWinner(X),
+        xScore = 1,
+        oScore = 2,
+        drawCount = 0,
+        onCellClicked = {},
+        onRestartClicked = {},
+        onReplayClicked = {},
+        windowSizeClass = windowSizeClass
+    )
 }
 
-class IsExpandedScreenDataProvider : PreviewParameterProvider<Boolean> {
+class WindowScreenSizeDataProvider : PreviewParameterProvider<WindowClass> {
 
-    override val values: Sequence<Boolean>
+    override val values: Sequence<WindowClass>
         get() {
-            return sequenceOf(true, false)
+            return sequenceOf(NORMAL, COMPACT, EXPANDED)
         }
 }
