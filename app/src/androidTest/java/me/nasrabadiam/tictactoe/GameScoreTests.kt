@@ -5,7 +5,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import me.nasrabadiam.tictactoe.WindowClass.COMPACT
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import org.junit.Rule
 import org.junit.Test
@@ -16,11 +16,12 @@ class GameScoreTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+    private val gameViewModel = GameViewModel(gameUseCase)
     private val windowClass = COMPACT
 
     @Test
     fun whenXWinsOneTimeShouldShowScore1AndO0(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X
@@ -37,7 +38,7 @@ class GameScoreTests {
 
     @Test
     fun whenXWinsOneTimeAndOWinsAnotherShouldShowScore1ForXAnd1ForO(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X
@@ -72,7 +73,7 @@ class GameScoreTests {
 
     @Test
     fun whenDrawShouldShowDrawCount1(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

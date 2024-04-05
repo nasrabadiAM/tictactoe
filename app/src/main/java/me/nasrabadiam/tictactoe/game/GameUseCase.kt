@@ -14,7 +14,6 @@ import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-@AppScope
 class GameUseCase(
     private val boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
     private val starterPlayer: Player = Player.X

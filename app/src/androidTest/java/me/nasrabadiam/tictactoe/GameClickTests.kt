@@ -1,7 +1,7 @@
 package me.nasrabadiam.tictactoe
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import me.nasrabadiam.tictactoe.WindowClass.COMPACT
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
 import org.junit.Rule
@@ -13,11 +13,12 @@ class GameClickTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+    private val gameViewModel = GameViewModel(gameUseCase)
     private val windowClass = COMPACT
 
     @Test
     fun whenClickOnCellsShouldDrawItem(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(0, 0)
 
@@ -26,7 +27,7 @@ class GameClickTests {
 
     @Test
     fun whenClickOnSecondCellShouldChangeTurn(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(0, 0)
         clickOnCell(1, 1)
@@ -37,7 +38,7 @@ class GameClickTests {
 
     @Test
     fun whenClickOnCellThatClickedBeforeShouldDoNothing(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(0, 0)
 

@@ -20,39 +20,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import me.nasrabadiam.tictactoe.WindowClass.COMPACT
-import me.nasrabadiam.tictactoe.WindowClass.EXPANDED
-import me.nasrabadiam.tictactoe.WindowClass.NORMAL
-import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.model.Cell
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
-import me.nasrabadiam.tictactoe.game.model.Player.X
-import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
-fun MainScreen(gameUseCase: GameUseCase, windowSizeClass: WindowClass) {
+fun MainScreen(
+    gameViewModel: GameViewModel,
+    windowSizeClass: GameWindowSizeClass
+) {
     TicTacToeTheme {
-        val cells = gameUseCase.cells.collectAsState(
-            initial = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
-        )
-        val gameResult = gameUseCase.gameResult.collectAsState()
-        val xScore = gameUseCase.xScore.collectAsState()
-        val oScore = gameUseCase.oScore.collectAsState()
-        val drawCount = gameUseCase.drawCount.collectAsState()
+        val state = gameViewModel.state.collectAsState()
         MainScreenContent(
-            cellsData = cells.value,
-            gameResult = gameResult.value,
-            xScore = xScore.value,
-            oScore = oScore.value,
-            drawCount = drawCount.value,
-            onCellClicked = gameUseCase::clickOnCell,
-            onRestartClicked = gameUseCase::restartGame,
-            onReplayClicked = gameUseCase::replayGame,
+            state = state.value,
+            sendEvent = gameViewModel::handleEvent,
             windowSizeClass = windowSizeClass,
         )
     }
@@ -60,52 +46,28 @@ fun MainScreen(gameUseCase: GameUseCase, windowSizeClass: WindowClass) {
 
 @Composable
 private fun MainScreenContent(
-    cellsData: List<Cell>,
-    gameResult: GameResult?,
-    xScore: Int,
-    oScore: Int,
-    drawCount: Int,
-    onCellClicked: (Int) -> Unit,
-    onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit,
-    windowSizeClass: WindowClass,
+    state: GameState,
+    sendEvent: (GameEvent) -> Unit,
+    windowSizeClass: GameWindowSizeClass,
     modifier: Modifier = Modifier
 ) {
     when (windowSizeClass) {
         NORMAL -> VerticalGameScreen(
             modifier,
-            gameResult,
-            xScore,
-            oScore,
-            drawCount,
-            cellsData,
-            onCellClicked,
-            onRestartClicked,
-            onReplayClicked,
+            state,
+            sendEvent,
         )
 
         EXPANDED -> HorizontalGameScreen(
             modifier,
-            gameResult,
-            xScore,
-            oScore,
-            drawCount,
-            cellsData,
-            onCellClicked,
-            onRestartClicked,
-            onReplayClicked,
+            state,
+            sendEvent
         )
 
         COMPACT -> CompactGameScreen(
             modifier,
-            gameResult,
-            xScore,
-            oScore,
-            drawCount,
-            cellsData,
-            onCellClicked,
-            onRestartClicked,
-            onReplayClicked,
+            state,
+            sendEvent
         )
     }
 }
@@ -113,14 +75,8 @@ private fun MainScreenContent(
 @Composable
 private fun VerticalGameScreen(
     modifier: Modifier,
-    gameResult: GameResult?,
-    xScore: Int,
-    oScore: Int,
-    drawCount: Int,
-    cellsData: List<Cell>,
-    onCellClicked: (Int) -> Unit,
-    onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit,
+    state: GameState,
+    sendEvent: (GameEvent) -> Unit,
 ) {
     val isExpandedScreen = false
     Column(
@@ -131,23 +87,22 @@ private fun VerticalGameScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         ScoresSection(
-            xScore,
-            drawCount,
-            oScore,
+            state.scores,
             isExpandedScreen
         )
 
         TicTacToeGameBoard(
-            cellsData = cellsData,
-            onCellClicked = onCellClicked,
+            cellsData = state.cells,
+            onCellClicked = { index ->
+                sendEvent(GameEvent.CellClicked(index))
+            },
             modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
         ButtonsSection(
-            gameResult,
-            onRestartClicked,
-            onReplayClicked,
+            state.gameResult,
+            sendEvent,
             isExpandedScreen
         )
     }
@@ -156,14 +111,8 @@ private fun VerticalGameScreen(
 @Composable
 private fun HorizontalGameScreen(
     modifier: Modifier,
-    gameResult: GameResult?,
-    xScore: Int,
-    oScore: Int,
-    drawCount: Int,
-    cellsData: List<Cell>,
-    onCellClicked: (Int) -> Unit,
-    onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit,
+    state: GameState,
+    sendEvent: (GameEvent) -> Unit,
 ) {
     val isExpandedScreen = true
     Row(
@@ -174,22 +123,21 @@ private fun HorizontalGameScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         ScoresSection(
-            xScore,
-            drawCount,
-            oScore,
+            state.scores,
             isExpandedScreen
         )
         TicTacToeGameBoard(
-            cellsData = cellsData,
-            onCellClicked = onCellClicked,
+            cellsData = state.cells,
+            onCellClicked = { index ->
+                sendEvent(GameEvent.CellClicked(index))
+            },
             modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
         ButtonsSection(
-            gameResult,
-            onRestartClicked,
-            onReplayClicked,
+            state.gameResult,
+            sendEvent,
             isExpandedScreen
         )
     }
@@ -198,14 +146,8 @@ private fun HorizontalGameScreen(
 @Composable
 private fun CompactGameScreen(
     modifier: Modifier,
-    gameResult: GameResult?,
-    xScore: Int,
-    oScore: Int,
-    drawCount: Int,
-    cellsData: List<Cell>,
-    onCellClicked: (Int) -> Unit,
-    onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit,
+    state: GameState,
+    sendEvent: (GameEvent) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -215,14 +157,26 @@ private fun CompactGameScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         Column {
-            Scores(xScore, drawCount, oScore)
-            val result = getResultString(gameResult)
+            Scores(state.scores)
+            val result = getResultString(state.gameResult)
 
-            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+            ActionButtons(
+                result,
+                state.gameResult,
+                onRestartClicked = {
+                    sendEvent(GameEvent.RestartClicked)
+                },
+                onReplayClicked = {
+                    sendEvent(GameEvent.ReplayClicked)
+                }
+            )
         }
         TicTacToeGameBoard(
-            cellsData = cellsData,
-            onCellClicked = onCellClicked,
+            cellsData = state.cells,
+            onCellClicked = { index ->
+                sendEvent(GameEvent.CellClicked(index))
+
+            },
             modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
@@ -233,8 +187,7 @@ private fun CompactGameScreen(
 @Composable
 private fun ButtonsSection(
     gameResult: GameResult?,
-    onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit,
+    sendEvent: (GameEvent) -> Unit,
     isExpandedScreen: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -248,7 +201,16 @@ private fun ButtonsSection(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+            ActionButtons(
+                result,
+                gameResult,
+                onRestartClicked = {
+                    sendEvent(GameEvent.RestartClicked)
+                },
+                onReplayClicked = {
+                    sendEvent(GameEvent.ReplayClicked)
+                }
+            )
         }
     } else {
         Row(
@@ -259,7 +221,16 @@ private fun ButtonsSection(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ActionButtons(result, onRestartClicked, gameResult, onReplayClicked)
+            ActionButtons(
+                result,
+                gameResult,
+                onRestartClicked = {
+                    sendEvent(GameEvent.RestartClicked)
+                },
+                onReplayClicked = {
+                    sendEvent(GameEvent.ReplayClicked)
+                }
+            )
         }
     }
 }
@@ -267,8 +238,8 @@ private fun ButtonsSection(
 @Composable
 private fun ActionButtons(
     result: String,
-    onRestartClicked: () -> Unit,
     gameResult: GameResult?,
+    onRestartClicked: () -> Unit,
     onReplayClicked: () -> Unit
 ) {
     Text(
@@ -287,9 +258,7 @@ private fun ActionButtons(
 
 @Composable
 private fun ScoresSection(
-    xScore: Int,
-    drawCount: Int,
-    oScore: Int,
+    scores: ScoresState,
     isExpandedScreen: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -303,7 +272,7 @@ private fun ScoresSection(
                     horizontal = 32.dp
                 )
         ) {
-            Scores(xScore, drawCount, oScore)
+            Scores(scores)
         }
     } else {
         Row(
@@ -315,27 +284,27 @@ private fun ScoresSection(
                     horizontal = 8.dp
                 )
         ) {
-            Scores(xScore, drawCount, oScore)
+            Scores(scores)
         }
     }
 }
 
 @Composable
-private fun Scores(xScore: Int, drawCount: Int, oScore: Int) {
+private fun Scores(scores: ScoresState) {
 
     Text(
         modifier = Modifier.padding(4.dp),
-        text = "X: $xScore",
+        text = "X: ${scores.xScore}",
         color = MaterialTheme.colorScheme.onBackground
     )
     Text(
         modifier = Modifier.padding(4.dp),
-        text = "Draw: $drawCount",
+        text = "Draw: ${scores.drawCount}",
         color = MaterialTheme.colorScheme.onBackground
     )
     Text(
         modifier = Modifier.padding(4.dp),
-        text = "O: $oScore",
+        text = "O: ${scores.oScore}",
         color = MaterialTheme.colorScheme.onBackground
     )
 }
@@ -350,26 +319,19 @@ private fun getResultString(gameResult: GameResult?) = when (gameResult) {
 @Preview(showSystemUi = true, device = Devices.TABLET)
 @Composable
 fun MainScreenPreview(
-    @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: WindowClass
+    @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: GameWindowSizeClass
 
 ) {
-    val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
     MainScreenContent(
-        cellsData = cells,
-        gameResult = EndWithWinner(X),
-        xScore = 1,
-        oScore = 2,
-        drawCount = 0,
-        onCellClicked = {},
-        onRestartClicked = {},
-        onReplayClicked = {},
+        state = GameState(),
+        sendEvent = {},
         windowSizeClass = windowSizeClass
     )
 }
 
-class WindowScreenSizeDataProvider : PreviewParameterProvider<WindowClass> {
+class WindowScreenSizeDataProvider : PreviewParameterProvider<GameWindowSizeClass> {
 
-    override val values: Sequence<WindowClass>
+    override val values: Sequence<GameWindowSizeClass>
         get() {
             return sequenceOf(NORMAL, COMPACT, EXPANDED)
         }
