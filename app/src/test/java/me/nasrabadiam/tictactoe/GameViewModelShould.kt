@@ -1,5 +1,6 @@
 package me.nasrabadiam.tictactoe
 
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.clearAllMocks
 import io.mockk.spyk
 import io.mockk.verify
@@ -17,11 +18,11 @@ class GameViewModelShould {
     val coroutineRule = MainDispatcherRule()
 
     private val gameUseCase: GameUseCase = spyk()
-    lateinit var gameViewModel: GameViewModel
+    private lateinit var gameViewModel: GameViewModel
 
     @Before
     fun setup() {
-        gameViewModel = GameViewModel(gameUseCase)
+        gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     }
 
     @Test

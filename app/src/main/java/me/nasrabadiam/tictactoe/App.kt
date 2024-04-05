@@ -7,6 +7,8 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import me.tatarka.inject.annotations.Inject
 
@@ -14,9 +16,9 @@ typealias App = @Composable () -> Unit
 
 @Inject
 @Composable
-fun App(gameViewModel: () -> GameViewModel) {
+fun App(gameViewModel: (SavedStateHandle) -> GameViewModel) {
     val windowSizeClass = getWindowSizeClass()
-    val viewModel = viewModel { gameViewModel() }
+    val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
     MainScreen(viewModel, windowSizeClass)
 }
 

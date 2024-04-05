@@ -3,7 +3,7 @@ package me.nasrabadiam.tictactoe.game
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import me.nasrabadiam.tictactoe.di.scopes.AppScope
+import me.nasrabadiam.tictactoe.GameState
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameResult
@@ -162,5 +162,13 @@ class GameUseCase(
         } else {
             null
         }
+    }
+
+    fun restoreGameState(gameState: GameState) {
+        _gameResult.update { gameState.gameResult }
+        _cells.update { gameState.cells }
+        _xScore.update { gameState.scores.xScore }
+        _oScore.update { gameState.scores.oScore }
+        _drawCount.update { gameState.scores.drawCount }
     }
 }
