@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
@@ -16,7 +17,7 @@ class GameLogicTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-    private val gameViewModel = GameViewModel(gameUseCase)
+    private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     /**

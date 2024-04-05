@@ -9,6 +9,7 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
@@ -22,7 +23,7 @@ class GameTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-    private val gameViewModel = GameViewModel(gameUseCase)
+    private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     @Test
