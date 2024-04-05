@@ -3,7 +3,8 @@ package me.nasrabadiam.tictactoe
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import me.nasrabadiam.tictactoe.WindowClass.COMPACT
+import androidx.lifecycle.SavedStateHandle
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
 import org.junit.Rule
@@ -15,11 +16,12 @@ class GameTurnTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
+    private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     @Test
     fun whenGameStartsXShouldStartTheGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(0, 0)
 
@@ -29,7 +31,7 @@ class GameTurnTests {
 
     @Test
     fun whenGameDrawsWhoDoesNotPlayThisGameFirstShouldPlayFirst(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -55,7 +57,7 @@ class GameTurnTests {
 
     @Test
     fun whenXWinsTheGameShouldStartTheNextGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameUseCase, windowClass) }
+        setContent { MainScreen(gameViewModel, windowClass) }
 
         val colIndex = 0
 

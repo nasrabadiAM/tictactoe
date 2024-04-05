@@ -7,22 +7,24 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import me.nasrabadiam.tictactoe.game.GameUseCase
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import me.tatarka.inject.annotations.Inject
 
 typealias App = @Composable () -> Unit
 
 @Inject
 @Composable
-fun App(gameUseCase: GameUseCase) {
+fun App(gameViewModel: (SavedStateHandle) -> GameViewModel) {
     val windowSizeClass = getWindowSizeClass()
-
-    MainScreen(gameUseCase, windowSizeClass)
+    val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
+    MainScreen(viewModel, windowSizeClass)
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-private fun getWindowSizeClass(): WindowClass {
+private fun getWindowSizeClass(): GameWindowSizeClass {
     val activity = LocalContext.current as Activity
 
     val windowSizeClass = calculateWindowSizeClass(activity)
@@ -32,19 +34,19 @@ private fun getWindowSizeClass(): WindowClass {
 
     return when {
         heightSizeClass == WindowHeightSizeClass.Compact && widthSizeClass == WindowWidthSizeClass.Compact -> {
-            WindowClass.COMPACT
+            GameWindowSizeClass.COMPACT
         }
 
         widthSizeClass != WindowWidthSizeClass.Compact -> {
-            WindowClass.EXPANDED
+            GameWindowSizeClass.EXPANDED
         }
 
         else -> {
-            WindowClass.NORMAL
+            GameWindowSizeClass.NORMAL
         }
     }
 }
 
-enum class WindowClass {
+enum class GameWindowSizeClass {
     NORMAL, EXPANDED, COMPACT
 }
