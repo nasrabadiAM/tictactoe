@@ -5,7 +5,9 @@ import io.mockk.clearAllMocks
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import me.nasrabadiam.tictactoe.game.ui.GameEvent
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.utils.MainDispatcherRule
 import org.junit.After
 import org.junit.Before
@@ -49,6 +51,14 @@ class GameViewModelShould {
         gameViewModel.handleEvent(GameEvent.CellClicked(1))
         verify(exactly = 1) {
             gameUseCase.clickOnCell(1)
+        }
+    }
+
+    @Test
+    fun callRestoreGameWhenViewModelInitialized() = runTest {
+
+        verify(exactly = 1) {
+            gameUseCase.restoreGameState(any())
         }
     }
 

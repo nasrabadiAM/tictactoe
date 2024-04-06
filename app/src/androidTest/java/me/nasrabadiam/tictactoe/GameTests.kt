@@ -12,8 +12,10 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import org.junit.Rule
 import org.junit.Test
 
@@ -28,7 +30,7 @@ class GameTests {
 
     @Test
     fun displayGameCells(): Unit = with(composeRule) {
-        setContent { MainScreen(gameViewModel, windowClass) }
+        setContent { GameScreen(gameViewModel, windowClass) }
         for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
             onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
         }
@@ -36,14 +38,14 @@ class GameTests {
 
     @Test
     fun displayRestartButton(): Unit = with(composeRule) {
-        setContent { MainScreen(gameViewModel, windowClass) }
+        setContent { GameScreen(gameViewModel, windowClass) }
 
         onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
     }
 
     @Test
     fun displayReplayButtonWhenOneGameFinished(): Unit = with(composeRule) {
-        setContent { MainScreen(gameViewModel, windowClass) }
+        setContent { GameScreen(gameViewModel, windowClass) }
 
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
 
@@ -66,7 +68,7 @@ class GameTests {
 
     @Test
     fun restartGameBoardWhenClickOnReplayButton(): Unit = with(composeRule) {
-        setContent { MainScreen(gameViewModel, windowClass) }
+        setContent { GameScreen(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -93,7 +95,7 @@ class GameTests {
 
     @Test
     fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
-        setContent { MainScreen(gameViewModel, windowClass) }
+        setContent { GameScreen(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

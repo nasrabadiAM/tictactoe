@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.game.model.Cell
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
 import me.nasrabadiam.tictactoe.game.model.utlis.getBoardSize
@@ -174,17 +173,17 @@ class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
 
     override val values: Sequence<List<Cell>>
         get() {
-            val mixedCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+            val mixedCellsData = listOfEmptyCells().map {
                 if (it.index % 2 == 0) {
                     it.copy(value = O)
                 } else {
                     it.copy(value = X)
                 }
             }
-            val xCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+            val xCellsData = listOfEmptyCells().map {
                 it.copy(value = X)
             }
-            val oCellsData = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT).map {
+            val oCellsData = listOfEmptyCells().map {
                 it.copy(value = X)
             }
             return sequenceOf(mixedCellsData, oCellsData, xCellsData)

@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,11 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import me.nasrabadiam.tictactoe.GameEvent.CellClicked
-import me.nasrabadiam.tictactoe.GameEvent.ReplayClicked
-import me.nasrabadiam.tictactoe.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -53,7 +52,7 @@ class GameViewModel(
                 savedStateHandle[X_SCORE_KEY] = xScore
                 _state.update {
                     state.value.copy(
-                        scores = _state.value.scores.copy(xScore = xScore)
+                        scores = state.value.scores.copy(xScore = xScore)
                     )
                 }
             }.launchIn(viewModelScope)
@@ -61,7 +60,7 @@ class GameViewModel(
                 savedStateHandle[O_SCORE_KEY] = oScore
                 _state.update {
                     state.value.copy(
-                        scores = _state.value.scores.copy(oScore = oScore)
+                        scores = state.value.scores.copy(oScore = oScore)
                     )
                 }
             }.launchIn(viewModelScope)
@@ -69,7 +68,7 @@ class GameViewModel(
                 savedStateHandle[DRAW_COUNT_SCORE_KEY] = drawCount
                 _state.update {
                     state.value.copy(
-                        scores = _state.value.scores.copy(drawCount = drawCount)
+                        scores = state.value.scores.copy(drawCount = drawCount)
                     )
                 }
             }.launchIn(viewModelScope)
@@ -79,7 +78,7 @@ class GameViewModel(
     private fun fetchGameState(): GameState {
         return GameState(
             gameResult = savedStateHandle[GAME_RESULT_KEY],
-            cells = savedStateHandle[CELLS_KEY] ?: listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT),
+            cells = savedStateHandle[CELLS_KEY] ?: listOfEmptyCells(),
             scores = ScoresState(
                 xScore = savedStateHandle[X_SCORE_KEY] ?: 0,
                 oScore = savedStateHandle[O_SCORE_KEY] ?: 0,

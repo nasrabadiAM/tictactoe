@@ -7,7 +7,11 @@ import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
+import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.ui.GameState
+import me.nasrabadiam.tictactoe.game.ui.ScoresState
 import org.junit.Test
 
 class GameUseCaseShould {
@@ -583,4 +587,27 @@ class GameUseCaseShould {
     ////////
     // Turn change Tests
     ////////
+
+    @Test
+    fun restoreGameStateWhenRestoreGameCalled() = runTest {
+        val cells = listOfEmptyCells().toMutableList().apply {
+            this[0] = this[0].copy(value = Player.X)
+        }
+        val gameResult = EndWithWinner(O)
+
+        useCase.restoreGameState(
+            GameState(
+                cells,
+                gameResult,
+                ScoresState(1, 2, 3)
+            )
+        )
+
+        assertEquals(useCase.gameResult.value, gameResult)
+        assertEquals(useCase.cells.value, cells)
+        assertEquals(useCase.xScore.value, 1)
+        assertEquals(useCase.oScore.value, 2)
+        assertEquals(useCase.drawCount.value, 3)
+
+    }
 }

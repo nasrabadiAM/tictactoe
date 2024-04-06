@@ -1,7 +1,6 @@
 package me.nasrabadiam.tictactoe
 
 import junit.framework.TestCase.assertEquals
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.utlis.getColumnIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.getRowIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
@@ -9,7 +8,7 @@ import org.junit.Test
 
 class CallExtTest {
 
-    private val cells = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT)
+    private val cells = listOfEmptyCells()
 
     @Test
     fun getCellRowFromIndex0() {

@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game.ui
 
 sealed class GameEvent {
     data class CellClicked(val index: Int) : GameEvent()

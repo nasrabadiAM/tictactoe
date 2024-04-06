@@ -10,6 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.tatarka.inject.annotations.Inject
 
 typealias App = @Composable () -> Unit
@@ -19,7 +21,7 @@ typealias App = @Composable () -> Unit
 fun App(gameViewModel: (SavedStateHandle) -> GameViewModel) {
     val windowSizeClass = getWindowSizeClass()
     val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
-    MainScreen(viewModel, windowSizeClass)
+    GameScreen(viewModel, windowSizeClass)
 }
 
 @Composable

@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,17 +20,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import me.nasrabadiam.tictactoe.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
-import me.nasrabadiam.tictactoe.game.ui.TicTacToeGameBoard
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
-fun MainScreen(
+fun GameScreen(
     gameViewModel: GameViewModel,
     windowSizeClass: GameWindowSizeClass
 ) {
@@ -94,7 +97,7 @@ private fun VerticalGameScreen(
         TicTacToeGameBoard(
             cellsData = state.cells,
             onCellClicked = { index ->
-                sendEvent(GameEvent.CellClicked(index))
+                sendEvent(CellClicked(index))
             },
             modifier = Modifier
                 .weight(1f)
@@ -129,7 +132,7 @@ private fun HorizontalGameScreen(
         TicTacToeGameBoard(
             cellsData = state.cells,
             onCellClicked = { index ->
-                sendEvent(GameEvent.CellClicked(index))
+                sendEvent(CellClicked(index))
             },
             modifier = Modifier
                 .weight(1f)
@@ -164,17 +167,17 @@ private fun CompactGameScreen(
                 result,
                 state.gameResult,
                 onRestartClicked = {
-                    sendEvent(GameEvent.RestartClicked)
+                    sendEvent(RestartClicked)
                 },
                 onReplayClicked = {
-                    sendEvent(GameEvent.ReplayClicked)
+                    sendEvent(ReplayClicked)
                 }
             )
         }
         TicTacToeGameBoard(
             cellsData = state.cells,
             onCellClicked = { index ->
-                sendEvent(GameEvent.CellClicked(index))
+                sendEvent(CellClicked(index))
 
             },
             modifier = Modifier
@@ -205,10 +208,10 @@ private fun ButtonsSection(
                 result,
                 gameResult,
                 onRestartClicked = {
-                    sendEvent(GameEvent.RestartClicked)
+                    sendEvent(RestartClicked)
                 },
                 onReplayClicked = {
-                    sendEvent(GameEvent.ReplayClicked)
+                    sendEvent(ReplayClicked)
                 }
             )
         }
@@ -225,10 +228,10 @@ private fun ButtonsSection(
                 result,
                 gameResult,
                 onRestartClicked = {
-                    sendEvent(GameEvent.RestartClicked)
+                    sendEvent(RestartClicked)
                 },
                 onReplayClicked = {
-                    sendEvent(GameEvent.ReplayClicked)
+                    sendEvent(ReplayClicked)
                 }
             )
         }

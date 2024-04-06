@@ -1,13 +1,12 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game.ui
 
 import me.nasrabadiam.tictactoe.game.model.Cell
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import java.io.Serializable
 
 data class GameState(
-    val cells: List<Cell> = listOfEmptyCells(DEFAULT_BOARD_CELL_COUNT),
+    val cells: List<Cell> = listOfEmptyCells(),
     val gameResult: GameResult? = null,
     val scores: ScoresState = ScoresState()
 ) : Serializable
