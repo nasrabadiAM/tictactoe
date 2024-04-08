@@ -14,6 +14,7 @@ coroutines = "1.7.3"
 ksp = "1.9.0-1.0.13"
 kotlin-inject = "0.6.3"
 mockk = "1.13.10"
+lyricist = "1.4.2"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -33,6 +34,7 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 androidx-window = { group = "androidx.window", name = "window", version.ref = "androidx-window" }
 kotlin-inject-ksp = { group = "me.tatarka.inject", name = "kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
 kotlin-inject-runtime = { group = "me.tatarka.inject", name = "kotlin-inject-runtime", version.ref = "kotlin-inject" }
+lyricist = { group = "cafe.adriel.lyricist", name = "lyricist", version.ref = "lyricist" }
 
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui = { group = "androidx.compose.ui", name = "ui" }
