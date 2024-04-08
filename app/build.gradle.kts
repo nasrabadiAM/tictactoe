@@ -6,15 +6,16 @@ plugins {
 }
 
 android {
-    namespace = "me.nasrabadiam.tictactoe"
-    compileSdk = 34
+    val appId = extra.get("applicationId") as String
+    namespace = appId
+    compileSdk = extra.get("compileSdk") as Int
 
     defaultConfig {
-        applicationId = "me.nasrabadiam.tictactoe"
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = appId
+        minSdk = extra.get("minSdk") as Int
+        targetSdk = extra.get("targetSdk") as Int
+        versionCode = extra.get("versionCode") as Int
+        versionName = extra.get("versionName") as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -1,14 +1,14 @@
 package me.nasrabadiam.tictactoe
 
-import    androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import org.junit.Rule
 import org.junit.Test
 

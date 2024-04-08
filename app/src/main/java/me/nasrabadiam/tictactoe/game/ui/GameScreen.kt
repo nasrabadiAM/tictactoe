@@ -178,7 +178,6 @@ private fun CompactGameScreen(
             cellsData = state.cells,
             onCellClicked = { index ->
                 sendEvent(CellClicked(index))
-
             },
             modifier = Modifier
                 .weight(1f)

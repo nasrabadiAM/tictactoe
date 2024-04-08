@@ -35,7 +35,8 @@ private fun getWindowSizeClass(): GameWindowSizeClass {
     val heightSizeClass = windowSizeClass.heightSizeClass
 
     return when {
-        heightSizeClass == WindowHeightSizeClass.Compact && widthSizeClass == WindowWidthSizeClass.Compact -> {
+        heightSizeClass == WindowHeightSizeClass.Compact &&
+            widthSizeClass == WindowWidthSizeClass.Compact -> {
             GameWindowSizeClass.COMPACT
         }
 

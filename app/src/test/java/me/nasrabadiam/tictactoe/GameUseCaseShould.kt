@@ -495,9 +495,9 @@ class GameUseCaseShould {
         assertEquals(0, useCase.oScore.value)
     }
 
-    ////////
+    // //////
     // Turn change Tests
-    ////////
+    // //////
     @Test
     fun changeTheCurrentPlayerToOWhenOWins() = runTest {
         val oColumn = 1
@@ -584,9 +584,9 @@ class GameUseCaseShould {
 
         assertEquals(Player.X, useCase.currentPlayer)
     }
-    ////////
+    // //////
     // Turn change Tests
-    ////////
+    // //////
 
     @Test
     fun restoreGameStateWhenRestoreGameCalled() = runTest {
@@ -608,6 +608,5 @@ class GameUseCaseShould {
         assertEquals(useCase.xScore.value, 1)
         assertEquals(useCase.oScore.value, 2)
         assertEquals(useCase.drawCount.value, 3)
-
     }
 }
