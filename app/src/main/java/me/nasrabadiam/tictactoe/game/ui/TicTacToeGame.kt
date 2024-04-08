@@ -71,7 +71,7 @@ private fun GameGrid(
             .drawBehind(gameGrid(boardSize, gridColor))
             .testTag("game_board")
     ) {
-        (0 until boardSize).forEach { index ->
+        for (index in 0 until boardSize) {
             GameRow(
                 cellsData = cellsData,
                 rowIndex = index,
@@ -121,7 +121,7 @@ private fun GameRow(
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
-        (0 until boardSize).forEach { columnIndex ->
+        for (columnIndex in 0 until boardSize) {
             val itemIndex = (rowIndex * boardSize) + columnIndex
             val cell = cellsData[itemIndex]
             GameCell(cell, onCellClicked)

@@ -21,7 +21,12 @@ tasks.register<Detekt>("detektAll") {
         }
     }
     include("**/*.kt", "**/*.kts")
-    exclude("resources/", "build/")
+    exclude("resources/", "*/build/")
+}
+
+allprojects {
+    apply { from(file("$rootDir/gradle/config.gradle")) }
+    apply { from(file("$rootDir/gradle/version.gradle")) }
 }
 
 dependencies {

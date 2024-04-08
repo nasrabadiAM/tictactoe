@@ -162,13 +162,17 @@ class GameUseCase(
 
     private fun getSecondCrossKey(rowIndex: Int, colIndex: Int): String? {
         return if (
-            (rowIndex == 0 && colIndex == 2) ||
-            (rowIndex == 1 && colIndex == 1) ||
-            (rowIndex == 2 && colIndex == 0)
+            isSecondCrossCell(rowIndex, colIndex)
         ) {
             "second_cross"
         } else {
             null
         }
+    }
+
+    private fun isSecondCrossCell(rowIndex: Int, colIndex: Int): Boolean {
+        return (rowIndex == 0 && colIndex == 2) ||
+            (rowIndex == 1 && colIndex == 1) ||
+            (rowIndex == 2 && colIndex == 0)
     }
 }
