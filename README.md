@@ -1,6 +1,6 @@
 # Tic Tac Toe Game (Implemented with Jetpack Compose)
 
-![CI-MAIN](https://github.com/nasrabadiAM/tictactoe/actions/workflows/ci_checks.yml/badge.svg?branch=main)
+![CI-MAIN](https://github.com/nasrabadiAM/tictactoe/actions/workflows/android.yml/badge.svg?branch=main)
 
 Tic Tac Toe is a classic game brought to life with modern technology. This project implements the game using Jetpack Compose for Android UI, following a Test-Driven Development (TDD) approach.
 
