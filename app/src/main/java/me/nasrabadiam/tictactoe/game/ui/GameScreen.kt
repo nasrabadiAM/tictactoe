@@ -87,7 +87,7 @@ private fun VerticalGameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         ScoresSection(
             state.scores,
@@ -123,7 +123,7 @@ private fun HorizontalGameScreen(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         ScoresSection(
             state.scores,
@@ -157,7 +157,7 @@ private fun CompactGameScreen(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         Column {
             Scores(state.scores)
