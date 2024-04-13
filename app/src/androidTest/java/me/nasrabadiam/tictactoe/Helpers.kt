@@ -2,40 +2,46 @@ package me.nasrabadiam.tictactoe
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
+import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 
 internal fun ComposeContentTestRule.assertPlayersCountEquals(
-    text: String,
+    testTag: String,
     counts: Int
 ) {
-    onNode(hasTestTag(GAME_BOARD_TEST_TAG))
+    onNode(hasTestTag(GAME_BOARD_TEST_TAG), useUnmergedTree = true)
         .onChildren()
-        .filter(hasText(text))
+        .filter(
+            hasAnyChild(
+                hasTestTag(testTag)
+            ),
+        )
         .assertCountEquals(counts)
 }
 
 internal fun ComposeContentTestRule.clickOnCell(
     col: Int,
-    row: Int
+    row: Int,
+    player: Player? = null
 ) {
     val cellIndex = getCellIndex(row = row, col = col)
     onNode(hasTestTag(GAME_BOARD_TEST_TAG))
         .onChildren()
         .filter(hasClickAction())
-        .filter(hasTestTag(getCellTestTag(cellIndex)))
+        .filter(hasTestTag(getCellTestTag(cellIndex, player)))
         .onFirst()
         .performClick()
 }
 
-internal fun getCellTestTag(index: Int): String {
-    return CELL_TEST_TAG + "_$index"
+internal fun getCellTestTag(index: Int, player: Player? = null): String {
+    return CELL_TEST_TAG + "_${index}_$player"
 }
 
 internal const val CELL_TEST_TAG = "cell"

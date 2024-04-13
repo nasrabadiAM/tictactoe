@@ -122,7 +122,7 @@ class GameLogicTests {
         onNode(hasText(O_WINS_RESULT_STRING)).isDisplayed()
 
         // assert game ends
-        clickOnCell(col = 2, row = 1) // should not show X on 2,1, because the game is finished!
+        clickOnCell(col = 1, row = 2) // should not show X on 2,1, because the game is finished!
         assertPlayersCountEquals(Player.X.toString(), 3)
     }
 
