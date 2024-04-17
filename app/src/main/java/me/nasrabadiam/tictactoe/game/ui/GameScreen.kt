@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
@@ -23,7 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -46,7 +50,8 @@ import kotlin.math.max
 
 @Composable
 fun GameScreen(
-    gameViewModel: GameViewModel, windowSizeClass: GameWindowSizeClass
+    gameViewModel: GameViewModel,
+    windowSizeClass: GameWindowSizeClass,
 ) {
     TicTacToeTheme {
         val state = gameViewModel.state.collectAsState()
@@ -180,7 +185,9 @@ private fun CompactGameScreen(
 
 @Composable
 private fun ButtonsSection(
-    sendEvent: (GameEvent) -> Unit, isExpandedScreen: Boolean, modifier: Modifier = Modifier
+    sendEvent: (GameEvent) -> Unit,
+    isExpandedScreen: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     if (isExpandedScreen) {
         Column(
@@ -271,7 +278,7 @@ private fun ScoresSection(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            ScoreContainer(score = scores.oScore, isMirror = true) {
+            ScoreContainer(score = scores.oScore, isMirrored = true) {
                 OCell(
                     modifier = Modifier
                         .widthIn(min = 20.dp)
@@ -283,7 +290,7 @@ private fun ScoresSection(
         }
     } else {
         ScoresCoordinator(modifier) {
-            ScoreContainer(score = scores.xScore, scoreCell = {
+            ScoreContainer(score = scores.xScore, playerIcon = {
                 XCell(
                     modifier = Modifier
                         .widthIn(min = 20.dp)
@@ -291,9 +298,10 @@ private fun ScoresSection(
                     cellColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             })
-            ScoreContainer(score = scores.oScore, isMirror = true, scoreCell = {
+            ScoreContainer(score = scores.oScore, isMirrored = true, playerIcon = {
                 OCell(
                     modifier = Modifier
+                        .background(Color.Blue)
                         .widthIn(min = 20.dp)
                         .padding(horizontal = 8.dp),
                     cellColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -374,11 +382,13 @@ private fun calculateSpaceWidth(
 private fun ScoreContainer(
     score: Int,
     modifier: Modifier = Modifier,
-    isMirror: Boolean = false,
-    scoreCell: @Composable () -> Unit
+    isMirrored: Boolean = false,
+    playerIcon: @Composable RowScope.() -> Unit
 ) {
+    val xScale = if (!isMirrored) -1f else 1f
     Row(
         modifier = modifier
+            .scale(scaleX = xScale, scaleY = 1f)
             .widthIn(max = 200.dp)
             .aspectRatio(3f / 2f)
             .shadow(8.dp, MaterialTheme.shapes.large)
@@ -392,30 +402,22 @@ private fun ScoreContainer(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (isMirror) {
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                modifier = Modifier.weight(0.3f),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                text = "$score",
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            scoreCell.invoke()
-        } else {
-            scoreCell.invoke()
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                modifier = Modifier.weight(0.3f),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                text = "$score",
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-        }
+        ScoreText(score = score)
+        playerIcon()
     }
+}
+
+@Composable
+private fun ScoreText(score: Int, modifier: Modifier = Modifier) {
+    Spacer(modifier = Modifier.width(12.dp))
+    Text(
+        modifier = modifier.wrapContentSize().widthIn(min = 24.dp),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleLarge,
+        text = "$score",
+        color = MaterialTheme.colorScheme.onPrimaryContainer
+    )
+    Spacer(modifier = Modifier.width(12.dp))
 }
 
 @Preview(showBackground = true)

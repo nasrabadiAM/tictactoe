@@ -115,12 +115,16 @@ internal fun OCell(
             })
 }
 
-private fun Float.cellPadding() = this / 4
+private const val CELL_PADDING_DIVIDER = 4
+
+private fun Float.cellPadding() = this / CELL_PADDING_DIVIDER
+
+private const val STROKE_WIDTH_DIVIDER = 3
 
 private fun strokeWidth(
     size: Float,
     paddingInPx: Float
-) = (size - (paddingInPx * 2)) / 3
+) = (size - (paddingInPx + paddingInPx)) / STROKE_WIDTH_DIVIDER
 
 @Composable
 @Preview
