@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
-import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -34,7 +35,12 @@ class GameViewModel(
             is CellClicked -> gameUseCase.clickOnCell(event.index)
             ReplayClicked -> gameUseCase.replayGame()
             RestartClicked -> gameUseCase.restartGame()
+            RulesClicked -> rulesClicked()
         }
+    }
+
+    private fun rulesClicked() {
+        // No-op -> "Not yet implemented", Probably navigate to rules screen
     }
 
     private fun observeGameUseCase() {

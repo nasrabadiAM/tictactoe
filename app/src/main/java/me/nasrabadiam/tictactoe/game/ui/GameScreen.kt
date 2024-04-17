@@ -1,15 +1,18 @@
 package me.nasrabadiam.tictactoe.game.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
@@ -20,27 +23,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
-import me.nasrabadiam.tictactoe.game.model.GameResult
-import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
-import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
-import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
+import kotlin.math.max
 
 @Composable
 fun GameScreen(
-    gameViewModel: GameViewModel,
-    windowSizeClass: GameWindowSizeClass
+    gameViewModel: GameViewModel, windowSizeClass: GameWindowSizeClass
 ) {
     TicTacToeTheme {
         val state = gameViewModel.state.collectAsState()
@@ -95,23 +101,18 @@ private fun VerticalGameScreen(
             .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         ScoresSection(
-            state.scores,
-            isExpandedScreen
+            state.scores, isExpandedScreen
         )
 
         TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
+            cellsData = state.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
         ButtonsSection(
-            state.gameResult,
-            sendEvent,
-            isExpandedScreen
+            sendEvent, isExpandedScreen
         )
     }
 }
@@ -131,22 +132,17 @@ private fun HorizontalGameScreen(
             .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         ScoresSection(
-            state.scores,
-            isExpandedScreen
+            state.scores, isExpandedScreen
         )
         TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
+            cellsData = state.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
         ButtonsSection(
-            state.gameResult,
-            sendEvent,
-            isExpandedScreen
+            sendEvent, isExpandedScreen
         )
     }
 }
@@ -165,26 +161,17 @@ private fun CompactGameScreen(
             .background(MaterialTheme.colorScheme.surfaceDim),
     ) {
         Column {
-            Scores(state.scores)
-            val result = getResultString(state.gameResult)
-
-            ActionButtons(
-                result,
-                state.gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
-                }
-            )
+            // TODO:  Scores
+            ActionButtons(onRestartClicked = {
+                sendEvent(RestartClicked)
+            }, onRulesClicked = {
+                sendEvent(RulesClicked)
+            })
         }
         TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
+            cellsData = state.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
@@ -193,75 +180,69 @@ private fun CompactGameScreen(
 
 @Composable
 private fun ButtonsSection(
-    gameResult: GameResult?,
-    sendEvent: (GameEvent) -> Unit,
-    isExpandedScreen: Boolean,
-    modifier: Modifier = Modifier
+    sendEvent: (GameEvent) -> Unit, isExpandedScreen: Boolean, modifier: Modifier = Modifier
 ) {
-    val result = getResultString(gameResult)
     if (isExpandedScreen) {
         Column(
             modifier = modifier.padding(
-                vertical = 8.dp,
-                horizontal = 32.dp
+                vertical = 8.dp, horizontal = 32.dp
             ),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ActionButtons(
-                result,
-                gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
-                }
-            )
+            ActionButtons(onRestartClicked = {
+                sendEvent(RestartClicked)
+            }, onRulesClicked = {
+                sendEvent(RulesClicked)
+            })
         }
     } else {
-        Row(
+        Column(
             modifier = modifier.padding(
-                vertical = 32.dp,
-                horizontal = 8.dp
+                vertical = 32.dp, horizontal = 8.dp
             ),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ActionButtons(
-                result,
-                gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
-                }
-            )
+            ActionButtons(onRestartClicked = {
+                sendEvent(RestartClicked)
+            }, onRulesClicked = {
+                sendEvent(RulesClicked)
+            })
         }
     }
 }
 
 @Composable
 private fun ActionButtons(
-    result: String,
-    gameResult: GameResult?,
     onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit
+    onRulesClicked: () -> Unit,
 ) {
-    Text(
-        text = result,
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Button(onClick = onRestartClicked) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .widthIn(
+                min = 124.dp, max = 210.dp
+            ), onClick = onRestartClicked
+    ) {
         Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = "Restart")
     }
-    if (gameResult != null) {
-        Button(onClick = onReplayClicked) {
-            Text(text = "Again")
-        }
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .widthIn(
+                min = 124.dp, max = 210.dp
+            ), enabled = false, onClick = onRulesClicked
+    ) {
+        Text(text = "Game Rules")
+        Text(
+            text = "(Coming Soon)",
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
 
@@ -277,51 +258,164 @@ private fun ScoresSection(
             modifier = modifier
                 .fillMaxHeight()
                 .padding(
-                    vertical = 8.dp,
-                    horizontal = 32.dp
+                    vertical = 8.dp, horizontal = 36.dp
                 )
         ) {
-            Scores(scores)
+            ScoreContainer(score = scores.xScore) {
+                XCell(
+                    modifier = Modifier
+                        .widthIn(min = 20.dp)
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            ScoreContainer(score = scores.oScore, isMirror = true) {
+                OCell(
+                    modifier = Modifier
+                        .widthIn(min = 20.dp)
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     } else {
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 32.dp,
-                    horizontal = 8.dp
+        ScoresCoordinator(modifier) {
+            ScoreContainer(score = scores.xScore, scoreCell = {
+                XCell(
+                    modifier = Modifier
+                        .widthIn(min = 20.dp)
+                        .padding(horizontal = 8.dp),
+                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-        ) {
-            Scores(scores)
+            })
+            ScoreContainer(score = scores.oScore, isMirror = true, scoreCell = {
+                OCell(
+                    modifier = Modifier
+                        .widthIn(min = 20.dp)
+                        .padding(horizontal = 8.dp),
+                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            })
         }
     }
 }
 
 @Composable
-private fun Scores(scores: ScoresState) {
+private fun ScoresCoordinator(
+    modifier: Modifier = Modifier,
+    topPadding: Dp = 12.dp,
+    bottomPadding: Dp = 12.dp,
+    startPadding: Dp = 8.dp,
+    endPadding: Dp = 8.dp,
+    itemMaxWidth: Dp = 200.dp,
+    content: @Composable () -> Unit
+) {
+    Layout(modifier = modifier, content = content) { measurables, outerConstraints ->
+        val topPaddingPx = topPadding.roundToPx()
+        val bottomPaddingPx = bottomPadding.roundToPx()
+        val startPaddingPx = startPadding.roundToPx()
+        val endPaddingPx = endPadding.roundToPx()
+        val itemMaxWidthPx = itemMaxWidth.roundToPx()
 
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "X: ${scores.xScore}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "Draw: ${scores.drawCount}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "O: ${scores.oScore}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
+        val itemCounts = measurables.size
+        val minMiddleSpace = outerConstraints.maxWidth / 5
+        val maxWidthWithSpaces =
+            outerConstraints.maxWidth - minMiddleSpace - startPaddingPx - endPaddingPx
+        val itemWidth = (maxWidthWithSpaces / itemCounts).coerceIn(0, itemMaxWidthPx)
+
+        val itemHeight = outerConstraints.maxHeight - topPaddingPx - bottomPaddingPx
+        val itemConstraints = outerConstraints.copy(
+            maxWidth = itemWidth,
+            maxHeight = itemHeight
+        )
+
+        // Measure elements with their maximum width and keep track of the height
+        var layoutHeight = topPaddingPx + bottomPaddingPx
+        val placeables = measurables.mapIndexed { _, measurable ->
+            val placeable = measurable.measure(itemConstraints)
+            layoutHeight += placeable.height
+            placeable
+        }
+
+        layout(
+            width = outerConstraints.maxWidth,
+            height = outerConstraints.constrainHeight(layoutHeight)
+        ) {
+            var xPosition = startPaddingPx
+
+            placeables.forEachIndexed { _, placeable ->
+                placeable.placeRelative(x = xPosition, y = topPaddingPx)
+                val space = calculateSpaceWidth(
+                    outerConstraints,
+                    itemCounts,
+                    itemWidth,
+                    startPaddingPx,
+                    endPaddingPx
+                )
+                val spaceWidth = max(minMiddleSpace, space)
+                xPosition += itemWidth + spaceWidth
+            }
+        }
+    }
 }
 
-private fun getResultString(gameResult: GameResult?) = when (gameResult) {
-    is Draw -> "Draw"
-    is EndWithWinner -> "${gameResult.player} Wins"
-    else -> ""
+private fun calculateSpaceWidth(
+    outerConstraints: Constraints,
+    itemCounts: Int,
+    itemWidth: Int,
+    startPaddingPx: Int,
+    endPaddingPx: Int
+) = outerConstraints.maxWidth - ((itemCounts * itemWidth) + startPaddingPx + endPaddingPx)
+
+@Composable
+private fun ScoreContainer(
+    score: Int,
+    modifier: Modifier = Modifier,
+    isMirror: Boolean = false,
+    scoreCell: @Composable () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .widthIn(max = 200.dp)
+            .aspectRatio(3f / 2f)
+            .shadow(8.dp, MaterialTheme.shapes.large)
+            .background(
+                MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.large
+            )
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.large
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (isMirror) {
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.weight(0.3f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                text = "$score",
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            scoreCell.invoke()
+        } else {
+            scoreCell.invoke()
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.weight(0.3f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                text = "$score",
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -332,9 +426,7 @@ fun MainScreenPreview(
 
 ) {
     MainScreenContent(
-        state = GameState(),
-        sendEvent = {},
-        windowSizeClass = windowSizeClass
+        state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
     )
 }
 

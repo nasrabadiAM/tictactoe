@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,8 +13,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
+import me.nasrabadiam.tictactoe.ui.squareLayout
 
 @Composable
 internal fun GameCell(
@@ -39,8 +39,7 @@ internal fun GameCell(
         modifier = modifier
             .padding(4.dp)
             .shadow(
-                elevation = 8.dp,
-                shape = MaterialTheme.shapes.large
+                elevation = 8.dp, shape = MaterialTheme.shapes.large
             )
             .aspectRatio(1f)
             .clip(MaterialTheme.shapes.large)
@@ -57,29 +56,32 @@ internal fun GameCell(
 }
 
 @Composable
-private fun XCell() {
-    val color = MaterialTheme.colorScheme.surfaceDim
+internal fun XCell(
+    modifier: Modifier = Modifier,
+    cellColor: Color = MaterialTheme.colorScheme.onPrimary
+) {
     Box(
-        Modifier
-            .fillMaxSize()
+        modifier
             .testTag("X")
+            .squareLayout()
             .drawBehind {
-                val paddingInPx = cellPadding()
+                val size = minOf(size.height, size.width)
+                val paddingInPx = size.cellPadding()
 
-                val endX = size.width - paddingInPx
-                val endY = size.height - paddingInPx
+                val endX = size - paddingInPx
+                val endY = size - paddingInPx
 
-                val strokeWidth = strokeWidth(paddingInPx)
+                val strokeWidth = strokeWidth(size, paddingInPx)
 
                 drawLine(
-                    color = color,
+                    color = cellColor,
                     start = Offset(paddingInPx, paddingInPx),
                     end = Offset(endX, endY),
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round
                 )
                 drawLine(
-                    color = color,
+                    color = cellColor,
                     start = Offset(paddingInPx, endY),
                     end = Offset(endX, paddingInPx),
                     strokeWidth = strokeWidth,
@@ -89,39 +91,43 @@ private fun XCell() {
 }
 
 @Composable
-private fun OCell() {
-    val color = MaterialTheme.colorScheme.surfaceDim
+internal fun OCell(
+    modifier: Modifier = Modifier,
+    cellColor: Color = MaterialTheme.colorScheme.onPrimary
+) {
     Box(
-        Modifier
-            .fillMaxSize()
+        modifier
             .testTag("O")
+            .squareLayout()
             .drawBehind {
-                val paddingInPx = cellPadding()
-                val radius = (size.height - (paddingInPx * 2)) / 2
-                val strokeWidth = strokeWidth(paddingInPx)
+                val size = minOf(size.height, size.width)
 
+                val paddingInPx = size.cellPadding()
+                val radius = (size - (paddingInPx * 2)) / 2
+                val strokeWidth = strokeWidth(size, paddingInPx)
+                val center = Offset(paddingInPx + radius, paddingInPx + radius)
                 drawCircle(
-                    color = color,
+                    color = cellColor,
                     radius = radius,
+                    center = center,
                     style = Stroke(width = strokeWidth)
                 )
             })
 }
 
-private fun DrawScope.cellPadding() = size.height / 4
+private fun Float.cellPadding() = this / 4
 
-private fun DrawScope.strokeWidth(paddingInPx: Float) =
-    (size.height - (paddingInPx * 2)) / 3
+private fun strokeWidth(
+    size: Float,
+    paddingInPx: Float
+) = (size - (paddingInPx * 2)) / 3
 
 @Composable
 @Preview
 fun GameCellPreview(
     @PreviewParameter(GameCellDataProvider::class) cellData: Cell
 ) {
-    GameCell(
-        cell = cellData,
-        onClick = {}
-    )
+    GameCell(cell = cellData, onClick = {})
 }
 
 class GameCellDataProvider : PreviewParameterProvider<Cell> {

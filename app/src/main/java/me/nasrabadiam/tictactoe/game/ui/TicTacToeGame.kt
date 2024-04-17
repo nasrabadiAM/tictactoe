@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +19,7 @@ import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
 import me.nasrabadiam.tictactoe.game.model.utlis.getBoardSize
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.ui.squareLayout
 
 @Composable
 fun TicTacToeGameBoard(
@@ -40,21 +40,7 @@ private fun GameGrid(
 
     Column(
         modifier = modifier
-            .layout { measurable, constraints ->
-                // Determine the minimum dimension for square layout
-                val minDimension = minOf(constraints.maxWidth, constraints.maxHeight)
-                val placeable = measurable.measure(
-                    constraints.copy(
-                        maxWidth = minDimension,
-                        maxHeight = minDimension,
-                        minHeight = minDimension,
-                        minWidth = minDimension
-                    )
-                )
-                layout(minDimension, minDimension) {
-                    placeable.place(x = 0, y = 0)
-                }
-            }
+            .squareLayout()
             .testTag("game_board")
     ) {
         for (index in 0 until boardSize) {
