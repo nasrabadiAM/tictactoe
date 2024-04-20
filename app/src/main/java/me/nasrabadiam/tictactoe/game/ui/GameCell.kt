@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
-import me.nasrabadiam.tictactoe.ui.squareLayout
+import me.nasrabadiam.tictactoe.ui.squareWrapContentLayout
 
 @Composable
 internal fun GameCell(
@@ -39,7 +39,8 @@ internal fun GameCell(
         modifier = modifier
             .padding(4.dp)
             .shadow(
-                elevation = 8.dp, shape = MaterialTheme.shapes.large
+                elevation = 8.dp,
+                shape = MaterialTheme.shapes.large
             )
             .aspectRatio(1f)
             .clip(MaterialTheme.shapes.large)
@@ -63,7 +64,7 @@ internal fun XCell(
     Box(
         modifier
             .testTag("X")
-            .squareLayout()
+            .squareWrapContentLayout()
             .drawBehind {
                 val size = minOf(size.height, size.width)
                 val paddingInPx = size.cellPadding()
@@ -98,7 +99,7 @@ internal fun OCell(
     Box(
         modifier
             .testTag("O")
-            .squareLayout()
+            .squareWrapContentLayout()
             .drawBehind {
                 val size = minOf(size.height, size.width)
 

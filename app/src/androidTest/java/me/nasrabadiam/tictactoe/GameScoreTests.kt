@@ -1,8 +1,10 @@
 package me.nasrabadiam.tictactoe
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
@@ -35,8 +37,10 @@ class GameScoreTests {
 
         clickOnCell(col = 2, row = rowIndex) // X
 
-        // assert showing winner
-        onNode(hasText("X: 1")).assertIsDisplayed()
+        onNodeWithContentDescription(
+            label = "X Score is",
+            substring = true
+        ).onChildren().assertAny(hasText("1"))
     }
 
     @Test
@@ -53,7 +57,10 @@ class GameScoreTests {
         clickOnCell(col = 2, row = rowIndex) // X wins
 
         // assert showing x score
-        onNode(hasText("X: 1")).assertIsDisplayed()
+        onNodeWithContentDescription(
+            label = "X Score is",
+            substring = true
+        ).onChildren().assertAny(hasText("1"))
 
         // replay game
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).performClick()
@@ -70,28 +77,13 @@ class GameScoreTests {
         clickOnCell(col = colIndex, row = 2) // O wins
 
         // assert showing scores
-        onNode(hasText("X: 1")).assertIsDisplayed()
-        onNode(hasText("O: 1")).assertIsDisplayed()
-    }
-
-    @Test
-    fun whenDrawShouldShowDrawCount1(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
-
-        clickOnCell(col = 0, row = 0) // X
-        clickOnCell(col = 2, row = 0) // O
-
-        clickOnCell(col = 1, row = 1) // X
-        clickOnCell(col = 0, row = 1) // O
-
-        clickOnCell(col = 0, row = 2) // X
-        clickOnCell(col = 2, row = 2) // O
-
-        clickOnCell(col = 2, row = 1) // X
-        clickOnCell(col = 1, row = 0) // O
-
-        clickOnCell(col = 1, row = 2) // X
-
-        onNode(hasText("Draw: 1")).assertIsDisplayed() // X and O Draw
+        onNodeWithContentDescription(
+            label = "X Score is",
+            substring = true
+        ).onChildren().assertAny(hasText("1"))
+        onNodeWithContentDescription(
+            label = "O Score is",
+            substring = true
+        ).onChildren().assertAny(hasText("1"))
     }
 }

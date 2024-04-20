@@ -3,6 +3,7 @@ package me.nasrabadiam.tictactoe
 import android.app.Activity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -31,23 +32,38 @@ private fun getWindowSizeClass(): GameWindowSizeClass {
 
     val windowSizeClass = calculateWindowSizeClass(activity)
 
-    val widthSizeClass = windowSizeClass.widthSizeClass
-    val heightSizeClass = windowSizeClass.heightSizeClass
-
-    return when {
-        heightSizeClass == WindowHeightSizeClass.Compact &&
-            widthSizeClass == WindowWidthSizeClass.Compact -> {
+    val gameWindowSizeClass = when {
+        windowSizeClass.isSquareScreen() -> {
             GameWindowSizeClass.COMPACT
         }
 
-        widthSizeClass != WindowWidthSizeClass.Compact -> {
-            GameWindowSizeClass.EXPANDED
+        windowSizeClass.isVerticalScreen() -> {
+            GameWindowSizeClass.NORMAL
         }
 
         else -> {
-            GameWindowSizeClass.NORMAL
+            GameWindowSizeClass.EXPANDED
         }
     }
+    return gameWindowSizeClass
+}
+
+private fun WindowSizeClass.isSquareScreen(): Boolean {
+    val isCompact = heightSizeClass == WindowHeightSizeClass.Compact &&
+        widthSizeClass == WindowWidthSizeClass.Compact
+    val isMedium = heightSizeClass == WindowHeightSizeClass.Medium &&
+        widthSizeClass == WindowWidthSizeClass.Medium
+    val isExpanded = widthSizeClass == WindowWidthSizeClass.Expanded &&
+        heightSizeClass == WindowHeightSizeClass.Expanded
+    return isCompact || isMedium || isExpanded
+}
+
+private fun WindowSizeClass.isVerticalScreen(): Boolean {
+    return (heightSizeClass == WindowHeightSizeClass.Expanded &&
+        widthSizeClass == WindowWidthSizeClass.Medium ||
+        widthSizeClass == WindowWidthSizeClass.Compact) ||
+        (heightSizeClass == WindowHeightSizeClass.Medium &&
+            widthSizeClass == WindowWidthSizeClass.Compact)
 }
 
 enum class GameWindowSizeClass {

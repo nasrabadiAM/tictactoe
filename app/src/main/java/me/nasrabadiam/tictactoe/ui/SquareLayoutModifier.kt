@@ -3,7 +3,7 @@ package me.nasrabadiam.tictactoe.ui
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 
-fun Modifier.squareLayout() = this then layout { measurable, constraints ->
+fun Modifier.squareWrapContentLayout() = this then layout { measurable, constraints ->
     // Determine the minimum dimension for square layout
     val minDimension = minOf(constraints.maxWidth, constraints.maxHeight)
     val placeable = measurable.measure(
