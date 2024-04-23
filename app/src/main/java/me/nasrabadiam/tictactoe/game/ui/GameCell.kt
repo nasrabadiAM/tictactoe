@@ -39,7 +39,7 @@ internal fun GameCell(
         modifier = modifier
             .padding(4.dp)
             .shadow(
-                elevation = 8.dp,
+                elevation = 2.dp,
                 shape = MaterialTheme.shapes.large
             )
             .aspectRatio(1f)

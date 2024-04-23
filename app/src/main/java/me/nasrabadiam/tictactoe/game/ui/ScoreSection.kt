@@ -41,6 +41,7 @@ internal fun ScoresSection(
     modifier: Modifier = Modifier
 ) {
     ScoresCoordinator(modifier.heightIn(max = 360.dp, min = 80.dp)) {
+        val cellColor = MaterialTheme.colorScheme.onSecondaryContainer
         ScoreContainer(
             score = scores.xScore,
             player = X,
@@ -49,7 +50,7 @@ internal fun ScoresSection(
                     modifier = Modifier
                         .widthIn(min = 20.dp)
                         .padding(horizontal = 8.dp),
-                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    cellColor = cellColor
                 )
             }
         )
@@ -61,7 +62,7 @@ internal fun ScoresSection(
                     modifier = Modifier
                         .widthIn(min = 20.dp)
                         .padding(horizontal = 8.dp),
-                    cellColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    cellColor = cellColor
                 )
             }
         )
@@ -235,7 +236,6 @@ private fun ScoreContainer(
 ) {
     val xScale = if (!isMirrored) -1f else 1f
 
-    println("TTT, ${player.name} Score is $score")
     Row(
         modifier = modifier
             .scale(scaleX = xScale, scaleY = 1f)
@@ -243,7 +243,7 @@ private fun ScoreContainer(
             .aspectRatio(3f / 2f)
             .shadow(8.dp, MaterialTheme.shapes.large)
             .background(
-                MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.large
+                MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.large
             )
             .border(
                 width = 1.dp,
@@ -271,7 +271,7 @@ private fun ScoreText(score: Int, modifier: Modifier = Modifier) {
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.titleLarge,
         text = "$score",
-        color = MaterialTheme.colorScheme.onPrimaryContainer
+        color = MaterialTheme.colorScheme.onSecondaryContainer
     )
     Spacer(modifier = Modifier.width(12.dp))
 }

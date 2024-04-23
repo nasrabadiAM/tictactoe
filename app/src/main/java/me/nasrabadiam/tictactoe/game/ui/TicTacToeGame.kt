@@ -1,11 +1,13 @@
 package me.nasrabadiam.tictactoe.game.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -13,6 +15,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -44,52 +49,75 @@ fun TicTacToeGameBoard(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        val transparent = MaterialTheme.colorScheme.transparent
-        val onBackground = MaterialTheme.colorScheme.onBackground
 
-        val resultBackgroundColor = if (gameResult == null) {
-            transparent
-        } else {
-            onBackground
-        }
-        val blur = if (gameResult == null) 0.dp else 4.dp
-
-        GameGrid(cellsData, onCellClicked, modifier.blur(blur))
+        val blurValue by animateDpAsState(
+            targetValue = if (gameResult == null) 0.dp else 4.dp,
+            label = "Blur",
+            animationSpec = tween(durationMillis = GAME_RESULT_ANIMATION_DURATION)
+        )
+        GameGrid(cellsData, onCellClicked, modifier.blur(blurValue))
         if (gameResult != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.radialGradient(
-                            colors = listOf(
-                                resultBackgroundColor,
-                                resultBackgroundColor.copy(alpha = 0.7f),
-                                transparent
-                            ),
-                        )
-                    )
-            )
+            GameResult(gameResult, onReplayClicked)
+        }
+    }
+}
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                val resultText = when (gameResult) {
-                    Draw -> "Draw"
-                    is EndWithWinner -> "${gameResult.player.name} Wins"
-                }
+@Composable
+private fun GameResult(
+    gameResult: GameResult,
+    onReplayClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val transparent = MaterialTheme.colorScheme.transparent
+    val targetColor = MaterialTheme.colorScheme.surface
+    val alpha = remember {
+        Animatable(
+            initialValue = 0f,
+        )
+    }
 
-                Text(
-                    text = resultText,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.padding(8.dp)
+    LaunchedEffect(gameResult) {
+        alpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(GAME_RESULT_ANIMATION_DURATION)
+        )
+    }
+    Box(
+        modifier = modifier
+            .squareWrapContentLayout()
+            .blur(16.dp)
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        targetColor.copy(alpha.value),
+                        targetColor.copy((alpha.value - 0.2f).coerceIn(0f, 1f)),
+                        transparent
+                    ),
                 )
-                Button(
-                    onClick = onReplayClicked,
-                    modifier = Modifier.padding(top = 16.dp)
-                ) {
-                    Text("Again")
-                }
-            }
+            )
+    )
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val resultText = when (gameResult) {
+            Draw -> "Draw!"
+            is EndWithWinner -> "${gameResult.player.name} Wins"
+        }
+
+        Text(
+            text = resultText,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(8.dp)
+        )
+        Button(
+            onClick = onReplayClicked,
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Again")
         }
     }
 }
@@ -142,12 +170,13 @@ private fun GameRow(
 @Preview(showSystemUi = true, device = Devices.TABLET)
 @Composable
 fun TicTacToePreview(
-    @PreviewParameter(GameBoardDataProvider::class) cellsData: List<Cell>
+    @PreviewParameter(GameBoardDataProvider::class) gameBoardData: Pair<GameResult?, List<Cell>>
 ) {
+    val (gameResult, cellsData) = gameBoardData
     TicTacToeGameBoard(
         cellsData = cellsData,
         onCellClicked = {},
-        gameResult = null,
+        gameResult = gameResult,
         onReplayClicked = {},
         modifier = Modifier
             .wrapContentSize()
@@ -155,9 +184,11 @@ fun TicTacToePreview(
     )
 }
 
-class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
+private const val GAME_RESULT_ANIMATION_DURATION = 300
 
-    override val values: Sequence<List<Cell>>
+class GameBoardDataProvider : PreviewParameterProvider<Pair<GameResult?, List<Cell>>> {
+
+    override val values: Sequence<Pair<GameResult?, List<Cell>>>
         get() {
             val mixedCellsData = listOfEmptyCells().map {
                 if (it.index % 2 == 0) {
@@ -172,6 +203,10 @@ class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
             val oCellsData = listOfEmptyCells().map {
                 it.copy(value = X)
             }
-            return sequenceOf(mixedCellsData, oCellsData, xCellsData)
+            return sequenceOf(
+                Pair(null, mixedCellsData),
+                Pair(Draw, oCellsData),
+                Pair(null, xCellsData)
+            )
         }
 }
