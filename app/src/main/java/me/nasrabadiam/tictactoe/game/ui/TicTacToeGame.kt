@@ -1,8 +1,12 @@
 package me.nasrabadiam.tictactoe.game.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -76,10 +81,11 @@ private fun GameResult(
         )
     }
 
+    val tweenAnimationSpec = tween<Float>(GAME_RESULT_ANIMATION_DURATION)
     LaunchedEffect(gameResult) {
         alpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(GAME_RESULT_ANIMATION_DURATION)
+            animationSpec = tweenAnimationSpec
         )
     }
     Box(
@@ -96,28 +102,51 @@ private fun GameResult(
                 )
             )
     )
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val resultText = when (gameResult) {
-            Draw -> "Draw!"
-            is EndWithWinner -> "${gameResult.player.name} Wins"
+    val gameResultState = remember {
+        MutableTransitionState(false).apply {
+            // Start the animation immediately.
+            targetState = true
         }
-
-        Text(
-            text = resultText,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(8.dp)
-        )
-        Button(
-            onClick = onReplayClicked,
-            modifier = Modifier.padding(top = 16.dp)
+    }
+    AnimatedVisibility(
+        visibleState = gameResultState,
+        enter = fadeIn(tweenAnimationSpec) + scaleIn(tweenAnimationSpec)
+    ) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Again")
+
+            if (gameResult == Draw) {
+                Row {
+                    XCell(
+                        modifier = Modifier.size(100.dp),
+                        cellColor = MaterialTheme.colorScheme.onSurface
+                    )
+                    OCell(
+                        modifier = Modifier.size(100.dp),
+                        cellColor = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+            val resultText = when (gameResult) {
+                Draw -> "Draw!"
+                is EndWithWinner -> "${gameResult.player.name} Wins"
+            }
+
+            Text(
+                text = resultText,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(8.dp)
+            )
+            Button(
+                onClick = onReplayClicked,
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Again")
+            }
         }
     }
 }
@@ -184,7 +213,7 @@ fun TicTacToePreview(
     )
 }
 
-private const val GAME_RESULT_ANIMATION_DURATION = 300
+private const val GAME_RESULT_ANIMATION_DURATION = 400
 
 class GameBoardDataProvider : PreviewParameterProvider<Pair<GameResult?, List<Cell>>> {
 
