@@ -8,6 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -88,6 +90,7 @@ private fun GameResult(
             animationSpec = tweenAnimationSpec
         )
     }
+    val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .squareWrapContentLayout()
@@ -101,6 +104,14 @@ private fun GameResult(
                     ),
                 )
             )
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                if (alpha.isRunning) return@clickable
+                onReplayClicked.invoke()
+            }
+
     )
     val gameResultState = remember {
         MutableTransitionState(false).apply {
