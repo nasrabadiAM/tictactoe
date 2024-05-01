@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
@@ -78,6 +79,14 @@ class GameViewModel(
                     )
                 }
             }.launchIn(viewModelScope)
+            currentPlayer.onEach { player ->
+                savedStateHandle[CURRENT_PLAYER] = player
+                _state.update {
+                    state.value.copy(
+                        currentPlayer = player
+                    )
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -85,6 +94,7 @@ class GameViewModel(
         return GameState(
             gameResult = savedStateHandle[GAME_RESULT_KEY],
             cells = savedStateHandle[CELLS_KEY] ?: listOfEmptyCells(),
+            currentPlayer = savedStateHandle[CURRENT_PLAYER] ?: Player.X,
             scores = ScoresState(
                 xScore = savedStateHandle[X_SCORE_KEY] ?: 0,
                 oScore = savedStateHandle[O_SCORE_KEY] ?: 0,
@@ -98,6 +108,7 @@ class GameViewModel(
         private const val GAME_RESULT_KEY = "game_result"
         private const val X_SCORE_KEY = "x_score"
         private const val O_SCORE_KEY = "o_score"
+        private const val CURRENT_PLAYER = "current_player"
         private const val DRAW_COUNT_SCORE_KEY = "draw_count"
     }
 }

@@ -38,12 +38,14 @@ import kotlin.math.max
 @Composable
 internal fun ScoresSection(
     scores: ScoresState,
+    currentPlayer: Player,
     modifier: Modifier = Modifier
 ) {
     ScoresCoordinator(modifier.heightIn(max = 360.dp, min = 80.dp)) {
         val cellColor = MaterialTheme.colorScheme.onSecondaryContainer
         ScoreContainer(
             score = scores.xScore,
+            isTurnEnable = currentPlayer == X,
             player = X,
             playerIcon = {
                 XCell(
@@ -57,6 +59,7 @@ internal fun ScoresSection(
         ScoreContainer(
             score = scores.oScore,
             player = O,
+            isTurnEnable = currentPlayer == O,
             playerIcon = {
                 OCell(
                     modifier = Modifier
@@ -230,11 +233,26 @@ private fun calculateSpaceHeight(
 private fun ScoreContainer(
     score: Int,
     player: Player,
+    isTurnEnable: Boolean,
     modifier: Modifier = Modifier,
     isMirrored: Boolean = false,
     playerIcon: @Composable RowScope.() -> Unit
 ) {
     val xScale = if (!isMirrored) -1f else 1f
+
+    val turnModifier = if (isTurnEnable) {
+        Modifier.border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            shape = MaterialTheme.shapes.large
+        )
+    } else {
+        Modifier.border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.large
+        )
+    }
 
     Row(
         modifier = modifier
@@ -245,11 +263,7 @@ private fun ScoreContainer(
             .background(
                 MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.large
             )
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.large
-            )
+            .then(turnModifier)
             .semantics { contentDescription = "${player.name} Score is $score" },
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -283,5 +297,8 @@ fun ScoreSectionPreview(
     @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: GameWindowSizeClass
 
 ) {
-    ScoresSection(scores = ScoresState(1, 2, 3))
+    ScoresSection(
+        scores = ScoresState(1, 2, 3),
+        currentPlayer = Player.X
+    )
 }

@@ -36,14 +36,14 @@ class GameUseCase(
     private val _drawCount: MutableStateFlow<Int> = MutableStateFlow(0)
     val drawCount: StateFlow<Int> = _drawCount
 
-    internal var currentPlayer: Player = starterPlayer
-        private set
+    private val _currentPlayer: MutableStateFlow<Player> = MutableStateFlow(starterPlayer)
+    val currentPlayer: StateFlow<Player> = _currentPlayer
 
     fun clickOnCell(index: Int) {
         if (gameResult.value != null) return
         val copiedCells = cellsList
         if (index >= copiedCells.size || copiedCells[index].value != null) return
-        copiedCells[index] = copiedCells[index].copy(value = currentPlayer)
+        copiedCells[index] = copiedCells[index].copy(value = currentPlayer.value)
         _cells.update { copiedCells }
         changePlayerTurn()
         checkGameResultAndNotifyIfChanged()
@@ -58,7 +58,7 @@ class GameUseCase(
         _oScore.update { 0 }
         _drawCount.update { 0 }
 
-        currentPlayer = starterPlayer
+        _currentPlayer.update { starterPlayer }
     }
 
     fun replayGame() {
@@ -71,15 +71,18 @@ class GameUseCase(
         _gameResult.update { gameState.gameResult }
         _cells.update { gameState.cells }
         _xScore.update { gameState.scores.xScore }
+        _currentPlayer.update { gameState.currentPlayer }
         _oScore.update { gameState.scores.oScore }
         _drawCount.update { gameState.scores.drawCount }
     }
 
     private fun changePlayerTurn() {
-        currentPlayer = if (currentPlayer == Player.X) {
-            Player.O
-        } else {
-            Player.X
+        _currentPlayer.update {
+            if (currentPlayer.value == Player.X) {
+                Player.O
+            } else {
+                Player.X
+            }
         }
     }
 

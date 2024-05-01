@@ -36,7 +36,7 @@ class GameUseCaseShould {
     fun changePlayerTurnItemValueWhenClicked() = runTest {
         val index = 0
         useCase.clickOnCell(index)
-        assertEquals(Player.O, useCase.currentPlayer)
+        assertEquals(Player.O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -47,7 +47,7 @@ class GameUseCaseShould {
         }
         val clickedCell = useCase.cells.value[index]
         assertEquals(Player.X, clickedCell.value)
-        assertEquals(Player.O, useCase.currentPlayer)
+        assertEquals(Player.O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -63,7 +63,7 @@ class GameUseCaseShould {
         val index = 0
         val useCase = GameUseCase(starterPlayer = Player.O)
         useCase.clickOnCell(index)
-        assertEquals(Player.X, useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer.value)
     }
 
     @Test
@@ -76,7 +76,7 @@ class GameUseCaseShould {
             "Cells must be empty, but it's not.",
             cells.isEmpty()
         )
-        assertEquals(Player.X, useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer.value)
     }
 
     /**
@@ -512,7 +512,7 @@ class GameUseCaseShould {
 
         useCase.restartGame()
 
-        val currentPlayer = useCase.currentPlayer
+        val currentPlayer = useCase.currentPlayer.value
         assertTrue(
             "Current Player must be restart to starter player, " +
                 "when we restart the game but it is -> currentPlayer=$currentPlayer",
@@ -614,7 +614,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.O, useCase.currentPlayer)
+        assertEquals(Player.O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -630,7 +630,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.X, useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer.value)
     }
 
     @Test
@@ -651,7 +651,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.O, useCase.currentPlayer)
+        assertEquals(Player.O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -684,7 +684,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.X, useCase.currentPlayer)
+        assertEquals(Player.X, useCase.currentPlayer.value)
     }
     // //////
     // Turn change Tests
@@ -700,17 +700,20 @@ class GameUseCaseShould {
             winningOrientation = CROSS,
             winningIndex = 0
         )
+        val currentPlayer = Player.O
 
         useCase.restoreGameState(
             GameState(
-                cells,
-                gameResult,
-                ScoresState(1, 2, 3)
+                cells = cells,
+                gameResult = gameResult,
+                currentPlayer = currentPlayer,
+                scores = ScoresState(1, 2, 3)
             )
         )
 
         assertEquals(useCase.gameResult.value, gameResult)
         assertEquals(useCase.cells.value, cells)
+        assertEquals(useCase.currentPlayer.value, currentPlayer)
         assertEquals(useCase.xScore.value, 1)
         assertEquals(useCase.oScore.value, 2)
         assertEquals(useCase.drawCount.value, 3)

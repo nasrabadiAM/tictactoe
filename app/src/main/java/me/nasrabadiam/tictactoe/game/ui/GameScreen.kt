@@ -93,7 +93,8 @@ private fun VerticalGameScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         ScoresSection(
-            scores = state.scores
+            scores = state.scores,
+            currentPlayer = state.currentPlayer,
         )
 
         TicTacToeGameBoard(
@@ -125,6 +126,7 @@ private fun HorizontalGameScreen(
     ) {
         ScoresSection(
             scores = state.scores,
+            currentPlayer = state.currentPlayer,
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
@@ -161,6 +163,7 @@ private fun CompactGameScreen(
                 Row {
                     ScoresSection(
                         scores = state.scores,
+                        currentPlayer = state.currentPlayer,
                         modifier = Modifier
                             .weight(0.1f)
                     )
@@ -179,6 +182,7 @@ private fun CompactGameScreen(
                 Column {
                     ScoresSection(
                         scores = state.scores,
+                        currentPlayer = state.currentPlayer,
                         modifier = Modifier
                             .weight(0.1f)
                     )
