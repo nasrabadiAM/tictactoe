@@ -110,6 +110,7 @@ internal fun GameResultBox(
                 val cellSize = getCellSize(size, allPaddings).width
                 val strokeWidth = cellSize * WINNER_LINE_STROKE_FACTOR
 
+                if (start == end) return@drawBehind
                 drawLine(
                     color = color,
                     start = start,
