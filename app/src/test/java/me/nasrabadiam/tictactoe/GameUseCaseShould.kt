@@ -4,16 +4,22 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.COLUMN
+import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.CROSS
+import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.ROW
+import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameState
 import me.nasrabadiam.tictactoe.game.ui.ScoresState
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class GameUseCaseShould {
 
     private val useCase = GameUseCase()
@@ -88,7 +94,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = COLUMN,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -103,7 +115,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = COLUMN,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -118,7 +136,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = COLUMN,
+                winningIndex = 2
+            ), useCase.gameResult.value
+        )
     }
 
     /**
@@ -136,7 +160,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = ROW,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -151,7 +181,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = ROW,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -166,7 +202,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = ROW,
+                winningIndex = 2
+            ), useCase.gameResult.value
+        )
     }
 
     /**
@@ -183,7 +225,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = CROSS,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -197,7 +245,13 @@ class GameUseCaseShould {
         assertEquals(null, useCase.gameResult.value)
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
-        assertEquals(EndWithWinner(Player.X), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.X,
+                winningOrientation = CROSS,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     /**
@@ -216,7 +270,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 1, col = 1)) // X
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = COLUMN,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -232,7 +292,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = COLUMN,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -248,7 +314,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = COLUMN,
+                winningIndex = 2
+            ), useCase.gameResult.value
+        )
     }
 
     /**
@@ -267,7 +339,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = ROW,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -283,7 +361,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = ROW,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -299,7 +383,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = ROW,
+                winningIndex = 2
+            ), useCase.gameResult.value
+        )
     }
 
     /**
@@ -317,7 +407,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = CROSS,
+                winningIndex = 0
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -332,7 +428,13 @@ class GameUseCaseShould {
 
         useCase.clickOnCell(getCellIndex(row = 2, col = 1)) // X
         useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // O
-        assertEquals(EndWithWinner(Player.O), useCase.gameResult.value)
+        assertEquals(
+            EndWithWinner(
+                player = Player.O,
+                winningOrientation = CROSS,
+                winningIndex = 1
+            ), useCase.gameResult.value
+        )
     }
 
     @Test
@@ -593,7 +695,11 @@ class GameUseCaseShould {
         val cells = listOfEmptyCells().toMutableList().apply {
             this[0] = this[0].copy(value = Player.X)
         }
-        val gameResult = EndWithWinner(O)
+        val gameResult = EndWithWinner(
+            player = Player.O,
+            winningOrientation = CROSS,
+            winningIndex = 0
+        )
 
         useCase.restoreGameState(
             GameState(
@@ -608,5 +714,23 @@ class GameUseCaseShould {
         assertEquals(useCase.xScore.value, 1)
         assertEquals(useCase.oScore.value, 2)
         assertEquals(useCase.drawCount.value, 3)
+    }
+
+    @Test
+    fun doNothingWhenGamesEndsWinner() = runTest {
+        val oColumn = 1
+        useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 0, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 1, col = 0)) // X
+        useCase.clickOnCell(getCellIndex(row = 1, col = oColumn)) // O
+
+        useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
+        useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O wins
+
+        // game ends, but we click in a new cell, and nothing should happen
+        useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // Cell 5 clicked but nothing happen
+
+        assertEquals(Cell(index = 5), useCase.cells.value[5])
     }
 }

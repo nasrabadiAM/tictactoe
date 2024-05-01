@@ -107,12 +107,21 @@ class GameUseCase(
                 winnerMap.putInMap(key, cell)
             }
         }
-        val nonNullWinnerMap = winnerMap.entries.mapNotNull { it.value }
+        val nonNullWinnerMap = winnerMap.entries.filter { it.value != null }
 
         if (nonNullWinnerMap.isNotEmpty()) {
-            val winner = nonNullWinnerMap[0]
+            val winner = requireNotNull(nonNullWinnerMap.first().value)
+            val winningKey = nonNullWinnerMap.first().key
             updateWinnerScore(winner)
-            _gameResult.update { GameResult.EndWithWinner(winner) }
+            val orientation = getOrientation(winningKey)
+            val index = getWinningIndex(winningKey)
+            _gameResult.update {
+                GameResult.EndWithWinner(
+                    player = winner,
+                    winningOrientation = orientation,
+                    winningIndex = index
+                )
+            }
             changePlayerTurn()
         } else if (hasNotAnyEmptyCell()) {
             _drawCount.update { drawCount.value + 1 }
@@ -154,7 +163,7 @@ class GameUseCase(
 
     private fun getFirstCrossKey(rowIndex: Int, colIndex: Int): String? {
         return if (rowIndex == colIndex) {
-            "first_cross"
+            "cross_0"
         } else {
             null
         }
@@ -164,9 +173,31 @@ class GameUseCase(
         return if (
             isSecondCrossCell(rowIndex, colIndex)
         ) {
-            "second_cross"
+            "cross_1"
         } else {
             null
+        }
+    }
+
+    private fun getWinningIndex(winningKey: String): Int {
+        val index = winningKey.split(WINNING_KEY_DELIMITER).getOrNull(1)
+        return index?.toInt()
+            ?: throw IllegalStateException(
+                "There is no winning index with this " +
+                    "(index value: $index), winningKey:$winningKey"
+            )
+    }
+
+    private fun getOrientation(winningKey: String): Orientation {
+        val orientation = winningKey.split(WINNING_KEY_DELIMITER).first()
+        return when (orientation) {
+            "cross" -> Orientation.CROSS
+            "row" -> Orientation.ROW
+            "col" -> Orientation.COLUMN
+            else -> throw IllegalStateException(
+                "There is no orientation with (name: $orientation)," +
+                    " winningKey:$winningKey"
+            )
         }
     }
 
@@ -174,5 +205,13 @@ class GameUseCase(
         return (rowIndex == 0 && colIndex == 2) ||
             (rowIndex == 1 && colIndex == 1) ||
             (rowIndex == 2 && colIndex == 0)
+    }
+
+    companion object {
+        private const val WINNING_KEY_DELIMITER = "_"
+    }
+
+    enum class Orientation {
+        CROSS, ROW, COLUMN
     }
 }
