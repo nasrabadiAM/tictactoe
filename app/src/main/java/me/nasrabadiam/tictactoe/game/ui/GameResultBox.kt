@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +30,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -154,18 +154,35 @@ internal fun GameResultBox(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            when (gameResult) {
-                Draw -> {
-                    Row {
-                        XSign()
-                        OSign()
-                    }
+            Box(modifier = Modifier
+                .layout { measurable, constraints ->
+                    // Determine the minimum dimension for square layout
+                    val minDimension = minOf(constraints.maxWidth, constraints.maxHeight) / 2
+                    val placeable = measurable.measure(
+                        constraints.copy(
+                            maxWidth = minDimension,
+                            maxHeight = minDimension,
+                            minHeight = minDimension,
+                            minWidth = minDimension
+                        )
+                    )
+                    layout(minDimension, minDimension) { placeable.place(x = 0, y = 0) }
                 }
+            ) {
+                val cellColor = MaterialTheme.colorScheme.onSurface
+                when (gameResult) {
+                    Draw -> {
+                        Row {
+                            XCell(cellColor = cellColor)
+                            OCell(cellColor = cellColor)
+                        }
+                    }
 
-                is EndWithWinner -> {
-                    when (gameResult.player) {
-                        X -> XSign()
-                        O -> OSign()
+                    is EndWithWinner -> {
+                        when (gameResult.player) {
+                            X -> XCell(cellColor = cellColor)
+                            O -> OCell(cellColor = cellColor)
+                        }
                     }
                 }
             }
@@ -178,34 +195,19 @@ internal fun GameResultBox(
             Text(
                 text = resultText,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.displayLarge,
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(4.dp)
             )
             Button(
                 onClick = onReplayClicked,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(12.dp)
             ) {
                 Text("Again")
             }
         }
     }
-}
-
-@Composable
-private fun OSign() {
-    OCell(
-        modifier = Modifier.size(100.dp),
-        cellColor = MaterialTheme.colorScheme.onSurface
-    )
-}
-
-@Composable
-private fun XSign() {
-    XCell(
-        modifier = Modifier.size(100.dp),
-        cellColor = MaterialTheme.colorScheme.onSurface
-    )
 }
 
 private fun getWinningLine(
