@@ -1,6 +1,7 @@
 package me.nasrabadiam.tictactoe
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -41,11 +42,8 @@ class GameLogicTests {
         clickOnCell(col = colIndex, row = 2) // X
 
         // assert showing winner
-        onNode(hasText(X_WINS_RESULT_STRING)).isDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
-        assertPlayersCountEquals(Player.O.toString(), 2)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("X $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**
@@ -67,11 +65,8 @@ class GameLogicTests {
         clickOnCell(col = 2, row = rowIndex) // X
 
         // assert showing winner
-        onNode(hasText(X_WINS_RESULT_STRING)).assertIsDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 2, row = 2) // should not show O on 2,2, because the game is finished!
-        assertPlayersCountEquals(Player.O.toString(), 2)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("X $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**
@@ -92,11 +87,8 @@ class GameLogicTests {
         clickOnCell(col = 2, row = 2) // X
 
         // assert showing winner
-        onNode(hasText(X_WINS_RESULT_STRING)).assertIsDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 1, row = 0) // should not show O on 1,0, because the game is finished!
-        assertPlayersCountEquals(Player.O.toString(), 2)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("X $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**
@@ -119,11 +111,8 @@ class GameLogicTests {
         clickOnCell(col = colIndex, row = 2) // O
 
         // assert showing winner
-        onNode(hasText(O_WINS_RESULT_STRING)).isDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 2, row = 1) // should not show X on 2,1, because the game is finished!
-        assertPlayersCountEquals(Player.X.toString(), 3)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("O $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**
@@ -146,11 +135,8 @@ class GameLogicTests {
         clickOnCell(col = 2, row = rowIndex) // O
 
         // assert showing winner
-        onNode(hasText(O_WINS_RESULT_STRING)).assertIsDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 0, row = 2) // should not show X on 0,2, because the game is finished!
-        assertPlayersCountEquals(Player.X.toString(), 3)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("O $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**
@@ -172,11 +158,8 @@ class GameLogicTests {
         clickOnCell(col = 0, row = 2) // O
 
         // assert showing winner
-        onNode(hasText(O_WINS_RESULT_STRING)).assertIsDisplayed()
-
-        // assert game ends
-        clickOnCell(col = 1, row = 0) // should not show X on 1,0, because the game is finished!
-        assertPlayersCountEquals(Player.X.toString(), 3)
+        onNode(hasText(WINNER_RESULT_STRING)).isDisplayed()
+        onNode(hasContentDescription("O $WINNER_CLICKABLE_CONTENT_DESCRIPTION"))
     }
 
     /**

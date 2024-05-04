@@ -53,6 +53,7 @@ complexity:
   LargeClass:
     active: true
     threshold: 500
+    ignoreAnnotated: [ 'RunWith' ]
   LongMethod:
     active: true
     threshold: 50

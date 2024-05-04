@@ -4,9 +4,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import org.junit.Rule
 import org.junit.Test
 
@@ -47,7 +47,7 @@ class GameClickTests {
 
         assertPlayersCountEquals(Player.X.toString(), 1)
 
-        clickOnCell(0, 0)
+        clickOnCell(0, 0, Player.X)
 
         assertPlayersCountEquals(Player.X.toString(), 1)
     }

@@ -121,8 +121,8 @@ class GameTests {
 
         // assert any game result not to be shown
         onNode(hasText(DRAW_RESULT_STRING)).assertIsNotDisplayed()
-        onNode(hasText(X_WINS_RESULT_STRING)).assertIsNotDisplayed()
-        onNode(hasText(O_WINS_RESULT_STRING)).assertIsNotDisplayed()
+        onNode(hasText(WINNER_RESULT_STRING)).assertIsNotDisplayed()
+        onNode(hasText(WINNER_RESULT_STRING)).assertIsNotDisplayed()
         // all scores should disappear
         onNode(hasText("1")).assertIsNotDisplayed()
     }

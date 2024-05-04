@@ -2,19 +2,27 @@ package me.nasrabadiam.tictactoe.game.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -24,18 +32,15 @@ import me.nasrabadiam.tictactoe.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
-import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
-import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
-import me.nasrabadiam.tictactoe.game.model.GameResult
-import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
-import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
 fun GameScreen(
     gameViewModel: GameViewModel,
-    windowSizeClass: GameWindowSizeClass
+    windowSizeClass: GameWindowSizeClass,
 ) {
     TicTacToeTheme {
         val state = gameViewModel.state.collectAsState()
@@ -54,21 +59,22 @@ private fun MainScreenContent(
     windowSizeClass: GameWindowSizeClass,
     modifier: Modifier = Modifier
 ) {
+    val modifierWithBackground = modifier.background(MaterialTheme.colorScheme.surfaceDim)
     when (windowSizeClass) {
         NORMAL -> VerticalGameScreen(
-            modifier,
+            modifierWithBackground,
             state,
             sendEvent,
         )
 
         EXPANDED -> HorizontalGameScreen(
-            modifier,
+            modifierWithBackground,
             state,
             sendEvent
         )
 
         COMPACT -> CompactGameScreen(
-            modifier,
+            modifierWithBackground,
             state,
             sendEvent
         )
@@ -81,32 +87,28 @@ private fun VerticalGameScreen(
     state: GameState,
     sendEvent: (GameEvent) -> Unit,
 ) {
-    val isExpandedScreen = false
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+        modifier = modifier.fillMaxSize(),
     ) {
         ScoresSection(
-            state.scores,
-            isExpandedScreen
+            scores = state.scores,
+            currentPlayer = state.currentPlayer,
         )
 
         TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
+            cellsData = state.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
             },
+            gameResult = state.gameResult,
+            onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
             modifier = Modifier
                 .weight(1f)
                 .padding(8.dp)
         )
         ButtonsSection(
-            state.gameResult,
-            sendEvent,
-            isExpandedScreen
+            sendEvent = sendEvent
         )
     }
 }
@@ -117,31 +119,34 @@ private fun HorizontalGameScreen(
     state: GameState,
     sendEvent: (GameEvent) -> Unit,
 ) {
-    val isExpandedScreen = true
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+        modifier = modifier.fillMaxSize(),
     ) {
         ScoresSection(
-            state.scores,
-            isExpandedScreen
+            scores = state.scores,
+            currentPlayer = state.currentPlayer,
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
         )
+
         TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
+            cellsData = state.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
             },
+            gameResult = state.gameResult,
+            onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
             modifier = Modifier
-                .weight(1f)
+                .fillMaxHeight()
                 .padding(8.dp)
         )
         ButtonsSection(
-            state.gameResult,
-            sendEvent,
-            isExpandedScreen
+            sendEvent = sendEvent,
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
         )
     }
 }
@@ -152,170 +157,143 @@ private fun CompactGameScreen(
     state: GameState,
     sendEvent: (GameEvent) -> Unit,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-    ) {
-        Column {
-            Scores(state.scores)
-            val result = getResultString(state.gameResult)
-
-            ActionButtons(
-                result,
-                state.gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
+    Column(modifier) {
+        BoxWithConstraints(Modifier.weight(1f)) {
+            if (maxWidth > maxHeight) {
+                Row {
+                    ScoresSection(
+                        scores = state.scores,
+                        currentPlayer = state.currentPlayer,
+                        modifier = Modifier
+                            .weight(0.1f)
+                    )
+                    TicTacToeGameBoard(
+                        cellsData = state.cells, onCellClicked = { index ->
+                            sendEvent(CellClicked(index))
+                        },
+                        gameResult = state.gameResult,
+                        onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
                 }
-            )
+            } else {
+                Column {
+                    ScoresSection(
+                        scores = state.scores,
+                        currentPlayer = state.currentPlayer,
+                        modifier = Modifier
+                            .weight(0.1f)
+                    )
+                    TicTacToeGameBoard(
+                        cellsData = state.cells, onCellClicked = { index ->
+                            sendEvent(CellClicked(index))
+                        },
+                        gameResult = state.gameResult,
+                        onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                }
+            }
         }
-        TicTacToeGameBoard(
-            cellsData = state.cells,
-            onCellClicked = { index ->
-                sendEvent(CellClicked(index))
-            },
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)
-        )
+        Row(Modifier.weight(0.2f)) {
+
+            Button(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .weight(1f)
+                    .widthIn(min = 124.dp, max = 210.dp),
+                onClick = { sendEvent(RestartClicked) }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Refresh,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = RESTART_BUTTON_TEXT)
+            }
+            Button(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .weight(1f)
+                    .widthIn(min = 124.dp, max = 210.dp),
+                enabled = false,
+                onClick = { sendEvent(RulesClicked) }
+            ) {
+                Text(text = GAME_RULE_BUTTON_TEXT)
+                Text(
+                    text = COMING_SOON_BUTTON_TEXT,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun ButtonsSection(
-    gameResult: GameResult?,
     sendEvent: (GameEvent) -> Unit,
-    isExpandedScreen: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val result = getResultString(gameResult)
-    if (isExpandedScreen) {
-        Column(
-            modifier = modifier.padding(
-                vertical = 8.dp,
-                horizontal = 32.dp
-            ),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ActionButtons(
-                result,
-                gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
-                }
-            )
-        }
-    } else {
-        Row(
-            modifier = modifier.padding(
-                vertical = 32.dp,
-                horizontal = 8.dp
-            ),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ActionButtons(
-                result,
-                gameResult,
-                onRestartClicked = {
-                    sendEvent(RestartClicked)
-                },
-                onReplayClicked = {
-                    sendEvent(ReplayClicked)
-                }
-            )
-        }
+    Column(
+        modifier = modifier.padding(
+            vertical = 32.dp,
+            horizontal = 8.dp
+        ),
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ActionButtons(onRestartClicked = {
+            sendEvent(RestartClicked)
+        }, onRulesClicked = {
+            sendEvent(RulesClicked)
+        })
     }
 }
 
 @Composable
 private fun ActionButtons(
-    result: String,
-    gameResult: GameResult?,
     onRestartClicked: () -> Unit,
-    onReplayClicked: () -> Unit
+    onRulesClicked: () -> Unit,
 ) {
-    Text(
-        text = result,
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Button(onClick = onRestartClicked) {
-        Text(text = "Restart")
-    }
-    if (gameResult != null) {
-        Button(onClick = onReplayClicked) {
-            Text(text = "Again")
-        }
-    }
-}
 
-@Composable
-private fun ScoresSection(
-    scores: ScoresState,
-    isExpandedScreen: Boolean,
-    modifier: Modifier = Modifier
-) {
-    if (isExpandedScreen) {
-        Column(
-            verticalArrangement = Arrangement.SpaceAround,
-            modifier = modifier
-                .fillMaxHeight()
-                .padding(
-                    vertical = 8.dp,
-                    horizontal = 32.dp
-                )
-        ) {
-            Scores(scores)
-        }
-    } else {
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 32.dp,
-                    horizontal = 8.dp
-                )
-        ) {
-            Scores(scores)
-        }
+    Button(
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .fillMaxWidth()
+            .widthIn(min = 124.dp, max = 210.dp),
+        onClick = onRestartClicked
+    ) {
+        Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = RESTART_BUTTON_TEXT,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+    }
+    Button(
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .fillMaxWidth()
+            .widthIn(min = 124.dp, max = 210.dp),
+        enabled = false,
+        onClick = onRulesClicked
+    ) {
+        Text(text = GAME_RULE_BUTTON_TEXT)
+        Text(
+            text = COMING_SOON_BUTTON_TEXT,
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
 
-@Composable
-private fun Scores(scores: ScoresState) {
-
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "X: ${scores.xScore}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "Draw: ${scores.drawCount}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    Text(
-        modifier = Modifier.padding(4.dp),
-        text = "O: ${scores.oScore}",
-        color = MaterialTheme.colorScheme.onBackground
-    )
-}
-
-private fun getResultString(gameResult: GameResult?) = when (gameResult) {
-    is Draw -> "Draw"
-    is EndWithWinner -> "${gameResult.player} Wins"
-    else -> ""
-}
+private const val RESTART_BUTTON_TEXT = "Restart"
+private const val GAME_RULE_BUTTON_TEXT = "Game Rules"
+private const val COMING_SOON_BUTTON_TEXT = "(Coming Soon)"
 
 @Preview(showBackground = true)
 @Preview(showSystemUi = true, device = Devices.TABLET)
@@ -325,9 +303,7 @@ fun MainScreenPreview(
 
 ) {
     MainScreenContent(
-        state = GameState(),
-        sendEvent = {},
-        windowSizeClass = windowSizeClass
+        state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
     )
 }
 

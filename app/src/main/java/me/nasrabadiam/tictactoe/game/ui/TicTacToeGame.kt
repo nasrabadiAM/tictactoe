@@ -1,6 +1,8 @@
 package me.nasrabadiam.tictactoe.game.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,38 +10,65 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.layout.layout
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.game.model.Cell
+import me.nasrabadiam.tictactoe.game.model.GameResult
+import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
 import me.nasrabadiam.tictactoe.game.model.utlis.getBoardSize
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
-import me.nasrabadiam.tictactoe.ui.AutoSizeText
+import me.nasrabadiam.tictactoe.ui.squareWrapContentLayout
 
 @Composable
 fun TicTacToeGameBoard(
     cellsData: List<Cell>,
+    gameResult: GameResult?,
+    onReplayClicked: () -> Unit,
     onCellClicked: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    GameGrid(cellsData, onCellClicked, modifier)
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        val winnerAnimation = remember { Animatable(0f) }
+        LaunchedEffect(gameResult) {
+            if (gameResult == null) {
+                winnerAnimation.snapTo(0f)
+            }
+        }
+
+        val blurValue by animateDpAsState(
+            targetValue = if (gameResult == null || winnerAnimation.isRunning) 0.dp else 4.dp,
+            label = "Blur",
+            animationSpec = tween(
+                durationMillis = GAME_RESULT_ANIMATION_DURATION,
+                delayMillis = GAME_RESULT_ANIMATION_DELAY.toInt()
+            )
+        )
+        GameGrid(
+            cellsData, onCellClicked,
+            modifier.blur(blurValue)
+        )
+        if (gameResult != null) {
+            GameResultBox(
+                gameResult = gameResult,
+                backgroundBlur = blurValue,
+                winnerAnimation = winnerAnimation,
+                onReplayClicked = onReplayClicked,
+            )
+        }
+    }
 }
 
 @Composable
@@ -50,25 +79,9 @@ private fun GameGrid(
 ) {
     val boardSize = cellsData.getBoardSize()
 
-    val gridColor = MaterialTheme.colorScheme.onBackground
     Column(
         modifier = modifier
-            .layout { measurable, constraints ->
-                // Determine the minimum dimension for square layout
-                val minDimension = minOf(constraints.maxWidth, constraints.maxHeight)
-                val placeable = measurable.measure(
-                    constraints.copy(
-                        maxWidth = minDimension,
-                        maxHeight = minDimension,
-                        minHeight = minDimension,
-                        minWidth = minDimension
-                    )
-                )
-                layout(minDimension, minDimension) {
-                    placeable.place(x = 0, y = 0)
-                }
-            }
-            .drawBehind(gameGrid(boardSize, gridColor))
+            .squareWrapContentLayout()
             .testTag("game_board")
     ) {
         for (index in 0 until boardSize) {
@@ -82,33 +95,6 @@ private fun GameGrid(
                     .fillMaxWidth()
             )
         }
-    }
-}
-
-@Composable
-private fun gameGrid(
-    boardSize: Int,
-    gridColor: Color
-): DrawScope.() -> Unit = {
-    val canvasWidth = size.width
-    val canvasHeight = size.height
-    val horizontalLineY = canvasHeight / 3
-    val verticalLineX = canvasWidth / 3
-    val lineStrokeWidth = 1.dp.toPx()
-
-    for (lineNumber in 1 until boardSize) {
-        drawLine(
-            start = Offset(x = 0.dp.toPx(), y = lineNumber * horizontalLineY),
-            end = Offset(x = canvasWidth, y = lineNumber * horizontalLineY),
-            color = gridColor,
-            strokeWidth = lineStrokeWidth
-        )
-        drawLine(
-            start = Offset(x = lineNumber * verticalLineX, y = 0.dp.toPx()),
-            end = Offset(x = lineNumber * verticalLineX, y = canvasHeight),
-            color = gridColor,
-            strokeWidth = lineStrokeWidth
-        )
     }
 }
 
@@ -129,49 +115,27 @@ private fun GameRow(
     }
 }
 
-@Composable
-private fun GameCell(
-    cell: Cell,
-    onClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier
-            .padding(4.dp)
-            .aspectRatio(1f)
-            .clickable { onClick.invoke(cell.index) }
-            .semantics { testTag = "cell_${cell.index}" },
-        contentAlignment = Alignment.Center
-    ) {
-
-        val displayLargeStyle = MaterialTheme.typography.headlineSmall
-        AutoSizeText(
-            text = cell.getShowingValue(),
-            textAlign = TextAlign.Center,
-            style = displayLargeStyle,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-    }
-}
-
 @Preview(showSystemUi = true)
 @Preview(showSystemUi = true, device = Devices.TABLET)
 @Composable
 fun TicTacToePreview(
-    @PreviewParameter(GameBoardDataProvider::class) cellsData: List<Cell>
+    @PreviewParameter(GameBoardDataProvider::class) gameBoardData: Pair<GameResult?, List<Cell>>
 ) {
+    val (gameResult, cellsData) = gameBoardData
     TicTacToeGameBoard(
         cellsData = cellsData,
         onCellClicked = {},
+        gameResult = gameResult,
+        onReplayClicked = {},
         modifier = Modifier
             .wrapContentSize()
             .padding(8.dp)
     )
 }
 
-class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
+class GameBoardDataProvider : PreviewParameterProvider<Pair<GameResult?, List<Cell>>> {
 
-    override val values: Sequence<List<Cell>>
+    override val values: Sequence<Pair<GameResult?, List<Cell>>>
         get() {
             val mixedCellsData = listOfEmptyCells().map {
                 if (it.index % 2 == 0) {
@@ -186,6 +150,10 @@ class GameBoardDataProvider : PreviewParameterProvider<List<Cell>> {
             val oCellsData = listOfEmptyCells().map {
                 it.copy(value = X)
             }
-            return sequenceOf(mixedCellsData, oCellsData, xCellsData)
+            return sequenceOf(
+                Pair(null, mixedCellsData),
+                Pair(Draw, oCellsData),
+                Pair(null, xCellsData)
+            )
         }
 }
