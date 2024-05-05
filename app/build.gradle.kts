@@ -24,13 +24,24 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("$rootDir/release/release.jks")
+            storePassword = "${project.properties["KEYSTORE_PASSWORD"]}"
+            keyAlias = "${project.properties["KEY_ALIAS"]}"
+            keyPassword = "${project.properties["KEY_PASSWORD"]}"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfigs.getByName("release")
         }
     }
     compileOptions {
