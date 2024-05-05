@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.parcelize) apply false
+    alias(libs.plugins.sentry) apply false
 }
 
 tasks.register<Detekt>("detektAll") {
