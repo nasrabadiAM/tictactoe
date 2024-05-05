@@ -26,18 +26,23 @@ jobs:
       - name: Build release artifacts
         run: ./gradlew --no-daemon app:bundleRelease app:assembleRelease
 
-      - name: Upload Release Bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: release.aab
-          path: app/build/outputs/bundle/release/app-release.aab
-
-      - name: Upload Release APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: release.apk
-          path: app/build/outputs/apk/release/app-release.apk
-
       - name: Clean secrets
         run: |
           rm -f release/release.jks
+
+      - name: Upload Release Build to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          paths: |
+            app/build/outputs/apk/release/
+            app/build/outputs/bundle/release/
+
+      - name: Create Github Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          prerelease: true
+          files: |
+            app/build/outputs/apk/release/app-release.apk
+            app/build/outputs/bundle/release/app-release.aab
