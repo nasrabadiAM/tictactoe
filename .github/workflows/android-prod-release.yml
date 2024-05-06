@@ -23,7 +23,9 @@ jobs:
           distribution: 'zulu'
 
       - name: Decrypt secrets
-        run: gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH }} release/release.gpg
+        run: |
+          mkdir ./app/release
+          gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH }} release/release.gpg
 
       - name: Build release artifacts
         run: |
