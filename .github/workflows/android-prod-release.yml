@@ -13,7 +13,7 @@ jobs:
       ORG_GRADLE_PROJECT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       ORG_GRADLE_PROJECT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       ORG_GRADLE_PROJECT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_FILE_PATH: ${{ secrets.KEY_FILE_PATH }}
+      KEY_FILE_PATH: ${{ vars.KEY_FILE_PATH }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK 18
@@ -27,11 +27,11 @@ jobs:
 
       - name: Build release artifacts
         run: |
-          echo ${{ env.KEY_FILE_PATH }}
+          echo ${{ vars.KEY_FILE_PATH }}
           rm -rf /android/build 
           rm -rf /android/app/build
           rm -rf /android/.gradle
-          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ env.KEY_FILE_PATH }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ vars.KEY_FILE_PATH }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Check output files
         run: | 
