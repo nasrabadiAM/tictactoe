@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TERM: term
-      ORG_GRADLE_PROJECT_KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
+      ORG_GRADLE_PROJECT_KEYSTORE_PATH: ${{ vars.KEY_FILE_PATH }}
       ORG_GRADLE_PROJECT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       ORG_GRADLE_PROJECT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       ORG_GRADLE_PROJECT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
