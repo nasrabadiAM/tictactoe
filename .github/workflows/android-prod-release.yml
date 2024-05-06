@@ -27,10 +27,11 @@ jobs:
 
       - name: Build release artifacts
         run: |
+          echo ${{ env.KEY_FILE_PATH }}
           rm -rf /android/build 
           rm -rf /android/app/build
           rm -rf /android/.gradle
-          ./gradlew --no-daemon app:bundleRelease app:assembleRelease
+          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ env.KEY_FILE_PATH }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Check output files
         run: | 
