@@ -30,7 +30,7 @@ jobs:
 
       - name: Clean secrets
         run: |
-          rm -f release/release.jks
+          rm -f ${{ secrets.KEYSTORE_PATH }}
 
       - name: Upload Release Build to Artifacts
         uses: actions/upload-artifact@v4
