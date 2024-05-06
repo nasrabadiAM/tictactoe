@@ -27,6 +27,7 @@ tasks.register<Detekt>("detektAll") {
 
 allprojects {
     apply { from(file("$rootDir/gradle/config.gradle")) }
+    apply { from(file("$rootDir/gradle/version.gradle")) }
 }
 
 dependencies {

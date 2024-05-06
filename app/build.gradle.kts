@@ -26,7 +26,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("$rootDir/release/release.jks")
+            storeFile = file("${project.properties["KEYSTORE_PATH"]}")
             storePassword = "${project.properties["KEYSTORE_PASSWORD"]}"
             keyAlias = "${project.properties["KEY_ALIAS"]}"
             keyPassword = "${project.properties["KEY_PASSWORD"]}"
