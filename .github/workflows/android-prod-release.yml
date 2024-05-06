@@ -28,15 +28,21 @@ jobs:
       - name: Build release artifacts
         run: ./gradlew --no-daemon app:bundleRelease app:assembleRelease
 
+      - name: Check output files
+        run: | 
+          ls app/build/outputs/apk/release/
+          ls app/build/outputs/bundle/release/
+
       - name: Clean secrets
         run: |
           rm -f ${{ secrets.KEYSTORE_PATH }}
+          ls ./release
 
       - name: Upload Release Build to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-artifacts
-          paths: |
+          path: |
             app/build/outputs/apk/release/
             app/build/outputs/bundle/release/
 
