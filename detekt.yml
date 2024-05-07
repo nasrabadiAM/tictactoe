@@ -71,7 +71,7 @@ complexity:
     threshold: 4
   StringLiteralDuplication:
     active: true
-    excludes: [ "**/test/**","**/androidTest/**","**/*.Test.kt","**/*.Spec.kt","**/*.Spek.kt" ]
+    excludes: [ "**/test/**","**/androidTest/**","**/*.Test.kt","**/*.Spec.kt","**/*.Spek.kt","**/*.gradle.kts" ]
     threshold: 2
     ignoreAnnotation: true
     excludeStringsWithLessThan5Characters: false

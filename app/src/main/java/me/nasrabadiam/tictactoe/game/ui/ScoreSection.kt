@@ -25,14 +25,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import me.nasrabadiam.tictactoe.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.model.Player.O
-import me.nasrabadiam.tictactoe.game.model.Player.X
 import kotlin.math.max
 
 @Composable
@@ -45,8 +41,8 @@ internal fun ScoresSection(
         val cellColor = MaterialTheme.colorScheme.onSecondaryContainer
         ScoreContainer(
             score = scores.xScore,
-            isTurnEnable = currentPlayer == X,
-            player = X,
+            isTurnEnable = currentPlayer == Player.X,
+            player = Player.X,
             playerIcon = {
                 XCell(
                     modifier = Modifier
@@ -58,8 +54,8 @@ internal fun ScoresSection(
         )
         ScoreContainer(
             score = scores.oScore,
-            player = O,
-            isTurnEnable = currentPlayer == O,
+            player = Player.O,
+            isTurnEnable = currentPlayer == Player.O,
             playerIcon = {
                 OCell(
                     modifier = Modifier
@@ -136,7 +132,7 @@ private fun ScoresCoordinatorRow(
         ) {
             var xPosition = startPaddingPx
 
-            placeables.forEachIndexed { index, placeable ->
+            placeables.forEachIndexed { _, placeable ->
                 placeable.placeRelative(x = xPosition, y = topPaddingPx)
                 val space = calculateSpaceWidth(
                     outerConstraints, itemCounts, itemWidth, startPaddingPx, endPaddingPx
@@ -293,10 +289,7 @@ private fun ScoreText(score: Int, modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Preview(showSystemUi = true, device = Devices.TABLET)
 @Composable
-fun ScoreSectionPreview(
-    @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: GameWindowSizeClass
-
-) {
+fun ScoreSectionPreview() {
     ScoresSection(
         scores = ScoresState(1, 2, 3),
         currentPlayer = Player.X
