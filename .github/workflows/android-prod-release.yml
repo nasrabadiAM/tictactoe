@@ -44,8 +44,10 @@ jobs:
           echo ${{ vars.KEY_FILE_PATH }}
           echo "KEY_FILE_PATH_JKS:"
           echo ${{ vars.KEY_FILE_PATH_JKS }}
-          FILE_PATH=$PWD + ${{ vars.KEY_FILE_PATH }}
-          echo "FILE_PATH=$FILE_PATH"
+          echo "GITHUB_WORKSPACE:"
+          echo ${GITHUB_WORKSPACE}
+          echo "absolut path:"
+          echo ${{ github.workspace }} + ${{ vars.KEY_FILE_PATH }}
           echo "ls app"
           ls ./app
           echo "ls ./release"
