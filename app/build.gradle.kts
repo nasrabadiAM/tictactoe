@@ -24,15 +24,6 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file("${project.properties["KEYSTORE_PATH"]}")
-            storePassword = "${project.properties["KEYSTORE_PASSWORD"]}"
-            keyAlias = "${project.properties["KEY_ALIAS"]}"
-            keyPassword = "${project.properties["KEY_PASSWORD"]}"
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -41,7 +32,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfigs.getByName("release")
+        }
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {

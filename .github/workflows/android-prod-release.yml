@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TERM: term
-      ORG_GRADLE_PROJECT_KEYSTORE_PATH: ${{ vars.KEY_FILE_PATH }}
-      ORG_GRADLE_PROJECT_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      ORG_GRADLE_PROJECT_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      ORG_GRADLE_PROJECT_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_FILE_PATH: ${{ vars.KEY_FILE_PATH }}
+      KEYSTORE_PATH: ${{ vars.KEY_FILE_PATH }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEYSTORE_ENCRYPT_KEY: ${{ secrets.KEYSTORE_ENCRYPT_KEY }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK 18
@@ -24,20 +24,33 @@ jobs:
 
       - name: Decrypt secrets
         run: |
-          mkdir ./app/release
-          gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH }} release/release.gpg
+          echo "KEYSTORE_PATH"
+          echo ${{ env.KEYSTORE_PATH }}
+          gpg --batch --yes --quiet --decrypt --passphrase=${{ env.KEYSTORE_ENCRYPT_KEY }} --output ${{ env.KEYSTORE_PATH }} release/release.gpg
+          echo "./release"
+          ls ./release
+          echo "./app"
+          ls ./app
+          echo "ls ./"
+          ls ./
 
       - name: Build release artifacts
         run: |
-          echo ${{ vars.KEY_FILE_PATH }}
-          echo ${{ vars.KEY_FILE_PATH_JKS }}
+          echo "KEY_FILE_PATH"
+          echo ${{ env.KEY_FILE_PATH }}
+          echo "app"
+          ls ./app
+          echo "./app/release"
+          ls ./app/release
+          echo "./release"
+          ls ./release
           rm -rf /android/build 
           rm -rf /android/app/build
           rm -rf /android/.gradle
           ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ vars.KEY_FILE_PATH_JKS }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Check output files
-        run: | 
+        run: |
           ls app/build/outputs/apk/release/
           ls app/build/outputs/bundle/release/
 
