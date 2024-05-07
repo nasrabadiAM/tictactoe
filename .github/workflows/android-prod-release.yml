@@ -1,4 +1,8 @@
 name: Android Production Release
+
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -7,12 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      TERM: term
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEYSTORE_ENCRYPT_KEY: ${{ secrets.KEYSTORE_ENCRYPT_KEY }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK 18
@@ -23,46 +21,15 @@ jobs:
 
       - name: Decrypt secrets
         run: |
-          echo "KEY_FILE_PATH:"
-          echo ${{ vars.KEY_FILE_PATH }}
-          echo "KEY_FILE_PATH_JKS:"
-          echo ${{ vars.KEY_FILE_PATH_JKS }}
           gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH }} release/release.gpg
-          echo "ls ./release"
-          ls ./release
-          echo "ls ./app"
-          ls ./app
-          echo "ls ./"
-          ls ./
 
       - name: Build release artifacts
         run: |
-          echo "KEY_FILE_PATH:"
-          echo ${{ vars.KEY_FILE_PATH }}
-          echo "KEY_FILE_PATH_JKS:"
-          echo ${{ vars.KEY_FILE_PATH_JKS }}
-          echo "GITHUB_WORKSPACE:"
-          echo ${GITHUB_WORKSPACE}
-          echo "absolut path:"
-          echo ${{ github.workspace }}${{ vars.KEY_FILE_PATH_JKS }}
-          echo "ls app"
-          ls ./app
-          echo "ls ./release"
-          ls ./release
-          rm -rf /android/build 
-          rm -rf /android/app/build
-          rm -rf /android/.gradle
           ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ github.workspace }}${{ vars.KEY_FILE_PATH_JKS }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-
-      - name: Check output files
-        run: |
-          ls app/build/outputs/apk/release/
-          ls app/build/outputs/bundle/release/
 
       - name: Clean secrets
         run: |
           rm -f ${{ vars.KEY_FILE_PATH }}
-          ls ./release
 
       - name: Upload Release Build to Artifacts
         uses: actions/upload-artifact@v4
