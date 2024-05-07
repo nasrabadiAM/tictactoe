@@ -36,7 +36,7 @@ jobs:
       - name: Build release artifacts
         run: |
           echo "KEY_FILE_PATH"
-          echo ${{ env.KEY_FILE_PATH }}
+          echo ${{ vars.KEY_FILE_PATH }}
           echo "app"
           ls ./app
           echo "./release"
@@ -44,7 +44,7 @@ jobs:
           rm -rf /android/build 
           rm -rf /android/app/build
           rm -rf /android/.gradle
-          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ vars.KEY_FILE_PATH_JKS }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ vars.KEY_FILE_PATH }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Check output files
         run: |
