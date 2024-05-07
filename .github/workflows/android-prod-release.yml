@@ -27,7 +27,7 @@ jobs:
           echo ${{ vars.KEY_FILE_PATH }}
           echo "KEY_FILE_PATH_JKS"
           echo ${{ vars.KEY_FILE_PATH_JKS }}
-          mkdir -p ${{ vars.KEY_FILE_PATH_JKS }}
+          mkdir -p ./app/release/
           gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH_JKS }} release/release.gpg
           echo "./release"
           ls ./release
