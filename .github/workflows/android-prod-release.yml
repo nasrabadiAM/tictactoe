@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TERM: term
-      KEYSTORE_PATH: ${{ vars.KEY_FILE_PATH }}
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -24,9 +23,9 @@ jobs:
 
       - name: Decrypt secrets
         run: |
-          echo "KEYSTORE_PATH"
-          echo ${{ env.KEYSTORE_PATH }}
-          gpg --batch --yes --quiet --decrypt --passphrase=${{ env.KEYSTORE_ENCRYPT_KEY }} --output ${{ env.KEYSTORE_PATH }} release/release.gpg
+          echo "KEY_FILE_PATH"
+          echo ${{ vars.KEY_FILE_PATH }}
+          gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH }} release/release.gpg
           echo "./release"
           ls ./release
           echo "./app"
@@ -40,8 +39,6 @@ jobs:
           echo ${{ env.KEY_FILE_PATH }}
           echo "app"
           ls ./app
-          echo "./app/release"
-          ls ./app/release
           echo "./release"
           ls ./release
           rm -rf /android/build 
