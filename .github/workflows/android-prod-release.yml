@@ -23,35 +23,37 @@ jobs:
 
       - name: Decrypt secrets
         run: |
-          echo "KEY_FILE_PATH"
+          echo "KEY_FILE_PATH:"
           echo ${{ vars.KEY_FILE_PATH }}
-          echo "KEY_FILE_PATH_JKS"
+          echo "KEY_FILE_PATH_JKS:"
           echo ${{ vars.KEY_FILE_PATH_JKS }}
           mkdir -p ./app/release/
           gpg --batch --yes --quiet --decrypt --passphrase=${{ secrets.KEYSTORE_ENCRYPT_KEY }} --output ${{ vars.KEY_FILE_PATH_JKS }} release/release.gpg
-          echo "./release"
+          echo "ls ./release"
           ls ./release
-          echo "./app/release"
+          echo "ls ./app/release"
           ls ./app/release
-          echo "./app"
+          echo "ls ./app"
           ls ./app
           echo "ls ./"
           ls ./
 
       - name: Build release artifacts
         run: |
-          echo "KEY_FILE_PATH"
+          echo "KEY_FILE_PATH:"
           echo ${{ vars.KEY_FILE_PATH }}
-          echo "KEY_FILE_PATH_JKS"
+          echo "KEY_FILE_PATH_JKS:"
           echo ${{ vars.KEY_FILE_PATH_JKS }}
-          echo "app"
+          FILE_PATH=$PWD + ${{ vars.KEY_FILE_PATH }}
+          echo "FILE_PATH=$FILE_PATH"
+          echo "ls app"
           ls ./app
-          echo "./release"
+          echo "ls ./release"
           ls ./release
           rm -rf /android/build 
           rm -rf /android/app/build
           rm -rf /android/.gradle
-          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=${{ vars.KEY_FILE_PATH }} -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          ./gradlew --no-daemon app:bundleRelease app:assembleRelease -Pandroid.injected.signing.store.file=$FILE_PATH -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
       - name: Check output files
         run: |
