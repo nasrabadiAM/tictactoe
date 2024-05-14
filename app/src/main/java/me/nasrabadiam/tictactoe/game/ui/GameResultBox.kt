@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -151,7 +152,8 @@ internal fun GameResultBox(
     ) {
         Column(
             modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
 
             Box(modifier = Modifier
@@ -161,20 +163,23 @@ internal fun GameResultBox(
                     val placeable = measurable.measure(
                         constraints.copy(
                             maxWidth = minDimension,
+                            minWidth = minDimension,
                             maxHeight = minDimension,
                             minHeight = minDimension,
-                            minWidth = minDimension
                         )
                     )
-                    layout(minDimension, minDimension) { placeable.place(x = 0, y = 0) }
+                    layout(minDimension, minDimension) {
+                        val topOffset = placeable.height * FIXED_OFFSET_FACTOR
+                        placeable.place(x = 0, y = topOffset.toInt())
+                    }
                 }
             ) {
                 val cellColor = MaterialTheme.colorScheme.onSurface
                 when (gameResult) {
                     Draw -> {
-                        Row {
-                            XCell(cellColor = cellColor)
-                            OCell(cellColor = cellColor)
+                        Row(Modifier) {
+                            OCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
+                            XCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
                         }
                     }
 
