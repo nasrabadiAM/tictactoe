@@ -22,19 +22,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import me.nasrabadiam.tictactoe.GameWindowSizeClass
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.EXPANDED
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.NORMAL
+import me.nasrabadiam.tictactoe.ui.WindowScreenSizeDataProvider
 import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
@@ -203,6 +205,7 @@ private fun CompactGameScreen(
 
             Button(
                 modifier = Modifier
+                    .semantics { contentDescription = RESTART_BUTTON_TEXT }
                     .padding(horizontal = 24.dp)
                     .weight(1f)
                     .widthIn(min = 124.dp, max = 210.dp),
@@ -217,6 +220,7 @@ private fun CompactGameScreen(
             }
             Button(
                 modifier = Modifier
+                    .semantics { contentDescription = COMING_SOON_BUTTON_TEXT }
                     .padding(horizontal = 24.dp)
                     .weight(1f)
                     .widthIn(min = 124.dp, max = 210.dp),
@@ -305,12 +309,4 @@ fun MainScreenPreview(
     MainScreenContent(
         state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
     )
-}
-
-class WindowScreenSizeDataProvider : PreviewParameterProvider<GameWindowSizeClass> {
-
-    override val values: Sequence<GameWindowSizeClass>
-        get() {
-            return sequenceOf(NORMAL, COMPACT, EXPANDED)
-        }
 }

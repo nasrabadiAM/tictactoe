@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game
 
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.hasText
@@ -8,10 +8,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
+import me.nasrabadiam.tictactoe.clickOnCell
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
 import org.junit.Rule
 import org.junit.Test
 

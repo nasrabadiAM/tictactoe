@@ -1,4 +1,4 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.game
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
@@ -6,11 +6,15 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.SavedStateHandle
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameViewModel
+import me.nasrabadiam.tictactoe.DRAW_RESULT_STRING
+import me.nasrabadiam.tictactoe.WINNER_CLICKABLE_CONTENT_DESCRIPTION
+import me.nasrabadiam.tictactoe.WINNER_RESULT_STRING
+import me.nasrabadiam.tictactoe.assertPlayersCountEquals
+import me.nasrabadiam.tictactoe.clickOnCell
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameViewModel
+import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
 import org.junit.Rule
 import org.junit.Test
 
