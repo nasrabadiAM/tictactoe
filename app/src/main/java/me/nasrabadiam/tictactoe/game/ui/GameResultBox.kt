@@ -157,6 +157,7 @@ internal fun GameResultBox(
         ) {
 
             Box(modifier = Modifier
+                .padding(16.dp)
                 .layout { measurable, constraints ->
                     // Determine the minimum dimension for square layout
                     val minDimension = minOf(constraints.maxWidth, constraints.maxHeight) / 2

@@ -1,5 +1,8 @@
 package me.nasrabadiam.tictactoe.game.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -48,10 +51,15 @@ internal fun GameCell(
             .clickable { onClick.invoke(cell.index) }
             .semantics { testTag = "cell_${cell.index}_${cell.value}" },
     ) {
-        when (cell.value) {
-            X -> XCell()
-            O -> OCell()
-            else -> {}
+        AnimatedVisibility(
+            visible = cell.value != null,
+            enter = fadeIn() + scaleIn()
+        ) {
+            if (cell.value == X) {
+                XCell()
+            } else if (cell.value == O) {
+                OCell()
+            }
         }
     }
 }
