@@ -1,18 +1,17 @@
 package me.nasrabadiam.tictactoe
 
-import android.app.Activity
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
+import me.nasrabadiam.tictactoe.home.HomeScreen
+import me.nasrabadiam.tictactoe.ui.getWindowSizeClass
 import me.tatarka.inject.annotations.Inject
 
 typealias App = @Composable () -> Unit
@@ -22,50 +21,24 @@ typealias App = @Composable () -> Unit
 fun App(gameViewModel: (SavedStateHandle) -> GameViewModel) {
     val windowSizeClass = getWindowSizeClass()
     val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
-    GameScreen(viewModel, windowSizeClass)
-}
 
-@Composable
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-private fun getWindowSizeClass(): GameWindowSizeClass {
-    val activity = LocalContext.current as Activity
-
-    val windowSizeClass = calculateWindowSizeClass(activity)
-
-    val gameWindowSizeClass = when {
-        windowSizeClass.isSquareScreen() -> {
-            GameWindowSizeClass.COMPACT
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = HOME_SCREEN_ROUTE) {
+        composable(HOME_SCREEN_ROUTE) {
+            HomeScreen(
+                windowSizeClass = windowSizeClass,
+                homeEvent = { navController.navigateToGameScreen() }
+            )
         }
-
-        windowSizeClass.isVerticalScreen() -> {
-            GameWindowSizeClass.NORMAL
-        }
-
-        else -> {
-            GameWindowSizeClass.EXPANDED
+        composable(GAME_SCREEN_ROUTE) {
+            GameScreen(viewModel, windowSizeClass)
         }
     }
-    return gameWindowSizeClass
 }
 
-private fun WindowSizeClass.isSquareScreen(): Boolean {
-    val isCompact = heightSizeClass == WindowHeightSizeClass.Compact &&
-        widthSizeClass == WindowWidthSizeClass.Compact
-    val isMedium = heightSizeClass == WindowHeightSizeClass.Medium &&
-        widthSizeClass == WindowWidthSizeClass.Medium
-    val isExpanded = widthSizeClass == WindowWidthSizeClass.Expanded &&
-        heightSizeClass == WindowHeightSizeClass.Expanded
-    return isCompact || isMedium || isExpanded
-}
+private const val GAME_SCREEN_ROUTE = "game_screen"
+private const val HOME_SCREEN_ROUTE = "home"
 
-private fun WindowSizeClass.isVerticalScreen(): Boolean {
-    return (heightSizeClass == WindowHeightSizeClass.Expanded &&
-        widthSizeClass == WindowWidthSizeClass.Medium ||
-        widthSizeClass == WindowWidthSizeClass.Compact) ||
-        (heightSizeClass == WindowHeightSizeClass.Medium &&
-            widthSizeClass == WindowWidthSizeClass.Compact)
-}
-
-enum class GameWindowSizeClass {
-    NORMAL, EXPANDED, COMPACT
+internal fun NavController.navigateToGameScreen() {
+    navigate(GAME_SCREEN_ROUTE)
 }
