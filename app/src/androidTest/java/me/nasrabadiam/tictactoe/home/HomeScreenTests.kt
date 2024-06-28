@@ -54,7 +54,10 @@ class HomeScreenTests {
         }
         setContent { HomeScreen(homeEvent, windowClass) }
         onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).performClick()
-        assert(clicked) { "when clicked on play with a friend button, home event of play with a friend should call, but it doesn't called." }
+        assert(clicked) {
+            "when clicked on play with a friend button," +
+                " home event of play with a friend should call, but it doesn't called."
+        }
     }
 
     companion object {
