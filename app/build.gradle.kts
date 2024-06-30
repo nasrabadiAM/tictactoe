@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.coroutines)
     implementation(libs.androidx.window)
     implementation(libs.materialWindow)
+    implementation(libs.navigation)
 
     ksp(libs.kotlin.inject.ksp)
     implementation(libs.kotlin.inject.runtime)
