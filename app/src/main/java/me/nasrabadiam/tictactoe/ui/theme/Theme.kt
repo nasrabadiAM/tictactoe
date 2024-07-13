@@ -14,6 +14,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import me.nasrabadiam.resources.Locale
+import me.nasrabadiam.resources.LocaleManager
+import me.nasrabadiam.tictactoe.strings.ProvideAppStrings
+import me.nasrabadiam.tictactoe.strings.rememberAppStrings
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -39,6 +43,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun TicTacToeTheme(
+    currentLocale: Locale = LocaleManager.currentLocale,
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -63,9 +68,14 @@ fun TicTacToeTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val currentLanguage = rememberAppStrings().apply {
+        languageTag = currentLocale
+    }
+    ProvideAppStrings(currentLanguage) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
