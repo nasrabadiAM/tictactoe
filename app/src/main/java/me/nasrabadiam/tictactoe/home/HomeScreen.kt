@@ -2,7 +2,6 @@ package me.nasrabadiam.tictactoe.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.R
 import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
-import me.nasrabadiam.resources.LocaleManager
-import me.nasrabadiam.resources.Locales
 import me.nasrabadiam.tictactoe.strings.appStrings
 import me.nasrabadiam.tictactoe.strings.getAppStrings
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass

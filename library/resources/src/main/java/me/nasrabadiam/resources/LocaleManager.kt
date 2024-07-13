@@ -22,8 +22,7 @@ public fun getLocale(): Locale {
 }
 
 public enum class Locales {
-    EN,
-    FA;
+    EN, FA
 }
 
 public fun Locales.getName(): String {

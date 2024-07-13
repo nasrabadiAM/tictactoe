@@ -40,7 +40,7 @@ public fun <T> ProvideStrings(
 
 private fun LayoutDirection.toComposeLayoutDirection(): ComposeLayoutDirection {
     return when (this) {
-        LayoutDirection.Ltr -> ComposeLayoutDirection.Ltr
-        LayoutDirection.Rtl -> ComposeLayoutDirection.Rtl
+        LayoutDirection.LTR -> ComposeLayoutDirection.Ltr
+        LayoutDirection.RTL -> ComposeLayoutDirection.Rtl
     }
 }

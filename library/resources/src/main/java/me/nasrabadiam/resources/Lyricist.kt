@@ -71,5 +71,5 @@ public class LyricistException internal constructor(
 ) : RuntimeException()
 
 public enum class LayoutDirection {
-    Ltr, Rtl
+    LTR, RTL
 }

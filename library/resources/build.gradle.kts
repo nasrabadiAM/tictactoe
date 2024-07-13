@@ -9,7 +9,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-dependencies{
+dependencies {
     implementation(libs.coroutines)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)

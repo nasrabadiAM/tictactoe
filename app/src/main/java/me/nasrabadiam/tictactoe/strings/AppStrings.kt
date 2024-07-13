@@ -18,8 +18,8 @@ internal val AppStrings: Map<LanguageTag, Strings> = mapOf(
 )
 
 internal val AppStringsLayoutDirections: Map<LanguageTag, LayoutDirection> = mapOf(
-    Locales.EN.getName() to LayoutDirection.Ltr,
-    Locales.FA.getName() to LayoutDirection.Rtl,
+    Locales.EN.getName() to LayoutDirection.LTR,
+    Locales.FA.getName() to LayoutDirection.RTL,
 )
 
 internal val LocalStrings: ProvidableCompositionLocal<Strings> =
