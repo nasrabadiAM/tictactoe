@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.androidx.window)
     implementation(libs.materialWindow)
     implementation(libs.navigation)
+    implementation(project(":library:resources"))
 
     ksp(libs.kotlin.inject.ksp)
     implementation(libs.kotlin.inject.runtime)
