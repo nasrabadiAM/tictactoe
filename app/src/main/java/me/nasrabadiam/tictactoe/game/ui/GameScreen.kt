@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
+import me.nasrabadiam.tictactoe.strings.appStrings
+import me.nasrabadiam.tictactoe.strings.getAppStrings
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.EXPANDED
@@ -205,7 +207,7 @@ private fun CompactGameScreen(
 
             Button(
                 modifier = Modifier
-                    .semantics { contentDescription = RESTART_BUTTON_TEXT }
+                    .semantics { contentDescription = getAppStrings().restart }
                     .padding(horizontal = 24.dp)
                     .weight(1f)
                     .widthIn(min = 124.dp, max = 210.dp),
@@ -216,20 +218,20 @@ private fun CompactGameScreen(
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(text = RESTART_BUTTON_TEXT)
+                Text(text = appStrings.restart)
             }
             Button(
                 modifier = Modifier
-                    .semantics { contentDescription = COMING_SOON_BUTTON_TEXT }
+                    .semantics { contentDescription = getAppStrings().comingSoon }
                     .padding(horizontal = 24.dp)
                     .weight(1f)
                     .widthIn(min = 124.dp, max = 210.dp),
                 enabled = false,
                 onClick = { sendEvent(RulesClicked) }
             ) {
-                Text(text = GAME_RULE_BUTTON_TEXT)
+                Text(text = appStrings.gameRules)
                 Text(
-                    text = COMING_SOON_BUTTON_TEXT,
+                    text = appStrings.comingSoon,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -274,7 +276,7 @@ private fun ActionButtons(
         Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = RESTART_BUTTON_TEXT,
+            text = appStrings.restart,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
@@ -287,17 +289,13 @@ private fun ActionButtons(
         enabled = false,
         onClick = onRulesClicked
     ) {
-        Text(text = GAME_RULE_BUTTON_TEXT)
+        Text(text = appStrings.gameRules)
         Text(
-            text = COMING_SOON_BUTTON_TEXT,
+            text = appStrings.comingSoon,
             style = MaterialTheme.typography.labelSmall
         )
     }
 }
-
-private const val RESTART_BUTTON_TEXT = "Restart"
-private const val GAME_RULE_BUTTON_TEXT = "Game Rules"
-private const val COMING_SOON_BUTTON_TEXT = "(Coming Soon)"
 
 @Preview(showBackground = true)
 @Preview(showSystemUi = true, device = Devices.TABLET)
