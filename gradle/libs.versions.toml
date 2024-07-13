@@ -53,6 +53,7 @@ materialWindow = { group = "androidx.compose.material3", name = "material3-windo
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+javaLibrary = { id = "java-library" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }

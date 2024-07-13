@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.parcelize) apply false
     alias(libs.plugins.sentry) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kotlinJvm) apply false
 }
 
 tasks.register<Detekt>("detektAll") {
