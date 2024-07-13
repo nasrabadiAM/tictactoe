@@ -1,17 +1,17 @@
 [versions]
-agp = "8.2.2"
-kotlin = "1.9.0"
-kotlinJvm = "1.9.0"
-core-ktx = "1.12.0"
+agp = "8.5.1"
+kotlin = "2.0.0"
+kotlinJvm = "2.0.0"
+core-ktx = "1.13.1"
 junit = "4.13.2"
-androidx-test-ext-junit = "1.1.5"
-espresso-core = "3.5.1"
-androidx-lifecycle = "2.7.0"
-activity-compose = "1.8.2"
-androidx-window = "1.2.0"
-compose-bom = "2024.02.02"
-coroutines = "1.7.3"
-ksp = "1.9.0-1.0.13"
+androidx-test-ext-junit = "1.2.1"
+espresso-core = "3.6.1"
+androidx-lifecycle = "2.8.3"
+activity-compose = "1.9.0"
+androidx-window = "1.3.0"
+compose-bom = "2024.06.00"
+coroutines = "1.8.1"
+ksp = "2.0.0-1.0.21"
 kotlin-inject = "0.6.3"
 mockk = "1.13.10"
 detekt = "1.23.6"
@@ -54,6 +54,7 @@ materialWindow = { group = "androidx.compose.material3", name = "material3-windo
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

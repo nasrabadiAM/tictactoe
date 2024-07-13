@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.parcelize) apply false
     alias(libs.plugins.sentry) apply false
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 tasks.register<Detekt>("detektAll") {
