@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -21,7 +22,7 @@ import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.getCellTestTag
-import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
+import me.nasrabadiam.tictactoe.ui.getWindowSizeClass
 import org.junit.Rule
 import org.junit.Test
 
@@ -32,11 +33,19 @@ class GameTests {
 
     private val gameUseCase = GameUseCase()
     private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
-    private val windowClass = COMPACT
+
+    private fun ComposeContentTestRule.setContent(
+        viewModel: GameViewModel = gameViewModel
+    ) {
+        setContent {
+            val windowSizeClass = getWindowSizeClass()
+            GameScreen(viewModel, windowSizeClass)
+        }
+    }
 
     @Test
     fun displayGameCells(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+        setContent()
         for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
             onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
         }
@@ -44,14 +53,14 @@ class GameTests {
 
     @Test
     fun displayRestartButton(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+        setContent()
 
         onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
     }
 
     @Test
     fun displayReplayButtonWhenOneGameFinished(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+        setContent()
 
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
 
@@ -74,7 +83,7 @@ class GameTests {
 
     @Test
     fun restartGameBoardWhenClickOnReplayButton(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+        setContent()
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -101,7 +110,7 @@ class GameTests {
 
     @Test
     fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+        setContent()
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

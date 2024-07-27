@@ -3,13 +3,14 @@ package me.nasrabadiam.tictactoe.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
@@ -33,8 +34,11 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import me.nasrabadiam.tictactoe.R
 import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
+import me.nasrabadiam.tictactoe.strings.appStrings
+import me.nasrabadiam.tictactoe.strings.getAppStrings
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.EXPANDED
@@ -120,7 +124,7 @@ private fun HorizontalHomeScreen(
 
 @Composable
 private fun AppLogo(modifier: Modifier = Modifier) {
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .semantics { contentDescription = "App Logo" }
             .padding(60.dp)
@@ -128,10 +132,14 @@ private fun AppLogo(modifier: Modifier = Modifier) {
             .scale(1.5f)
             .background(MaterialTheme.colorScheme.primary)
     ) {
+        val minSize = min(maxHeight, maxWidth) * 4 / 5
+
         Image(
-            modifier = Modifier.semantics(mergeDescendants = true) {},
+            modifier = Modifier
+                .size(minSize)
+                .semantics(mergeDescendants = true) {},
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentScale = ContentScale.FillWidth,
+            contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
             contentDescription = null
         )
@@ -146,7 +154,7 @@ private fun GameButtons(
 ) {
     Button(
         modifier = modifier
-            .semantics { contentDescription = PLAY_WITH_A_FRIEND_TEXT }
+            .semantics { contentDescription = getAppStrings().playWithAFriend }
             .widthIn(220.dp),
         colors = ButtonDefaults.buttonColors().copy(
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -164,13 +172,16 @@ private fun GameButtons(
         )
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_WITH_A_FRIEND_TEXT
+            text = appStrings.playWithAFriend
         )
     }
     buttonsSpace()
     Button(
         modifier = modifier
-            .semantics { contentDescription = PLAY_SOLO_TEXT + COMING_SOON_TEXT }
+            .semantics {
+                val playSoloContentDesc = getAppStrings().playSolo + getAppStrings().comingSoon
+                contentDescription = playSoloContentDesc
+            }
             .widthIn(min = 220.dp),
         onClick = { TODO("Not Implemented yet!") },
         enabled = false
@@ -182,19 +193,15 @@ private fun GameButtons(
         )
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_SOLO_TEXT
+            text = appStrings.playSolo
         )
         Text(
             modifier = Modifier.padding(start = 2.dp),
-            text = COMING_SOON_TEXT,
+            text = appStrings.comingSoon,
             style = MaterialTheme.typography.labelSmall
         )
     }
 }
-
-private const val PLAY_SOLO_TEXT = "Play solo"
-private const val COMING_SOON_TEXT = "(coming soon)"
-private const val PLAY_WITH_A_FRIEND_TEXT = "Play with a friend"
 
 @Preview(showBackground = true)
 @Preview(showSystemUi = true, device = Devices.TABLET)

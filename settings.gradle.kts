@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TicTacToe"
 include(":app")
+include(":library:resources")

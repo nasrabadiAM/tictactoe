@@ -2,10 +2,11 @@ package me.nasrabadiam.tictactoe.home
 
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
-import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.NORMAL
+import me.nasrabadiam.tictactoe.ui.getWindowSizeClass
 import org.junit.Rule
 import org.junit.Test
 
@@ -14,25 +15,31 @@ class HomeScreenTests {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val windowClass = NORMAL
-    private val homeEvent: (HomeEvent) -> Unit = { }
+    private fun ComposeContentTestRule.setContent(
+        homeEvent: (HomeEvent) -> Unit = {}
+    ) {
+        setContent {
+            val windowSizeClass = getWindowSizeClass()
+            HomeScreen(homeEvent, windowSizeClass)
+        }
+    }
 
     @Test
     fun whenOpenHomeScreenShouldShowAppIcon(): Unit = with(composeRule) {
-        setContent { HomeScreen(homeEvent, windowClass) }
+        setContent()
 
         onNode(hasContentDescription("App Logo")).assertExists()
     }
 
     @Test
     fun whenOpenHomeScreenShouldShowPlayWithAFriendButton(): Unit = with(composeRule) {
-        setContent { HomeScreen(homeEvent, windowClass) }
+        setContent()
         onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).assertExists()
     }
 
     @Test
     fun whenOpenHomeScreenShouldShowPlaySoloButtonDisabled(): Unit = with(composeRule) {
-        setContent { HomeScreen(homeEvent, windowClass) }
+        setContent()
         val soloButton = onNode(hasContentDescription(PLAY_SOLO_BUTTON_TEXT))
         soloButton.assertExists()
         soloButton.assertIsNotEnabled()
@@ -40,7 +47,7 @@ class HomeScreenTests {
 
     @Test
     fun whenClickedOnPlaySoloShouldDoNothing(): Unit = with(composeRule) {
-        setContent { HomeScreen(homeEvent, windowClass) }
+        setContent()
         val playSoloButton = onNode(hasContentDescription(PLAY_SOLO_BUTTON_TEXT))
         playSoloButton.performClick()
         playSoloButton.assertExists()
@@ -52,7 +59,7 @@ class HomeScreenTests {
         val homeEvent: (HomeEvent) -> Unit = {
             if (it == PlayWithAFriend) clicked = true
         }
-        setContent { HomeScreen(homeEvent, windowClass) }
+        setContent(homeEvent)
         onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).performClick()
         assert(clicked) {
             "when clicked on play with a friend button," +
