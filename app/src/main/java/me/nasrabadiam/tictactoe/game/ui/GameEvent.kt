@@ -5,4 +5,5 @@ sealed class GameEvent {
     data object RestartClicked : GameEvent()
     data object ReplayClicked : GameEvent()
     data object RulesClicked : GameEvent()
+    data object AdsShown : GameEvent()
 }

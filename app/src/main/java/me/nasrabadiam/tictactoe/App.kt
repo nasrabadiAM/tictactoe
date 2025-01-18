@@ -21,13 +21,16 @@ typealias App = @Composable () -> Unit
 
 @Inject
 @Composable
-fun App(gameViewModel: (SavedStateHandle) -> GameViewModel) {
+fun App(
+    gameViewModel: (SavedStateHandle) -> GameViewModel,
+    adsViewModel: () -> AdsViewModel,
+) {
     val windowSizeClass = getWindowSizeClass()
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = HOME_SCREEN_ROUTE) {
         homeScreen(windowSizeClass, navController)
-        gameScreen(gameViewModel, windowSizeClass)
+        gameScreen(gameViewModel, adsViewModel, windowSizeClass)
     }
 }
 
@@ -45,11 +48,13 @@ private fun NavGraphBuilder.homeScreen(
 
 private fun NavGraphBuilder.gameScreen(
     gameViewModel: (SavedStateHandle) -> GameViewModel,
+    adsViewModel: () -> AdsViewModel,
     windowSizeClass: GameWindowSizeClass
 ) {
     composable(GAME_SCREEN_ROUTE) {
         val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
-        GameScreen(viewModel, windowSizeClass)
+        val adViewModel = viewModel { adsViewModel() }
+        GameScreen(viewModel,adViewModel, windowSizeClass)
     }
 }
 

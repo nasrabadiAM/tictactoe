@@ -80,6 +80,8 @@ dependencies {
     ksp(libs.kotlin.inject.ksp)
     implementation(libs.kotlin.inject.runtime)
 
+    implementation(libs.google.ads)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.android)
