@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.AdsShown
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
@@ -26,6 +27,9 @@ class GameViewModel(
     private val _state = MutableStateFlow(fetchGameState())
     val state = _state.asStateFlow()
 
+    private val _showAds = MutableStateFlow(false)
+    val showAds = _showAds.asStateFlow()
+
     init {
         gameUseCase.restoreGameState(fetchGameState())
         observeGameUseCase()
@@ -33,11 +37,28 @@ class GameViewModel(
 
     fun handleEvent(event: GameEvent) {
         when (event) {
+            is AdsShown -> adsShown()
             is CellClicked -> gameUseCase.clickOnCell(event.index)
-            ReplayClicked -> gameUseCase.replayGame()
-            RestartClicked -> gameUseCase.restartGame()
+            ReplayClicked -> {
+                showAds()
+                gameUseCase.replayGame()
+            }
+
+            RestartClicked -> {
+                showAds()
+                gameUseCase.restartGame()
+            }
+
             RulesClicked -> rulesClicked()
         }
+    }
+
+    private fun showAds() {
+        _showAds.update { true }
+    }
+
+    private fun adsShown() {
+        _showAds.update { false }
     }
 
     private fun rulesClicked() {

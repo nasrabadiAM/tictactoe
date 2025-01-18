@@ -19,7 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -29,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import me.nasrabadiam.tictactoe.AdsViewModel
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
+import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
 import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass
@@ -42,13 +48,25 @@ import me.nasrabadiam.tictactoe.ui.theme.TicTacToeTheme
 @Composable
 fun GameScreen(
     gameViewModel: GameViewModel,
+    adsViewModel: AdsViewModel,
     windowSizeClass: GameWindowSizeClass,
 ) {
     TicTacToeTheme {
         val state = gameViewModel.state.collectAsState()
+        val adsFinishState = adsViewModel.continueApp.collectAsState()
+        LaunchedEffect(adsFinishState.value) {
+            if (adsFinishState.value) {
+                gameViewModel.handleEvent(GameEvent.AdsShown)
+            }
+        }
         MainScreenContent(
-            state = state.value,
-            sendEvent = gameViewModel::handleEvent,
+            state = state,
+            sendEvent = {
+                if (it is ReplayClicked || it is RestartClicked) {
+                    adsViewModel.showAd()
+                }
+                gameViewModel.handleEvent(it)
+            },
             windowSizeClass = windowSizeClass,
         )
     }
@@ -56,7 +74,7 @@ fun GameScreen(
 
 @Composable
 private fun MainScreenContent(
-    state: GameState,
+    state: State<GameState>,
     sendEvent: (GameEvent) -> Unit,
     windowSizeClass: GameWindowSizeClass,
     modifier: Modifier = Modifier
@@ -86,7 +104,7 @@ private fun MainScreenContent(
 @Composable
 private fun VerticalGameScreen(
     modifier: Modifier,
-    state: GameState,
+    state: State<GameState>,
     sendEvent: (GameEvent) -> Unit,
 ) {
     Column(
@@ -95,15 +113,15 @@ private fun VerticalGameScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         ScoresSection(
-            scores = state.scores,
-            currentPlayer = state.currentPlayer,
+            scores = state.value.scores,
+            currentPlayer = state.value.currentPlayer,
         )
 
         TicTacToeGameBoard(
-            cellsData = state.cells, onCellClicked = { index ->
+            cellsData = state.value.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
             },
-            gameResult = state.gameResult,
+            gameResult = state.value.gameResult,
             onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
             modifier = Modifier
                 .weight(1f)
@@ -118,7 +136,7 @@ private fun VerticalGameScreen(
 @Composable
 private fun HorizontalGameScreen(
     modifier: Modifier,
-    state: GameState,
+    state: State<GameState>,
     sendEvent: (GameEvent) -> Unit,
 ) {
     Row(
@@ -127,18 +145,18 @@ private fun HorizontalGameScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         ScoresSection(
-            scores = state.scores,
-            currentPlayer = state.currentPlayer,
+            scores = state.value.scores,
+            currentPlayer = state.value.currentPlayer,
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
         )
 
         TicTacToeGameBoard(
-            cellsData = state.cells, onCellClicked = { index ->
+            cellsData = state.value.cells, onCellClicked = { index ->
                 sendEvent(CellClicked(index))
             },
-            gameResult = state.gameResult,
+            gameResult = state.value.gameResult,
             onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
             modifier = Modifier
                 .fillMaxHeight()
@@ -156,7 +174,7 @@ private fun HorizontalGameScreen(
 @Composable
 private fun CompactGameScreen(
     modifier: Modifier,
-    state: GameState,
+    state: State<GameState>,
     sendEvent: (GameEvent) -> Unit,
 ) {
     Column(modifier) {
@@ -164,16 +182,16 @@ private fun CompactGameScreen(
             if (maxWidth > maxHeight) {
                 Row {
                     ScoresSection(
-                        scores = state.scores,
-                        currentPlayer = state.currentPlayer,
+                        scores = state.value.scores,
+                        currentPlayer = state.value.currentPlayer,
                         modifier = Modifier
                             .weight(0.1f)
                     )
                     TicTacToeGameBoard(
-                        cellsData = state.cells, onCellClicked = { index ->
+                        cellsData = state.value.cells, onCellClicked = { index ->
                             sendEvent(CellClicked(index))
                         },
-                        gameResult = state.gameResult,
+                        gameResult = state.value.gameResult,
                         onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
                         modifier = Modifier
                             .weight(1f)
@@ -183,16 +201,16 @@ private fun CompactGameScreen(
             } else {
                 Column {
                     ScoresSection(
-                        scores = state.scores,
-                        currentPlayer = state.currentPlayer,
+                        scores = state.value.scores,
+                        currentPlayer = state.value.currentPlayer,
                         modifier = Modifier
                             .weight(0.1f)
                     )
                     TicTacToeGameBoard(
-                        cellsData = state.cells, onCellClicked = { index ->
+                        cellsData = state.value.cells, onCellClicked = { index ->
                             sendEvent(CellClicked(index))
                         },
-                        gameResult = state.gameResult,
+                        gameResult = state.value.gameResult,
                         onReplayClicked = { sendEvent(GameEvent.ReplayClicked) },
                         modifier = Modifier
                             .weight(1f)
@@ -306,7 +324,8 @@ fun MainScreenPreview(
     @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: GameWindowSizeClass
 
 ) {
+    val state = remember { mutableStateOf(GameState()) }
     MainScreenContent(
-        state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
+        state = state, sendEvent = {}, windowSizeClass = windowSizeClass
     )
 }
