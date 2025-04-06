@@ -63,6 +63,7 @@ android {
 
 dependencies {
 
+    implementation(libs.metrix.attribution)
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)

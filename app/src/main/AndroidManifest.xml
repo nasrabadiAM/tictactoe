@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
     <application
         android:name=".TicTacToeApplication"
         android:allowBackup="true"
@@ -50,8 +52,12 @@
         <meta-data
             android:name="io.sentry.traces.sample-rate"
             android:value="1.0" />
-
-
+        <meta-data
+            android:name="metrix_trackerToken"
+            android:value="gqlrztdplqxzwhe" />
+        <meta-data
+            android:name="metrix_developer_mode"
+            android:value="true" />
     </application>
 
 </manifest>
