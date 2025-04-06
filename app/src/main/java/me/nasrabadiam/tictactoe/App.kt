@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.home.HomeScreen
@@ -35,7 +36,7 @@ private fun NavGraphBuilder.homeScreen(
     windowSizeClass: GameWindowSizeClass,
     navController: NavHostController
 ) {
-    composable(HOME_SCREEN_ROUTE) {
+    composable(route = HOME_SCREEN_ROUTE) {
         HomeScreen(
             windowSizeClass = windowSizeClass,
             homeEvent = { navController.navigateToGameScreen() }
@@ -47,7 +48,10 @@ private fun NavGraphBuilder.gameScreen(
     gameViewModel: (SavedStateHandle) -> GameViewModel,
     windowSizeClass: GameWindowSizeClass
 ) {
-    composable(GAME_SCREEN_ROUTE) {
+    composable(
+        route = GAME_SCREEN_ROUTE,
+        deepLinks = listOf(navDeepLink { uriPattern = "tactrix://start-game" })
+    ) {
         val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
         GameScreen(viewModel, windowSizeClass)
     }

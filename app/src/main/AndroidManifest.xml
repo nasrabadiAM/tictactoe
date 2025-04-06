@@ -23,13 +23,35 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <!-- tactrix:// intents -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="tactrix" />
+                <data android:host="start-game" />
+            </intent-filter>
         </activity>
 
-        <meta-data android:name="io.sentry.dsn" android:value="https://7be9215872686e7ff8f4960cdf50c608@sentry.hamravesh.com/6476" />
-        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true" />
-        <meta-data android:name="io.sentry.attach-screenshot" android:value="true" />
-        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="true" />
-        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://7be9215872686e7ff8f4960cdf50c608@sentry.hamravesh.com/6476" />
+        <meta-data
+            android:name="io.sentry.traces.user-interaction.enable"
+            android:value="true" />
+        <meta-data
+            android:name="io.sentry.attach-screenshot"
+            android:value="true" />
+        <meta-data
+            android:name="io.sentry.attach-view-hierarchy"
+            android:value="true" />
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="1.0" />
+
+
     </application>
 
 </manifest>
