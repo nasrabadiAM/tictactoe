@@ -17,22 +17,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MetrixAttribution.setOnDeeplinkResponseListener(object : OnDeeplinkResponseListener() {
-            override fun launchReceivedDeeplink(deeplink: Uri?): Boolean {
-                // ...
-                return if (shouldMetrixSdkLaunchTheDeeplink(deeplink)) {
-                    true
-                } else {
-                    false
-                }
-            }
-
+        MetrixAttribution.setOnDeeplinkResponseListener(object : OnDeeplinkResponseListener {
             override fun launchReceivedDeeplink(deeplink: Uri): Boolean {
-                return if (shouldMetrixSdkLaunchTheDeeplink(deeplink)) {
+                /*return if (shouldMetrixSdkLaunchTheDeeplink(deeplink)) {
                     true
                 } else {
                     false
-                }            }
+                }*/
+                return true
+            }
         })
 
         val activityComponent = ActivityComponent::class.create(activity = this)
