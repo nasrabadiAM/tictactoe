@@ -3,6 +3,7 @@ package me.nasrabadiam.tictactoe
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import ir.metrix.attribution.MetrixAttribution
@@ -19,11 +20,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         MetrixAttribution.setOnDeeplinkResponseListener(object : OnDeeplinkResponseListener {
             override fun launchReceivedDeeplink(deeplink: Uri): Boolean {
-                /*return if (shouldMetrixSdkLaunchTheDeeplink(deeplink)) {
-                    true
-                } else {
-                    false
-                }*/
+                if (deeplink.toString().isEmpty().not())
+                    Toast.makeText(this@MainActivity, "$deeplink", Toast.LENGTH_LONG)
+                        .show()
                 return true
             }
         })
