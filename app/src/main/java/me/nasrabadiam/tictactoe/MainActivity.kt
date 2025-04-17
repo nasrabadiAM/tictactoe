@@ -20,9 +20,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         MetrixAttribution.setOnDeeplinkResponseListener(object : OnDeeplinkResponseListener {
             override fun launchReceivedDeeplink(deeplink: Uri): Boolean {
-                if (deeplink.toString().isEmpty().not())
-                    Toast.makeText(this@MainActivity, "$deeplink", Toast.LENGTH_LONG)
-                        .show()
+                val logText = if (deeplink.toString().isEmpty().not()) {
+                    deeplink
+                } else {
+                    "No Deeplink"
+                }
+                Toast.makeText(
+                    this@MainActivity,
+                    "$logText",
+                    Toast.LENGTH_LONG
+                ).show()
                 return true
             }
         })
