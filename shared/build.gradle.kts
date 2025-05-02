@@ -39,7 +39,7 @@ kotlin {
 
 android {
 
-    namespace = "me.nasrabadiam.tictactoe"
+    namespace = "me.nasrabadiam.tictactoe.shared"
     compileSdk = extra.get("compileSdk") as Int
     defaultConfig {
         minSdk = extra.get("minSdk") as Int
