@@ -328,7 +328,7 @@ naming:
     ignoreOverridden: false
   InvalidPackageDeclaration:
     active: true
-    rootPackage: 'com.farsitel.panjere'
+    rootPackage: 'me.nasrabadiam.tictactoe'
   MatchingDeclarationName:
     active: true
     mustBeFirst: true
