@@ -1,10 +1,18 @@
 package me.nasrabadiam.tictactoe
 
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 actual fun getWindowSizeClass(): GameWindowSizeClass {
-    // TODO: return correct size class according to screen size
-    return EXPANDED
+    val windowSizeClass = calculateWindowSizeClass()
+
+    val gameWindowSizeClass = when {
+        windowSizeClass.isSquareScreen() -> GameWindowSizeClass.COMPACT
+        windowSizeClass.isVerticalScreen() -> GameWindowSizeClass.NORMAL
+        else -> GameWindowSizeClass.EXPANDED
+    }
+    return gameWindowSizeClass
 }

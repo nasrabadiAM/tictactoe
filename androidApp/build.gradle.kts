@@ -74,7 +74,6 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.coroutines)
-    implementation(libs.androidx.window)
     implementation(libs.materialWindow)
     implementation(libs.navigation)
 

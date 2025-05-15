@@ -25,6 +25,7 @@ androidx-navigation = "2.7.0-alpha06"
 kotlinx-serialization-json = "1.7.1"
 mokkery = "2.5.1"
 material-icons-core = "1.6.11"
+material-windowSizeClass = "1.7.3"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -46,7 +47,6 @@ kotlin_coroutines_test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-te
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
-androidx-window = { group = "androidx.window", name = "window", version.ref = "androidx-window" }
 kotlin-inject-ksp = { group = "me.tatarka.inject", name = "kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
 kotlin-inject-runtime = { group = "me.tatarka.inject", name = "kotlin-inject-runtime-kmp", version.ref = "kotlin-inject" }
 
@@ -62,6 +62,7 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 materialWindow = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 material-icons-core = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "material-icons-core" }
+material-windowSizeClass = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "material-windowSizeClass" }
 
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }

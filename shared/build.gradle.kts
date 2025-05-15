@@ -96,6 +96,7 @@ kotlin {
             implementation(libs.material.icons.core)
             implementation(libs.kotlin.inject.runtime)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.material.windowSizeClass)
 
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)

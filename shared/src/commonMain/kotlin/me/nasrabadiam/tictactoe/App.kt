@@ -1,6 +1,8 @@
 package me.nasrabadiam.tictactoe
 
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,7 +37,11 @@ internal fun TacTrixApp(gameUseCase: () -> GameUseCase) {
     val windowSizeClass = getWindowSizeClass()
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = HOME_SCREEN_ROUTE) {
+    NavHost(
+        modifier = Modifier.statusBarsPadding(),
+        navController = navController,
+        startDestination = HOME_SCREEN_ROUTE,
+    ) {
         homeScreen(windowSizeClass, navController)
         gameScreen(gameViewModel, windowSizeClass)
     }
