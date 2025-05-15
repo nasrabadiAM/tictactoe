@@ -10,8 +10,7 @@ typealias mainView = () -> Unit
 @OptIn(ExperimentalComposeUiApi::class)
 @Inject
 fun mainView(app: App) {
-    val body = requireNotNull(document.body)
-    ComposeViewport(body) {
+    ComposeViewport(document.body!!) {
         app()
     }
 }
