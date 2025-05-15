@@ -10,7 +10,10 @@ plugins {
     alias(libs.plugins.parcelize) apply false
     alias(libs.plugins.sentry) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kotlin.allopen) apply false
 }
+
+apply { from(file("$rootDir/gradle/testConfigs.gradle")) }
 
 tasks.register<Detekt>("detektAll") {
     description = "Runs detekt build..."

@@ -5,9 +5,7 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.home.HomeScreenTests.Companion.PLAY_WITH_A_FRIEND_BUTTON_TEXT
 import org.junit.Rule
 import org.junit.Test
@@ -18,11 +16,10 @@ class NavigationTests {
     val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
-    private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
 
     @Test
     fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInSoloMode(): Unit = with(composeRule) {
-        setContent { App(gameViewModel = { gameViewModel }) }
+        setContent { App(gameUseCase = { gameUseCase }) }
         val playWithAFriendButton =
             onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
         playWithAFriendButton.performClick()
@@ -34,7 +31,7 @@ class NavigationTests {
 
     @Test
     fun whenAppOpensShouldShowHomeRoute(): Unit = with(composeRule) {
-        setContent { App(gameViewModel = { gameViewModel }) }
+        setContent { App(gameUseCase = { gameUseCase }) }
         onNodeWithText(PLAY_WITH_A_FRIEND_BUTTON_TEXT).assertIsDisplayed()
     }
 }

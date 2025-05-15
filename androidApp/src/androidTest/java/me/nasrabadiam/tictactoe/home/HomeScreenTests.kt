@@ -4,8 +4,8 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
+import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
 import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
-import me.nasrabadiam.tictactoe.ui.GameWindowSizeClass.NORMAL
 import org.junit.Rule
 import org.junit.Test
 
