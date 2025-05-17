@@ -216,7 +216,7 @@ internal class TextDelegate(
             ),
             // This is a fallback behavior for ellipsis. Native
             maxLines = finalMaxLines,
-            ellipsis = overflow == TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 

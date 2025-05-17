@@ -1,6 +1,6 @@
 ext {
     applicationId = "me.nasrabadiam.tictactoe"
     minSdk = 21
-    compileSdk = 34
-    targetSdk = 34
+    compileSdk = 35
+    targetSdk = 35
 }

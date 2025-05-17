@@ -12,6 +12,6 @@ fun main() = application {
 
     Window(onCloseRequest = ::exitApplication, title = "TacTrix") {
         val injectMainViewComponent = InjectMainViewComponent(applicationComponent)
-        injectMainViewComponent.mainViewFactory()
+        injectMainViewComponent.mainViewFactory().invoke()
     }
 }

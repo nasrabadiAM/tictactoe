@@ -1,5 +1,6 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -14,8 +15,9 @@ plugins {
 }
 
 kotlin {
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
@@ -33,12 +35,8 @@ kotlin {
         binaries.executable()
     }
     androidTarget {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
-                }
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     jvm("desktop")
@@ -62,12 +60,7 @@ kotlin {
             }
         }
         val commonMain by getting
-        val jbMain by creating {
-            dependsOn(commonMain)
-        }
-        val desktopMain by getting {
-            dependsOn(commonMain)
-        }
+        val desktopMain by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -82,9 +75,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.materialWindow)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.datetime)
@@ -93,10 +84,10 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.material.icons.core)
+            implementation(compose.materialIconsExtended)
+            implementation(libs.material.windowSizeClass)
             implementation(libs.kotlin.inject.runtime)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.material.windowSizeClass)
 
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -106,8 +97,8 @@ kotlin {
             implementation(compose.uiTest)
         }
         desktopMain.dependencies {
-            implementation(libs.kotlinx.coroutinesSwing)
             implementation(compose.desktop.macos_arm64)
+            implementation(libs.kotlinx.coroutinesSwing)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -136,8 +127,8 @@ android {
         minSdk = extra.get("minSdk") as Int
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
