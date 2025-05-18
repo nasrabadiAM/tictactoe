@@ -23,9 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: swift package resolve
-
       - name: Run Tests on iPhone 14 Simulator (iOS 16.0)
         run: |
           xcodebuild test \
