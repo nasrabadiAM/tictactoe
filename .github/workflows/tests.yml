@@ -118,6 +118,12 @@ jobs:
 
       - name: Set up Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+      - name: Print Xcode SDK paths
+        run: |
+          xcrun --sdk iphonesimulator --show-sdk-path
+          xcodebuild -showsdks
+      - name: Build iOS simulator targets (KMP)
+        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace
 
       - name: Run Tests on iPhone 16 Simulator (iOS 18.2)
         working-directory: ./iosApp
@@ -131,5 +137,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-iPhone14-OS16
-          path: TestResults
+          name: test-reports-iPhone16-OS18
+          path: ./iosApp/TestResults
