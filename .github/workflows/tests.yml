@@ -117,7 +117,7 @@ jobs:
         working-directory: ./iosApp
         run: |
           xcodebuild test \
-            -scheme 'Requestify' \
+            -scheme 'Mastermind' \
             -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.0' \
             -resultBundlePath TestResults
 
