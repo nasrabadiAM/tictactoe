@@ -1,31 +1,30 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.ui.game
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
-import me.nasrabadiam.tictactoe.assertPlayersCountEquals
-import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameScreenRoute
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import org.junit.Rule
-import org.junit.Test
+import me.nasrabadiam.tictactoe.ui.REPLAY_GAME_BUTTON_TEXT
+import me.nasrabadiam.tictactoe.ui.assertPlayersCountEquals
+import me.nasrabadiam.tictactoe.ui.clickOnCell
+import kotlin.test.Test
 
+@OptIn(ExperimentalTestApi::class)
 class GameTurnTests {
-
-    @get:Rule
-    val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
     private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     @Test
-    fun whenGameStartsXShouldStartTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenGameStartsXShouldStartTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(0, 0)
 
@@ -34,8 +33,8 @@ class GameTurnTests {
     }
 
     @Test
-    fun whenGameDrawsWhoDoesNotPlayThisGameFirstShouldPlayFirst(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenGameDrawsWhoDoesNotPlayThisGameFirstShouldPlayFirst() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -60,8 +59,8 @@ class GameTurnTests {
     }
 
     @Test
-    fun whenXWinsTheGameShouldStartTheNextGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsTheGameShouldStartTheNextGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val colIndex = 0
 

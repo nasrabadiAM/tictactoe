@@ -1,24 +1,23 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.ui
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.runComposeUiTest
+import me.nasrabadiam.tictactoe.App
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.home.HomeScreenTests.Companion.PLAY_WITH_A_FRIEND_BUTTON_TEXT
-import org.junit.Rule
-import org.junit.Test
+import me.nasrabadiam.tictactoe.ui.home.HomeScreenTests.Companion.PLAY_WITH_A_FRIEND_BUTTON_TEXT
+import kotlin.test.Test
 
+@OptIn(ExperimentalTestApi::class)
 class NavigationTests {
-
-    @get:Rule
-    val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
 
     @Test
-    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInSoloMode(): Unit = with(composeRule) {
+    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInSoloMode() = runComposeUiTest {
         setContent { App(gameUseCase = { gameUseCase }) }
         val playWithAFriendButton =
             onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
@@ -30,7 +29,7 @@ class NavigationTests {
     }
 
     @Test
-    fun whenAppOpensShouldShowHomeRoute(): Unit = with(composeRule) {
+    fun whenAppOpensShouldShowHomeRoute() = runComposeUiTest {
         setContent { App(gameUseCase = { gameUseCase }) }
         onNodeWithText(PLAY_WITH_A_FRIEND_BUTTON_TEXT).assertIsDisplayed()
     }

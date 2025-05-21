@@ -1,57 +1,56 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.ui.game
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.SavedStateHandle
-import me.nasrabadiam.tictactoe.DRAW_RESULT_STRING
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
-import me.nasrabadiam.tictactoe.RESTART_GAME_BUTTON_TEXT
-import me.nasrabadiam.tictactoe.WINNER_RESULT_STRING
-import me.nasrabadiam.tictactoe.assertPlayersCountEquals
-import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameScreenRoute
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import me.nasrabadiam.tictactoe.getCellTestTag
-import org.junit.Rule
-import org.junit.Test
+import me.nasrabadiam.tictactoe.ui.DRAW_RESULT_STRING
+import me.nasrabadiam.tictactoe.ui.RESTART_GAME_BUTTON_TEXT
+import me.nasrabadiam.tictactoe.ui.REPLAY_GAME_BUTTON_TEXT
+import me.nasrabadiam.tictactoe.ui.WINNER_RESULT_STRING
+import me.nasrabadiam.tictactoe.ui.assertPlayersCountEquals
+import me.nasrabadiam.tictactoe.ui.clickOnCell
+import me.nasrabadiam.tictactoe.ui.getCellTestTag
+import kotlin.test.Test
 
+@OptIn(ExperimentalTestApi::class)
 class GameTests {
-
-    @get:Rule
-    val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
     private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     @Test
-    fun displayGameCells(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun displayGameCells() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
         for (index in 0..DEFAULT_BOARD_CELL_COUNT) {
             onNode(hasTestTag(getCellTestTag(index))).isDisplayed()
         }
     }
 
     @Test
-    fun displayRestartButton(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun displayRestartButton() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
     }
 
     @Test
-    fun displayReplayButtonWhenOneGameFinished(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun displayReplayButtonWhenOneGameFinished() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         onNodeWithText(REPLAY_GAME_BUTTON_TEXT).assertIsNotDisplayed()
 
@@ -73,8 +72,8 @@ class GameTests {
     }
 
     @Test
-    fun restartGameBoardWhenClickOnReplayButton(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun restartGameBoardWhenClickOnReplayButton() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -100,8 +99,8 @@ class GameTests {
     }
 
     @Test
-    fun whenClickOnRestartGameButtonShouldRestartGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenClickOnRestartGameButtonShouldRestartGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O

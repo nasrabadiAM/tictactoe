@@ -1,27 +1,26 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.ui.game
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.SavedStateHandle
-import me.nasrabadiam.tictactoe.DRAW_RESULT_STRING
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.WINNER_CLICKABLE_CONTENT_DESCRIPTION
-import me.nasrabadiam.tictactoe.WINNER_RESULT_STRING
-import me.nasrabadiam.tictactoe.assertPlayersCountEquals
-import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameScreenRoute
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import org.junit.Rule
-import org.junit.Test
+import me.nasrabadiam.tictactoe.ui.DRAW_RESULT_STRING
+import me.nasrabadiam.tictactoe.ui.WINNER_CLICKABLE_CONTENT_DESCRIPTION
+import me.nasrabadiam.tictactoe.ui.WINNER_RESULT_STRING
+import me.nasrabadiam.tictactoe.ui.assertPlayersCountEquals
+import me.nasrabadiam.tictactoe.ui.clickOnCell
+import kotlin.test.Test
 
+@OptIn(ExperimentalTestApi::class)
 class GameLogicTests {
-
-    @get:Rule
-    val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
     private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
@@ -33,8 +32,8 @@ class GameLogicTests {
      * X - M - M
      */
     @Test
-    fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsVerticallyShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val colIndex = 0
         clickOnCell(col = colIndex, row = 0) // X
@@ -56,8 +55,8 @@ class GameLogicTests {
      * M - M - M
      */
     @Test
-    fun whenXWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsHorizontallyShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X
@@ -79,8 +78,8 @@ class GameLogicTests {
      * M - M - X
      */
     @Test
-    fun whenXWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsInCrossShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 0, row = 1) // O
@@ -101,8 +100,8 @@ class GameLogicTests {
      * M - M - O
      */
     @Test
-    fun whenOWinsVerticallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenOWinsVerticallyShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val colIndex = 2
         clickOnCell(col = 0, row = 0) // X
@@ -125,8 +124,8 @@ class GameLogicTests {
      * M - M - M
      */
     @Test
-    fun whenOWinsHorizontallyShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenOWinsHorizontallyShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val rowIndex = 1
         clickOnCell(col = 0, row = 0) // X
@@ -149,8 +148,8 @@ class GameLogicTests {
      * O - M - M
      */
     @Test
-    fun whenOWinsInCrossShouldShowWinnerAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenOWinsInCrossShouldShowWinnerAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
@@ -172,8 +171,8 @@ class GameLogicTests {
      * X - X - O
      */
     @Test
-    fun whenOAndXDrawShouldShowDrawAndEndsTheGame(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenOAndXDrawShouldShowDrawAndEndsTheGame() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         clickOnCell(col = 0, row = 0) // X
         clickOnCell(col = 2, row = 0) // O
