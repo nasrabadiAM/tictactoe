@@ -113,6 +113,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: List available Xcode versions
+        run: ls /Applications | grep Xcode
+
+      - name: Show current version of Xcode
+        run: xcodebuild -version
+
       - name: Run Tests on iPhone 14 Simulator (iOS 16.0)
         working-directory: ./iosApp
         run: |
