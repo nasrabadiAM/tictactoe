@@ -123,7 +123,7 @@ jobs:
           xcrun --sdk iphonesimulator --show-sdk-path
           xcodebuild -showsdks
       - name: Build iOS simulator targets (KMP)
-        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace
+        run: ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace --info
 
       - name: Run Tests on iPhone 16 Simulator (iOS 18.2)
         working-directory: ./iosApp

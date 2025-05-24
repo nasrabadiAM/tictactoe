@@ -5,7 +5,7 @@ import BackgroundTasks
 class AppDelegate: NSObject, UIApplicationDelegate {
 
     lazy var applicationComponent: InjectApplicationComponent = InjectApplicationComponent(
-      uiViewControllerProvider: { UIApplication.topViewController()! }
+        dummyProvider: { "Dummy iOS" }
     )
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
