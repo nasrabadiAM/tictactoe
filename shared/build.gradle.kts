@@ -61,16 +61,18 @@ kotlin {
         }
         val commonMain by getting
         val desktopMain by getting
-
-        val iosMain by creating {
-            dependsOn(commonMain)
-        }
         val iosX64Main by getting
         val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting {
-            dependsOn(iosMain)
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
-        val wasmJsMain by getting
+        val wasmJsMain by getting {
+            dependsOn(commonMain)
+        }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
         }
