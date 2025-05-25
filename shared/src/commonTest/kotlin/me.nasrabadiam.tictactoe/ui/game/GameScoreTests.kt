@@ -1,33 +1,32 @@
-package me.nasrabadiam.tictactoe.game
+package me.nasrabadiam.tictactoe.ui.game
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
-import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
-import me.nasrabadiam.tictactoe.clickOnCell
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.ui.GameScreenRoute
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import org.junit.Rule
-import org.junit.Test
+import me.nasrabadiam.tictactoe.ui.REPLAY_GAME_BUTTON_TEXT
+import me.nasrabadiam.tictactoe.ui.clickOnCell
+import kotlin.test.Test
 
+@OptIn(ExperimentalTestApi::class)
 class GameScoreTests {
-
-    @get:Rule
-    val composeRule = createComposeRule()
 
     private val gameUseCase = GameUseCase()
     private val gameViewModel = GameViewModel(gameUseCase, SavedStateHandle())
     private val windowClass = COMPACT
 
     @Test
-    fun whenXWinsOneTimeShouldShowScore1AndO0(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsOneTimeShouldShowScore1AndO0() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X
@@ -45,8 +44,8 @@ class GameScoreTests {
     }
 
     @Test
-    fun whenXWinsOneTimeAndOWinsAnotherShouldShowScore1ForXAnd1ForO(): Unit = with(composeRule) {
-        setContent { GameScreen(gameViewModel, windowClass) }
+    fun whenXWinsOneTimeAndOWinsAnotherShouldShowScore1ForXAnd1ForO() = runComposeUiTest {
+        setContent { GameScreenRoute(gameViewModel, windowClass) }
 
         val rowIndex = 0
         clickOnCell(col = 0, row = rowIndex) // X

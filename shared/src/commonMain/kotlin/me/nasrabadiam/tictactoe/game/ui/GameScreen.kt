@@ -38,22 +38,20 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
-fun GameScreen(
+fun GameScreenRoute(
     gameViewModel: GameViewModel,
     windowSizeClass: GameWindowSizeClass,
 ) {
-    TacTrixTheme {
-        val state = gameViewModel.state.collectAsState()
-        MainScreenContent(
-            state = state.value,
-            sendEvent = gameViewModel::handleEvent,
-            windowSizeClass = windowSizeClass,
-        )
-    }
+    val state = gameViewModel.state.collectAsState()
+    GameScreen(
+        state = state.value,
+        sendEvent = gameViewModel::handleEvent,
+        windowSizeClass = windowSizeClass,
+    )
 }
 
 @Composable
-private fun MainScreenContent(
+private fun GameScreen(
     state: GameState,
     sendEvent: (GameEvent) -> Unit,
     windowSizeClass: GameWindowSizeClass,
@@ -299,11 +297,13 @@ private const val COMING_SOON_BUTTON_TEXT = "(Coming Soon)"
 
 @Preview
 @Composable
-fun MainScreenPreview(
+fun GameScreenPreview(
     @PreviewParameter(WindowScreenSizeDataProvider::class) windowSizeClass: GameWindowSizeClass
 
 ) {
-    MainScreenContent(
-        state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
-    )
+    TacTrixTheme {
+        GameScreen(
+            state = GameState(), sendEvent = {}, windowSizeClass = windowSizeClass
+        )
+    }
 }

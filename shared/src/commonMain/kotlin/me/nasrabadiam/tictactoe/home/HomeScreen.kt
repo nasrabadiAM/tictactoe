@@ -44,7 +44,7 @@ import tictactoe.shared.generated.resources.Res
 import tictactoe.shared.generated.resources.ic_launcher_foreground
 
 @Composable
-fun HomeScreen(
+fun HomeScreenRoute(
     homeEvent: (HomeEvent) -> Unit,
     windowSizeClass: GameWindowSizeClass,
     modifier: Modifier = Modifier,
@@ -190,6 +190,6 @@ fun HomeScreenPreView(
     windowSizeClass: GameWindowSizeClass
 ) {
     TacTrixTheme {
-        HomeScreen(windowSizeClass = windowSizeClass, homeEvent = {})
+        HomeScreenRoute(windowSizeClass = windowSizeClass, homeEvent = {})
     }
 }

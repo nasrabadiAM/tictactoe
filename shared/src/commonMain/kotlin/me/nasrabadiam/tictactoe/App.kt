@@ -13,9 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
+import me.nasrabadiam.tictactoe.game.ui.GameScreenRoute
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import me.nasrabadiam.tictactoe.home.HomeScreen
+import me.nasrabadiam.tictactoe.home.HomeScreenRoute
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import me.tatarka.inject.annotations.Inject
 
@@ -52,7 +52,7 @@ private fun NavGraphBuilder.homeScreen(
     navController: NavHostController
 ) {
     composable(HOME_SCREEN_ROUTE) {
-        HomeScreen(
+        HomeScreenRoute(
             windowSizeClass = windowSizeClass,
             homeEvent = { navController.navigateToGameScreen() }
         )
@@ -65,7 +65,7 @@ private fun NavGraphBuilder.gameScreen(
 ) {
     composable(GAME_SCREEN_ROUTE) {
         val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
-        GameScreen(viewModel, windowSizeClass)
+        GameScreenRoute(viewModel, windowSizeClass)
     }
 }
 

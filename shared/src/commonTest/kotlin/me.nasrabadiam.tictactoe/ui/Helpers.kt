@@ -1,18 +1,18 @@
-package me.nasrabadiam.tictactoe
+package me.nasrabadiam.tictactoe.ui
 
+import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 
-internal fun ComposeContentTestRule.assertPlayersCountEquals(
+internal fun SemanticsNodeInteractionsProvider.assertPlayersCountEquals(
     testTag: String,
     counts: Int
 ) {
@@ -26,7 +26,7 @@ internal fun ComposeContentTestRule.assertPlayersCountEquals(
         .assertCountEquals(counts)
 }
 
-internal fun ComposeContentTestRule.clickOnCell(
+internal fun SemanticsNodeInteractionsProvider.clickOnCell(
     col: Int,
     row: Int,
     player: Player? = null

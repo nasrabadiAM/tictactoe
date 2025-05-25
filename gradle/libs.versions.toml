@@ -46,6 +46,7 @@ navigation = { group = "androidx.navigation", name = "navigation-compose", versi
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android" }
 material-windowSizeClass = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "material-windowSizeClass" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }

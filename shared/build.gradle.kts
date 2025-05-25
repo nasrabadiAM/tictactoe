@@ -1,7 +1,9 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -35,6 +37,9 @@ kotlin {
         binaries.executable()
     }
     androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -61,6 +66,7 @@ kotlin {
         }
         val commonMain by getting
         val desktopMain by getting
+        val desktopTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -99,15 +105,24 @@ kotlin {
             implementation(compose.desktop.macos_arm64)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+        desktopTest.dependencies {
+            implementation(compose.desktop.uiTestJUnit4)
+            implementation(compose.desktop.macos_arm64)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test.annotations.common)
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
     }
 }
 
 dependencies {
+    debugImplementation(libs.ui.test.manifest)
+    debugImplementation(libs.ui.test.junit4.android)
+
     debugImplementation(compose.uiTooling)
 
     add("kspAndroid", libs.kotlin.inject.ksp)
@@ -124,6 +139,7 @@ android {
     compileSdk = extra.get("compileSdk") as Int
     defaultConfig {
         minSdk = extra.get("minSdk") as Int
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
