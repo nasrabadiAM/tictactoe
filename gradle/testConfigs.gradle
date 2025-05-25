@@ -1,0 +1,8 @@
+allprojects {
+
+    apply { plugin(libs.plugins.kotlin.allopen.get().pluginId) }
+
+    allOpen {
+        annotation "me.nasrabadiam.tictactoe.test.mock.Mockable"
+    }
+}
