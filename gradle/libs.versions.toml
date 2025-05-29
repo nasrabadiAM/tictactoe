@@ -21,6 +21,7 @@ kotlinx-serialization-json = "1.8.0"
 mokkery = "2.7.2"
 material-windowSizeClass = "1.8.0"
 compose-bom = "2025.04.00"
+logger = "2.0.4"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -47,6 +48,8 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material-windowSizeClass = { group = "org.jetbrains.compose.material3", name = "material3-window-size-class", version.ref = "material-windowSizeClass" }
+
+logger = { group = "co.touchlab", name = "kermit", version.ref = "logger" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }

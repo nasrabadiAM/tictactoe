@@ -87,6 +87,8 @@ kotlin {
 
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
+
+            implementation(libs.logger)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.macos_arm64)
