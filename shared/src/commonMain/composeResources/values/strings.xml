@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="play_solo">Play solo</string>
+    <string name="coming_soon">(coming soon)</string>
+    <string name="play_with_a_friend">Play with a friend</string>
+    <string name="app_logo_content_description">App Logo</string>
+</resources>
