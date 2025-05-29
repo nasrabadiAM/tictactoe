@@ -35,6 +35,7 @@ import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
 import me.nasrabadiam.tictactoe.game.ui.WindowScreenSizeDataProvider
 import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
+import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAI
 import me.nasrabadiam.tictactoe.ui.icon.Group
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import org.jetbrains.compose.resources.painterResource
@@ -157,10 +158,9 @@ private fun GameButtons(
     buttonsSpace()
     Button(
         modifier = modifier
-            .semantics { contentDescription = PLAY_SOLO_TEXT + COMING_SOON_TEXT }
+            .semantics { contentDescription = PLAY_SOLO_TEXT }
             .widthIn(min = 220.dp),
-        onClick = { TODO("Not Implemented yet!") },
-        enabled = false
+        onClick = { sendEvent.invoke(PlayWithAI) },
     ) {
         Icon(
             modifier = Modifier.semantics(mergeDescendants = true) {},
@@ -171,16 +171,10 @@ private fun GameButtons(
             modifier = Modifier.padding(start = 8.dp),
             text = PLAY_SOLO_TEXT
         )
-        Text(
-            modifier = Modifier.padding(start = 2.dp),
-            text = COMING_SOON_TEXT,
-            style = MaterialTheme.typography.labelSmall
-        )
     }
 }
 
-private const val PLAY_SOLO_TEXT = "Play solo"
-private const val COMING_SOON_TEXT = "(coming soon)"
+private const val PLAY_SOLO_TEXT = "Play With AI"
 private const val PLAY_WITH_A_FRIEND_TEXT = "Play with a friend"
 
 @Preview

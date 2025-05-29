@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.model.Game
+import me.nasrabadiam.tictactoe.game.model.GameMode
+import me.nasrabadiam.tictactoe.game.model.utlis.saveState
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.ReplayClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RestartClicked
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.RulesClicked
-import me.nasrabadiam.tictactoe.game.model.utlis.saveState
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -21,21 +24,24 @@ import me.tatarka.inject.annotations.Inject
 class GameViewModel(
     private val gameUseCase: GameUseCase,
     @Assisted val savedStateHandle: SavedStateHandle,
+    @Assisted val gameArgs: Game,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(fetchGameState())
+    private val _state = MutableStateFlow(fetchGameState(gameMode = gameArgs.gameMode))
     val state = _state.asStateFlow()
 
     init {
-        gameUseCase.restoreGameState(fetchGameState())
+        gameUseCase.restoreGameState(fetchGameState(gameMode = gameArgs.gameMode))
         observeGameUseCase()
     }
 
     fun handleEvent(event: GameEvent) {
-        when (event) {
-            is CellClicked -> gameUseCase.clickOnCell(event.index)
-            ReplayClicked -> gameUseCase.replayGame()
-            RestartClicked -> gameUseCase.restartGame()
-            RulesClicked -> rulesClicked()
+        viewModelScope.launch {
+            when (event) {
+                is CellClicked -> gameUseCase.clickOnCell(event.index)
+                ReplayClicked -> gameUseCase.replayGame()
+                RestartClicked -> gameUseCase.restartGame()
+                RulesClicked -> rulesClicked()
+            }
         }
     }
 
@@ -57,39 +63,33 @@ class GameViewModel(
             xScore.onEach { xScore ->
                 xScore.saveXScore(savedStateHandle)
                 _state.update {
-                    state.value.copy(
-                        scores = state.value.scores.copy(xScore = xScore)
-                    )
+                    state.value.copy(scores = state.value.scores.copy(xScore = xScore))
                 }
             }.launchIn(viewModelScope)
             oScore.onEach { oScore ->
                 oScore.saveOScore(savedStateHandle)
                 _state.update {
-                    state.value.copy(
-                        scores = state.value.scores.copy(oScore = oScore)
-                    )
+                    state.value.copy(scores = state.value.scores.copy(oScore = oScore))
                 }
             }.launchIn(viewModelScope)
             drawCount.onEach { drawCount ->
                 drawCount.saveDrawCount(savedStateHandle)
                 _state.update {
-                    state.value.copy(
-                        scores = state.value.scores.copy(drawCount = drawCount)
-                    )
+                    state.value.copy(scores = state.value.scores.copy(drawCount = drawCount))
                 }
             }.launchIn(viewModelScope)
             currentPlayer.onEach { player ->
                 player.saveState(savedStateHandle)
-                _state.update {
-                    state.value.copy(
-                        currentPlayer = player
-                    )
-                }
+                _state.update { state.value.copy(currentPlayer = player) }
+            }.launchIn(viewModelScope)
+            gameMode.onEach { mode ->
+                mode.saveState(savedStateHandle)
+                _state.update { state.value.copy(gameMode = mode) }
             }.launchIn(viewModelScope)
         }
     }
 
-    private fun fetchGameState(): GameState {
-        return GameState.getState(savedStateHandle)
+    private fun fetchGameState(gameMode: GameMode): GameState {
+        return GameState.getState(savedStateHandle, gameMode)
     }
 }

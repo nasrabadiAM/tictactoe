@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,9 +11,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import me.nasrabadiam.tictactoe.game.GameUseCase
+import me.nasrabadiam.tictactoe.game.model.Game
+import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
+import me.nasrabadiam.tictactoe.home.HomeEvent
+import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
+import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAI
 import me.nasrabadiam.tictactoe.home.HomeScreen
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import me.tatarka.inject.annotations.Inject
@@ -31,8 +36,12 @@ fun App(gameUseCase: () -> GameUseCase) {
 
 @Composable
 internal fun TacTrixApp(gameUseCase: () -> GameUseCase) {
-    val gameViewModel: (SavedStateHandle) -> GameViewModel = {
-        GameViewModel(gameUseCase.invoke(), savedStateHandle = it)
+    val gameViewModel: (SavedStateHandle, Game) -> GameViewModel = { savedStateHandle, game ->
+        GameViewModel(
+            gameUseCase = gameUseCase.invoke(),
+            savedStateHandle = savedStateHandle,
+            gameArgs = game
+        )
     }
     val windowSizeClass = getWindowSizeClass()
 
@@ -54,24 +63,35 @@ private fun NavGraphBuilder.homeScreen(
     composable(HOME_SCREEN_ROUTE) {
         HomeScreen(
             windowSizeClass = windowSizeClass,
-            homeEvent = { navController.navigateToGameScreen() }
+            homeEvent = navigateToGame(navController)
         )
     }
 }
 
+private fun navigateToGame(navController: NavHostController): (HomeEvent) -> Unit = {
+    when (it) {
+        PlayWithAFriend -> navController.navigateToPlayWithAFriend()
+        PlayWithAI -> navController.navigateToPlayWithAI()
+    }
+}
+
 private fun NavGraphBuilder.gameScreen(
-    gameViewModel: (SavedStateHandle) -> GameViewModel,
+    gameViewModel: (SavedStateHandle, Game) -> GameViewModel,
     windowSizeClass: GameWindowSizeClass
 ) {
-    composable(GAME_SCREEN_ROUTE) {
-        val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
+    composable<Game> { backStackEntry ->
+        val game: Game = backStackEntry.toRoute()
+        val viewModel = viewModel { gameViewModel(backStackEntry.savedStateHandle, game) }
         GameScreen(viewModel, windowSizeClass)
     }
 }
 
-internal fun NavController.navigateToGameScreen() {
-    navigate(GAME_SCREEN_ROUTE)
+private fun NavController.navigateToPlayWithAFriend() {
+    navigate(Game(GameMode.PLAYER_VS_PLAYER))
 }
 
-private const val GAME_SCREEN_ROUTE = "game_screen"
+private fun NavController.navigateToPlayWithAI() {
+    navigate(Game(GameMode.PLAYER_VS_AI))
+}
+
 private const val HOME_SCREEN_ROUTE = "home"
