@@ -12,6 +12,7 @@ import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.DrawCount
 import me.nasrabadiam.tictactoe.game.ui.GameState
@@ -190,7 +191,7 @@ class GameUseCase(
     companion object {
         private data class WinPattern(
             val cells: List<Int>,
-            val orientation: Orientation,
+            val orientation: WiningOrientation,
             val index: Int
         )
 
@@ -200,7 +201,7 @@ class GameUseCase(
                 val cells = (0 until BOARD_SIZE).map { col ->
                     row * BOARD_SIZE + col
                 }
-                add(WinPattern(cells, Orientation.ROW, row))
+                add(WinPattern(cells, WiningOrientation.ROW, row))
             }
 
             // Columns (0-2)
@@ -208,24 +209,20 @@ class GameUseCase(
                 val cells = (0 until BOARD_SIZE).map { row ->
                     row * BOARD_SIZE + col
                 }
-                add(WinPattern(cells, Orientation.COLUMN, col))
+                add(WinPattern(cells, WiningOrientation.COLUMN, col))
             }
 
             // Main diagonal (top-left to bottom-right)
             val mainDiagonal = (0 until BOARD_SIZE).map { i ->
                 i * BOARD_SIZE + i
             }
-            add(WinPattern(mainDiagonal, Orientation.CROSS, 0))
+            add(WinPattern(mainDiagonal, WiningOrientation.CROSS, 0))
 
             // Anti-diagonal (top-right to bottom-left)
             val antiDiagonal = (0 until BOARD_SIZE).map { i ->
                 i * BOARD_SIZE + (BOARD_SIZE - 1 - i)
             }
-            add(WinPattern(antiDiagonal, Orientation.CROSS, 1))
+            add(WinPattern(antiDiagonal, WiningOrientation.CROSS, 1))
         }
-    }
-
-    enum class Orientation {
-        CROSS, ROW, COLUMN
     }
 }

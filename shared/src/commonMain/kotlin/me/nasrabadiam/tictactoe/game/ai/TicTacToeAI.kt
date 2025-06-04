@@ -5,6 +5,7 @@ import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation
 import me.nasrabadiam.tictactoe.test.mock.Mockable
 import me.tatarka.inject.annotations.Inject
 
@@ -145,7 +146,7 @@ class TicTacToeAI {
         // Reuse the winning patterns from GameUseCase
         private data class WinPattern(
             val cells: List<Int>,
-            val orientation: GameUseCase.Orientation,
+            val orientation: WiningOrientation,
             val index: Int
         )
 
@@ -154,24 +155,24 @@ class TicTacToeAI {
             // Rows (0-2)
             repeat(BOARD_SIZE) { row ->
                 val cells = (0 until BOARD_SIZE).map { col -> row * BOARD_SIZE + col }
-                add(WinPattern(cells, GameUseCase.Orientation.ROW, row))
+                add(WinPattern(cells, WiningOrientation.ROW, row))
             }
 
             // Columns (0-2)
             repeat(BOARD_SIZE) { col ->
                 val cells = (0 until BOARD_SIZE).map { row -> row * BOARD_SIZE + col }
-                add(WinPattern(cells, GameUseCase.Orientation.COLUMN, col))
+                add(WinPattern(cells, WiningOrientation.COLUMN, col))
             }
 
             // Main diagonal (top-left to bottom-right)
             val mainDiagonal = (0 until BOARD_SIZE).map { i -> i * BOARD_SIZE + i }
-            add(WinPattern(mainDiagonal, GameUseCase.Orientation.CROSS, 0))
+            add(WinPattern(mainDiagonal, WiningOrientation.CROSS, 0))
 
             // Anti-diagonal (top-right to bottom-left)
             val antiDiagonal = (0 until BOARD_SIZE).map { i ->
                 i * BOARD_SIZE + (BOARD_SIZE - 1 - i)
             }
-            add(WinPattern(antiDiagonal, GameUseCase.Orientation.CROSS, 1))
+            add(WinPattern(antiDiagonal, WiningOrientation.CROSS, 1))
         }
     }
 }

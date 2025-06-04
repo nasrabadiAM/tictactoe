@@ -3,9 +3,6 @@ package me.nasrabadiam.tictactoe
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.COLUMN
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.CROSS
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.ROW
 import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameMode
@@ -13,6 +10,7 @@ import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameState
@@ -98,7 +96,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -119,7 +117,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -140,7 +138,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 2
             ), useCase.gameResult.value
         )
@@ -164,7 +162,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -185,7 +183,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -206,7 +204,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 2
             ), useCase.gameResult.value
         )
@@ -229,7 +227,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = CROSS,
+                winningOrientation = WiningOrientation.CROSS,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -249,7 +247,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.X,
-                winningOrientation = CROSS,
+                winningOrientation = WiningOrientation.CROSS,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -274,7 +272,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -296,7 +294,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -318,7 +316,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = COLUMN,
+                winningOrientation = WiningOrientation.COLUMN,
                 winningIndex = 2
             ), useCase.gameResult.value
         )
@@ -343,7 +341,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -365,7 +363,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -387,7 +385,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = ROW,
+                winningOrientation = WiningOrientation.ROW,
                 winningIndex = 2
             ), useCase.gameResult.value
         )
@@ -411,7 +409,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = CROSS,
+                winningOrientation = WiningOrientation.CROSS,
                 winningIndex = 0
             ), useCase.gameResult.value
         )
@@ -432,7 +430,7 @@ class GameUseCaseShould {
         assertEquals(
             EndWithWinner(
                 player = Player.O,
-                winningOrientation = CROSS,
+                winningOrientation = WiningOrientation.CROSS,
                 winningIndex = 1
             ), useCase.gameResult.value
         )
@@ -699,7 +697,7 @@ class GameUseCaseShould {
         }
         val gameResult = EndWithWinner(
             player = Player.O,
-            winningOrientation = CROSS,
+            winningOrientation = WiningOrientation.CROSS,
             winningIndex = 0
         )
         val currentPlayer = Player.O

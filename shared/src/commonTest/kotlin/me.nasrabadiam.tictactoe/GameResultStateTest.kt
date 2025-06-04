@@ -1,9 +1,9 @@
 package me.nasrabadiam.tictactoe
 
 import androidx.lifecycle.SavedStateHandle
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -27,7 +27,7 @@ class GameResultStateTest {
     fun testSaveAndGetStateWhenInputIsEndWithWinner() {
         val input = GameResult.EndWithWinner(
             Player.X,
-            Orientation.ROW,
+            WiningOrientation.ROW,
             1,
         )
         val savedStateHandle = SavedStateHandle()

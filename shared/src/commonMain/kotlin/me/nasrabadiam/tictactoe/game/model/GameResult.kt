@@ -2,7 +2,6 @@ package me.nasrabadiam.tictactoe.game.model
 
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.serialization.Serializable
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation
 import me.nasrabadiam.tictactoe.util.Decoder
 import me.nasrabadiam.tictactoe.util.Encoder
 
@@ -11,7 +10,7 @@ sealed class GameResult {
     @Serializable
     data class EndWithWinner(
         val player: Player,
-        val winningOrientation: Orientation,
+        val winningOrientation: WiningOrientation,
         val winningIndex: Int,
     ) : GameResult()
 
