@@ -10,7 +10,7 @@ enum class GameMode {
     PLAYER_VS_PLAYER,
     PLAYER_VS_AI;
 
-    private fun encode(): String {
+    fun encode(): String {
         return Encoder.encodeToString(serializer(), this)
     }
 
@@ -24,7 +24,7 @@ enum class GameMode {
             return decode(savedStateHandle.get<String>(GAME_MODE_KEY)) ?: default
         }
 
-        private fun decode(input: String?): GameMode? {
+        fun decode(input: String?): GameMode? {
             return Decoder.decodeString(serializer(), input)
         }
 

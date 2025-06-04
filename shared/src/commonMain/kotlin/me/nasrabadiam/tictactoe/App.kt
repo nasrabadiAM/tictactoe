@@ -8,10 +8,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.write
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Game
 import me.nasrabadiam.tictactoe.game.model.GameMode
@@ -23,6 +27,7 @@ import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAI
 import me.nasrabadiam.tictactoe.home.HomeScreen
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import me.tatarka.inject.annotations.Inject
+import kotlin.reflect.typeOf
 
 typealias App = @Composable () -> Unit
 
@@ -75,11 +80,29 @@ private fun navigateToGame(navController: NavHostController): (HomeEvent) -> Uni
     }
 }
 
+val gameModeNavType = object : NavType<GameMode>(isNullableAllowed = false) {
+    override fun get(bundle: SavedState, key: String): GameMode {
+        return bundle.read { getString(key).let { parseValue(it) } }
+    }
+
+    override fun parseValue(value: String): GameMode {
+        return GameMode.decode(value) ?: GameMode.PLAYER_VS_PLAYER
+    }
+
+    override fun put(bundle: SavedState, key: String, value: GameMode) {
+        bundle.write { putString(key, serializeAsValue(value)) }
+    }
+
+    override fun serializeAsValue(value: GameMode): String {
+        return value.encode()
+    }
+}
+
 private fun NavGraphBuilder.gameScreen(
     gameViewModel: (SavedStateHandle, Game) -> GameViewModel,
     windowSizeClass: GameWindowSizeClass
 ) {
-    composable<Game> { backStackEntry ->
+    composable<Game>(typeMap = mapOf(typeOf<GameMode>() to gameModeNavType)) { backStackEntry ->
         val game: Game = backStackEntry.toRoute()
         val viewModel = viewModel { gameViewModel(backStackEntry.savedStateHandle, game) }
         GameScreen(viewModel, windowSizeClass)
