@@ -60,7 +60,6 @@ class TicTacToeAI(
 
     fun dispose() {
         aiMoveJob?.cancel()
-        scope.cancel()
     }
 
     /**
