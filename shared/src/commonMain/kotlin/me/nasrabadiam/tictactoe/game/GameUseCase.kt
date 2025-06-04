@@ -1,14 +1,12 @@
 package me.nasrabadiam.tictactoe.game
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import me.nasrabadiam.tictactoe.di.Named
 import me.nasrabadiam.tictactoe.game.ai.TicTacToeAI
-import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
-import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
@@ -24,10 +22,12 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 @Mockable
 class GameUseCase(
-    private val boardSize: Int = DEFAULT_BOARD_CELL_COUNT,
-    private val starterPlayer: Player = Player.X,
-    private val ai: TicTacToeAI = TicTacToeAI()
+    @Named("boardCellCount")
+    private val boardSize: Int,
+    private val starterPlayer: Player,
+    private val ai: TicTacToeAI,
 ) {
+
     private val _cells: MutableStateFlow<List<Cell>> =
         MutableStateFlow(listOfEmptyCells(boardSize))
 
@@ -84,13 +84,12 @@ class GameUseCase(
 
     private suspend fun makeAIMove() {
         // Add a small delay for better UX
-        delay(AI_MOVE_DELAY_IN_MILLIS)
-
         if (gameResult.value != null) return
 
-        val aiMove = ai.getBestMove(_cells.value, Player.O)
-        if (isValidMove(aiMove)) {
-            makeMove(aiMove)
+        ai.scheduleAIMove(_cells.value) { aiMove ->
+            if (isValidMove(aiMove)) {
+                makeMove(aiMove)
+            }
         }
     }
 
@@ -100,6 +99,9 @@ class GameUseCase(
     }
 
     suspend fun restartGame() {
+        // Cancel any pending AI move
+        ai.dispose()
+
         val newCellList = listOfEmptyCells(boardSize)
         _cells.update { newCellList }
         _gameResult.update { null }
@@ -110,18 +112,21 @@ class GameUseCase(
 
         _currentPlayer.update { starterPlayer }
 
-        // If AI mode and AI goes first, make AI move
+        // If AI mode and AI goes first, schedule AI move
         if (_gameMode.value == GameMode.PLAYER_VS_AI && starterPlayer == Player.O) {
             makeAIMove()
         }
     }
 
     suspend fun replayGame() {
+        // Cancel any pending AI move
+        ai.dispose()
+
         val newCellList = listOfEmptyCells(boardSize)
         _cells.update { newCellList }
         _gameResult.update { null }
 
-        // If AI mode and AI goes first, make AI move
+        // If AI mode and AI goes first, schedule AI move
         if (_gameMode.value == GameMode.PLAYER_VS_AI && currentPlayer.value == Player.O) {
             makeAIMove()
         }

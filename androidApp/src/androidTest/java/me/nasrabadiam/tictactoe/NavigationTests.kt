@@ -5,6 +5,8 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import me.nasrabadiam.tictactoe.di.component.GameComponents
+import me.nasrabadiam.tictactoe.di.component.create
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.home.HomeScreenTests.Companion.PLAY_WITH_A_FRIEND_BUTTON_TEXT
 import org.junit.Rule
@@ -15,7 +17,7 @@ class NavigationTests {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val gameUseCase = GameUseCase()
+    private val gameUseCase: GameUseCase = GameComponents::class.create().gameUseCase()
 
     @Test
     fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInSoloMode(): Unit = with(composeRule) {

@@ -11,6 +11,8 @@ import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
 import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.di.component.GameComponents
+import me.nasrabadiam.tictactoe.di.component.create
 import me.nasrabadiam.tictactoe.game.model.Game
 import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
@@ -23,7 +25,7 @@ class GameScoreTests {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val gameUseCase = GameUseCase()
+    private val gameUseCase: GameUseCase = GameComponents::class.create().gameUseCase()
     private val gameViewModel = GameViewModel(
         gameUseCase,
         SavedStateHandle(),

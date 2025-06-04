@@ -2,6 +2,8 @@ package me.nasrabadiam.tictactoe
 
 import androidx.lifecycle.SavedStateHandle
 import dev.mokkery.MockMode.original
+import dev.mokkery.answering.calls
+import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
@@ -9,6 +11,8 @@ import dev.mokkery.verify.VerifyMode.Companion.exactly
 import dev.mokkery.verifySuspend
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -16,9 +20,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.model.Game
-import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_AI
 import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
+import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameEvent
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import kotlin.test.AfterTest
@@ -29,7 +33,9 @@ import kotlin.test.Test
 class GameViewModelShould {
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
-    private val gameUseCase = mock<GameUseCase>(original)
+    private val gameUseCase = mock<GameUseCase>(original) {
+        every { currentPlayer.onEach(any()) } calls { MutableStateFlow(Player.X) }
+    }
     private lateinit var gameViewModel: GameViewModel
 
     @BeforeTest
@@ -165,7 +171,7 @@ class GameViewModelShould {
 
         // Should not crash or throw exception
         aiGameViewModel.handleEvent(GameEvent.RulesClicked)
-        
+
         // Verify no unexpected interactions with game use case
         verifySuspend(exactly(0)) {
             gameUseCase.clickOnCell(any())
@@ -193,6 +199,7 @@ class GameViewModelShould {
 
     @Test
     fun handleSequentialEventsInAIMode() = runTest {
+
         val aiGameViewModel = GameViewModel(
             gameUseCase,
             SavedStateHandle(),

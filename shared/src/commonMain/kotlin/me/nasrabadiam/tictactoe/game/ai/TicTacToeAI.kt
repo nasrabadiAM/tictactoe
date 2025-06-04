@@ -1,6 +1,14 @@
 package me.nasrabadiam.tictactoe.game.ai
 
-import me.nasrabadiam.tictactoe.game.GameUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import me.nasrabadiam.tictactoe.di.Named
+import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameResult
@@ -11,9 +19,33 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @Mockable
-class TicTacToeAI {
+class TicTacToeAI(
+    @Named("default")
+    private val defaultDispatcher: CoroutineDispatcher,
+) {
+    private val scope = CoroutineScope(defaultDispatcher + SupervisorJob())
+    private var aiMoveJob: Job? = null
 
     data class Move(val index: Int, val score: Int)
+
+    /**
+     * Schedule ai to make the best move for the AI using minimax algorithm
+     * @param cells Current board state
+     * @param aiMoveCallback Callback to be called when the AI makes a move which @return aiMove Index of the best move
+     */
+    suspend fun scheduleAIMove(
+        cells: List<Cell>,
+        aiMoveCallback: (aiMove: Int) -> Unit
+    ) {
+        aiMoveJob?.cancel()
+
+        aiMoveJob = scope.launch {
+            delay(AI_MOVE_DELAY_IN_MILLIS)
+
+            val aiMove = getBestMove(cells, Player.O)
+            aiMoveCallback(aiMove)
+        }
+    }
 
     /**
      * Gets the best move for the AI using minimax algorithm
@@ -21,9 +53,14 @@ class TicTacToeAI {
      * @param aiPlayer The AI player (usually Player.O)
      * @return Index of the best move
      */
-    fun getBestMove(cells: List<Cell>, aiPlayer: Player): Int {
+    private suspend fun getBestMove(cells: List<Cell>, aiPlayer: Player): Int {
         val bestMove = minimax(cells, aiPlayer, aiPlayer, 0, Int.MIN_VALUE, Int.MAX_VALUE)
         return bestMove.index
+    }
+
+    fun dispose() {
+        aiMoveJob?.cancel()
+        scope.cancel()
     }
 
     /**
