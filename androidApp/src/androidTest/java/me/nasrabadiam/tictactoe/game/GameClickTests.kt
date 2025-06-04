@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.assertPlayersCountEquals
 import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.di.component.createGameComponents
 import me.nasrabadiam.tictactoe.game.model.Game
 import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
 import me.nasrabadiam.tictactoe.game.model.Player
@@ -18,7 +19,7 @@ class GameClickTests {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val gameUseCase = GameUseCase()
+    private val gameUseCase: GameUseCase = createGameComponents().gameUseCase
     private val gameViewModel = GameViewModel(
         gameUseCase,
         SavedStateHandle(),

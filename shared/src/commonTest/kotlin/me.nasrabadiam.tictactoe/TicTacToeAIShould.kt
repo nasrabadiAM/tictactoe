@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TicTacToeAIShould {
-    
+
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
     private val ai = TicTacToeAI(defaultDispatcher = testDispatcher)
 
@@ -104,7 +104,7 @@ class TicTacToeAIShould {
             this[0] = this[0].copy(value = O) // O at (0,0)
             this[1] = this[1].copy(value = O) // O at (0,1)
             // O can win at position 2
-            
+
             this[3] = this[3].copy(value = X) // X at (1,0)
             this[6] = this[6].copy(value = X) // X at (2,0)
             // X can win at position 6, but AI should prioritize own win
@@ -246,12 +246,12 @@ class TicTacToeAIShould {
         var secondMoveCallback = false
 
         // Schedule first move
-        ai.scheduleAIMove(cells1) { 
+        ai.scheduleAIMove(cells1) {
             firstMoveCallback = true
         }
 
         // Immediately schedule second move (should cancel first)
-        ai.scheduleAIMove(cells2) { 
+        ai.scheduleAIMove(cells2) {
             secondMoveCallback = true
         }
 
@@ -272,7 +272,7 @@ class TicTacToeAIShould {
         val cells = listOfEmptyCells()
         var callbackExecuted = false
 
-        ai.scheduleAIMove(cells) { 
+        ai.scheduleAIMove(cells) {
             callbackExecuted = true
         }
 
@@ -343,7 +343,7 @@ class TicTacToeAIShould {
         val testCases = listOf(
             // X in different corners
             listOf(0),
-            listOf(2), 
+            listOf(2),
             listOf(6),
             listOf(8),
             // X in edges

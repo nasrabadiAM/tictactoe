@@ -17,6 +17,7 @@ import me.nasrabadiam.tictactoe.RESTART_GAME_BUTTON_TEXT
 import me.nasrabadiam.tictactoe.WINNER_RESULT_STRING
 import me.nasrabadiam.tictactoe.assertPlayersCountEquals
 import me.nasrabadiam.tictactoe.clickOnCell
+import me.nasrabadiam.tictactoe.di.component.createGameComponents
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
 import me.nasrabadiam.tictactoe.game.model.Game
 import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
@@ -32,7 +33,7 @@ class GameTests {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val gameUseCase = GameUseCase()
+    private val gameUseCase: GameUseCase = createGameComponents().gameUseCase
     private val gameViewModel = GameViewModel(
         gameUseCase,
         SavedStateHandle(),
