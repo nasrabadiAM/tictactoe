@@ -5,9 +5,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import me.nasrabadiam.tictactoe.di.Named
 import me.nasrabadiam.tictactoe.game.ai.TicTacToeAI
+import me.nasrabadiam.tictactoe.game.model.AIDifficulty
 import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameMode
+import me.nasrabadiam.tictactoe.game.model.GameMode.PlayWithAI
+import me.nasrabadiam.tictactoe.game.model.GameMode.PlayWithFriend
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.WiningOrientation
@@ -25,7 +28,7 @@ class GameUseCase(
     @Named("boardCellCount")
     private val boardSize: Int,
     private val starterPlayer: Player,
-    private val ai: TicTacToeAI,
+    internal val ai: TicTacToeAI,
 ) {
 
     private val _cells: MutableStateFlow<List<Cell>> =
@@ -49,14 +52,14 @@ class GameUseCase(
     private val _currentPlayer: MutableStateFlow<Player> = MutableStateFlow(starterPlayer)
     val currentPlayer: StateFlow<Player> = _currentPlayer
 
-    private val _gameMode: MutableStateFlow<GameMode> = MutableStateFlow(GameMode.PLAYER_VS_PLAYER)
+    private val _gameMode: MutableStateFlow<GameMode> = MutableStateFlow(PlayWithFriend)
     val gameMode: StateFlow<GameMode> = _gameMode
 
     suspend fun clickOnCell(index: Int) {
         if (gameResult.value != null || !isValidMove(index)) return
 
         // In AI mode, only allow human (X) moves via click
-        if (_gameMode.value == GameMode.PLAYER_VS_AI && currentPlayer.value == Player.O) {
+        if (_gameMode.value is PlayWithAI && currentPlayer.value == Player.O) {
             return
         }
 
@@ -64,11 +67,11 @@ class GameUseCase(
 
         // If it's AI mode and now it's AI's turn, make AI move
         if (
-            _gameMode.value == GameMode.PLAYER_VS_AI &&
+            _gameMode.value is PlayWithAI &&
             gameResult.value == null &&
             currentPlayer.value == Player.O
         ) {
-            makeAIMove()
+            makeAIMove((_gameMode.value as PlayWithAI).difficulty)
         }
     }
 
@@ -82,11 +85,11 @@ class GameUseCase(
         checkGameResultAndNotifyIfChanged()
     }
 
-    private suspend fun makeAIMove() {
+    private suspend fun makeAIMove(aiDifficulty: AIDifficulty) {
         // Add a small delay for better UX
         if (gameResult.value != null) return
 
-        ai.scheduleAIMove(_cells.value) { aiMove ->
+        ai.scheduleAIMove(_cells.value, aiDifficulty) { aiMove ->
             if (isValidMove(aiMove)) {
                 makeMove(aiMove)
             }
@@ -113,8 +116,8 @@ class GameUseCase(
         _currentPlayer.update { starterPlayer }
 
         // If AI mode and AI goes first, schedule AI move
-        if (_gameMode.value == GameMode.PLAYER_VS_AI && starterPlayer == Player.O) {
-            makeAIMove()
+        if (_gameMode.value is PlayWithAI && starterPlayer == Player.O) {
+            makeAIMove((_gameMode.value as PlayWithAI).difficulty)
         }
     }
 
@@ -122,13 +125,21 @@ class GameUseCase(
         // Cancel any pending AI move
         ai.dispose()
 
+        // Determine next starter based on game result
+        val nextStarter = when (val result = _gameResult.value) {
+            is GameResult.EndWithWinner -> result.player // Winner starts next game
+            is GameResult.Draw -> currentPlayer.value // Current player starts after draw
+            null -> starterPlayer // If game not ended, reset to original starter
+        }
+
         val newCellList = listOfEmptyCells(boardSize)
         _cells.update { newCellList }
         _gameResult.update { null }
+        _currentPlayer.update { nextStarter }
 
         // If AI mode and AI goes first, schedule AI move
-        if (_gameMode.value == GameMode.PLAYER_VS_AI && currentPlayer.value == Player.O) {
-            makeAIMove()
+        if (_gameMode.value is PlayWithAI && nextStarter == Player.O) {
+            makeAIMove((_gameMode.value as PlayWithAI).difficulty)
         }
     }
 

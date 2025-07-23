@@ -1,11 +1,10 @@
 package me.nasrabadiam.tictactoe.home
 
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
-import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
-import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAI
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,13 +26,13 @@ class HomeScreenTests {
     @Test
     fun whenOpenHomeScreenShouldShowPlayWithAFriendButton(): Unit = with(composeRule) {
         setContent { HomeScreen(homeEvent, windowClass) }
-        onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).assertExists()
+        onNode(hasText(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).assertExists()
     }
 
     @Test
     fun whenOpenHomeScreenShouldShowPlaySoloButtonDisabled(): Unit = with(composeRule) {
         setContent { HomeScreen(homeEvent, windowClass) }
-        val soloButton = onNode(hasContentDescription(PLAY_SOLO_BUTTON_TEXT))
+        val soloButton = onNode(hasText(PLAY_SOLO_BUTTON_TEXT))
         soloButton.assertExists()
     }
 
@@ -41,10 +40,10 @@ class HomeScreenTests {
     fun whenClickedOnPlaySoloShouldCallHomeEvent(): Unit = with(composeRule) {
         var clicked = false
         val homeEvent: (HomeEvent) -> Unit = {
-            if (it == PlayWithAI) clicked = true
+            if (it is HomeEvent.PlayWithAIEvent) clicked = true
         }
         setContent { HomeScreen(homeEvent, windowClass) }
-        val playSoloButton = onNode(hasContentDescription(PLAY_SOLO_BUTTON_TEXT))
+        val playSoloButton = onNode(hasText(PLAY_SOLO_BUTTON_TEXT))
         playSoloButton.performClick()
         assert(clicked) {
             "when clicked on play with ai button," +
@@ -56,10 +55,10 @@ class HomeScreenTests {
     fun whenClickedOnPlayWithAFriendShouldCallHomeEvent(): Unit = with(composeRule) {
         var clicked = false
         val homeEvent: (HomeEvent) -> Unit = {
-            if (it == PlayWithAFriend) clicked = true
+            if (it is HomeEvent.PlayWithAFriendEvent) clicked = true
         }
         setContent { HomeScreen(homeEvent, windowClass) }
-        onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).performClick()
+        onNode(hasText(PLAY_WITH_A_FRIEND_BUTTON_TEXT)).performClick()
         assert(clicked) {
             "when clicked on play with a friend button," +
                 " home event of play with a friend should call, but it doesn't called."

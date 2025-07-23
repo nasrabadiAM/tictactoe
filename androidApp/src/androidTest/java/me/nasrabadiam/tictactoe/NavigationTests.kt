@@ -1,7 +1,7 @@
 package me.nasrabadiam.tictactoe
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -19,10 +19,10 @@ class NavigationTests {
     private val gameUseCase: GameUseCase = createGameComponents().gameUseCase
 
     @Test
-    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInSoloMode(): Unit = with(composeRule) {
+    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInTwoPlayerMode(): Unit = with(composeRule) {
         setContent { App(gameUseCase = { gameUseCase }) }
         val playWithAFriendButton =
-            onNode(hasContentDescription(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
+            onNode(hasText(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
         playWithAFriendButton.performClick()
         playWithAFriendButton.assertDoesNotExist()
 

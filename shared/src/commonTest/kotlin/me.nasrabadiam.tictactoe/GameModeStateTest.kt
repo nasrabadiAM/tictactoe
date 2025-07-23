@@ -11,22 +11,22 @@ class GameModeStateTest {
 
     @Test
     fun testSaveAndGetStateWhenInputIsPlayerVsPlayer() {
-        val input = GameMode.PLAYER_VS_PLAYER
+        val input = GameMode.PlayWithFriend
         val savedStateHandle = SavedStateHandle()
         input.saveState(savedStateHandle)
 
-        val gameMode = GameMode.getState(savedStateHandle, GameMode.PLAYER_VS_AI)
+        val gameMode = GameMode.getState(savedStateHandle, GameMode.PlayWithAI())
         assertEquals(input, gameMode)
         assertTrue(savedStateHandle.contains("game_mode"))
     }
 
     @Test
     fun testSaveAndGetStateWhenInputIsPlayerVsAI() {
-        val input = GameMode.PLAYER_VS_AI
+        val input = GameMode.PlayWithAI()
         val savedStateHandle = SavedStateHandle()
         input.saveState(savedStateHandle)
 
-        val gameMode = GameMode.getState(savedStateHandle, GameMode.PLAYER_VS_PLAYER)
+        val gameMode = GameMode.getState(savedStateHandle, GameMode.PlayWithFriend)
         assertEquals(input, gameMode)
         assertTrue(savedStateHandle.contains("game_mode"))
     }
@@ -34,7 +34,7 @@ class GameModeStateTest {
     @Test
     fun testGetStateWhenSavedStateIsEmptyReturnsDefault() {
         val savedStateHandle = SavedStateHandle()
-        val defaultMode = GameMode.PLAYER_VS_PLAYER
+        val defaultMode = GameMode.PlayWithFriend
 
         val gameMode = GameMode.getState(savedStateHandle, defaultMode)
         assertEquals(defaultMode, gameMode)
@@ -44,7 +44,7 @@ class GameModeStateTest {
     @Test
     fun testGetStateWhenSavedStateIsEmptyReturnsPlayerVsAIDefault() {
         val savedStateHandle = SavedStateHandle()
-        val defaultMode = GameMode.PLAYER_VS_AI
+        val defaultMode = GameMode.PlayWithAI()
 
         val gameMode = GameMode.getState(savedStateHandle, defaultMode)
         assertEquals(defaultMode, gameMode)

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import kotlinx.serialization.Serializable
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameMode
+import me.nasrabadiam.tictactoe.game.model.GameMode.PlayWithFriend
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellsListState
@@ -18,7 +19,7 @@ data class GameState(
     val gameResult: GameResult? = null,
     val currentPlayer: Player = Player.X,
     val scores: ScoresState = ScoresState(),
-    val gameMode: GameMode = GameMode.PLAYER_VS_PLAYER
+    val gameMode: GameMode = PlayWithFriend,
 ) {
 
     companion object {

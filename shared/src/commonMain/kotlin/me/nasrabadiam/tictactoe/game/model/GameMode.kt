@@ -6,9 +6,12 @@ import me.nasrabadiam.tictactoe.util.Decoder
 import me.nasrabadiam.tictactoe.util.Encoder
 
 @Serializable
-enum class GameMode {
-    PLAYER_VS_PLAYER,
-    PLAYER_VS_AI;
+sealed class GameMode {
+    @Serializable
+    data object PlayWithFriend : GameMode()
+
+    @Serializable
+    data class PlayWithAI(val difficulty: AIDifficulty = AIDifficulty.NORMAL) : GameMode()
 
     fun encode(): String {
         return Encoder.encodeToString(serializer(), this)

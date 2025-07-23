@@ -34,15 +34,18 @@ import me.nasrabadiam.tictactoe.GameWindowSizeClass.COMPACT
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.EXPANDED
 import me.nasrabadiam.tictactoe.GameWindowSizeClass.NORMAL
 import me.nasrabadiam.tictactoe.game.ui.WindowScreenSizeDataProvider
-import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriend
-import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAI
+import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAFriendEvent
+import me.nasrabadiam.tictactoe.home.HomeEvent.PlayWithAIEvent
 import me.nasrabadiam.tictactoe.ui.icon.Group
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tictactoe.shared.generated.resources.Res
 import tictactoe.shared.generated.resources.ic_launcher_foreground
+import tictactoe.shared.generated.resources.play_with_a_friend
+import tictactoe.shared.generated.resources.play_with_ai
 
 @Composable
 fun HomeScreen(
@@ -134,14 +137,13 @@ private fun GameButtons(
 ) {
     Button(
         modifier = modifier
-            .semantics { contentDescription = PLAY_WITH_A_FRIEND_TEXT }
             .widthIn(220.dp),
         colors = ButtonDefaults.buttonColors().copy(
             contentColor = MaterialTheme.colorScheme.onPrimary,
             containerColor = MaterialTheme.colorScheme.primary
         ),
         onClick = {
-            sendEvent.invoke(PlayWithAFriend)
+            sendEvent.invoke(PlayWithAFriendEvent)
         }
     ) {
         Icon(
@@ -152,15 +154,13 @@ private fun GameButtons(
         )
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_WITH_A_FRIEND_TEXT
+            text = stringResource(Res.string.play_with_a_friend)
         )
     }
     buttonsSpace()
     Button(
-        modifier = modifier
-            .semantics { contentDescription = PLAY_SOLO_TEXT }
-            .widthIn(min = 220.dp),
-        onClick = { sendEvent.invoke(PlayWithAI) },
+        modifier = modifier.widthIn(min = 220.dp),
+        onClick = { sendEvent.invoke(PlayWithAIEvent) },
     ) {
         Icon(
             modifier = Modifier.semantics(mergeDescendants = true) {},
@@ -169,13 +169,10 @@ private fun GameButtons(
         )
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_SOLO_TEXT
+            text = stringResource(Res.string.play_with_ai)
         )
     }
 }
-
-private const val PLAY_SOLO_TEXT = "Play With AI"
-private const val PLAY_WITH_A_FRIEND_TEXT = "Play with a friend"
 
 @Preview
 @Composable

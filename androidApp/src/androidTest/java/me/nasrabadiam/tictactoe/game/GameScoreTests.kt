@@ -13,7 +13,7 @@ import me.nasrabadiam.tictactoe.REPLAY_GAME_BUTTON_TEXT
 import me.nasrabadiam.tictactoe.clickOnCell
 import me.nasrabadiam.tictactoe.di.component.createGameComponents
 import me.nasrabadiam.tictactoe.game.model.Game
-import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
+import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import org.junit.Rule
@@ -28,7 +28,7 @@ class GameScoreTests {
     private val gameViewModel = GameViewModel(
         gameUseCase,
         SavedStateHandle(),
-        Game(PLAYER_VS_PLAYER),
+        Game(GameMode.PlayWithFriend),
     )
     private val windowClass = COMPACT
 

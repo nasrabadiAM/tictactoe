@@ -1,17 +1,18 @@
 package me.nasrabadiam.tictactoe
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.tictactoe.game.ai.TicTacToeAI
 import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
-import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_AI
-import me.nasrabadiam.tictactoe.game.model.GameMode.PLAYER_VS_PLAYER
+import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player.O
@@ -23,19 +24,32 @@ import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameState
 import me.nasrabadiam.tictactoe.game.ui.ScoresState
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GameUseCaseShould {
-    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
 
-    private val useCase: GameUseCase = GameUseCase(
-        boardSize = DEFAULT_BOARD_CELL_COUNT,
-        starterPlayer = X,
-        ai = TicTacToeAI(defaultDispatcher = testDispatcher),
-    )
+    private lateinit var useCase: GameUseCase
+
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        useCase = GameUseCase(
+            boardSize = DEFAULT_BOARD_CELL_COUNT,
+            starterPlayer = X,
+            ai = TicTacToeAI(defaultDispatcher = testDispatcher),
+        )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun updateItemValueWhenClicked() = runTest {
@@ -730,7 +744,7 @@ class GameUseCaseShould {
                 gameResult = gameResult,
                 currentPlayer = currentPlayer,
                 scores = ScoresState(1, 2, 3),
-                gameMode = PLAYER_VS_PLAYER
+                gameMode = GameMode.PlayWithFriend,
             )
         )
 
@@ -771,12 +785,12 @@ class GameUseCaseShould {
             gameResult = null,
             currentPlayer = X,
             scores = ScoresState(0, 0, 0),
-            gameMode = PLAYER_VS_AI
+            gameMode = GameMode.PlayWithAI()
         )
 
         useCase.restoreGameState(gameState)
 
-        assertEquals(PLAYER_VS_AI, useCase.gameMode.value)
+        assertEquals(GameMode.PlayWithAI(), useCase.gameMode.value)
         assertEquals(cells, useCase.cells.value)
         assertEquals(X, useCase.currentPlayer.value)
     }
@@ -789,7 +803,7 @@ class GameUseCaseShould {
                 gameResult = null,
                 currentPlayer = O,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -808,7 +822,7 @@ class GameUseCaseShould {
                 gameResult = null,
                 currentPlayer = X,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -819,14 +833,14 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun aiMakesValidMoveAfterHumanMove() = runTest {
+    fun aiMakesValidMoveAfterHumanMove() = runTest(testDispatcher) {
         useCase.restoreGameState(
             GameState(
                 cells = listOfEmptyCells(),
                 gameResult = null,
                 currentPlayer = X,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -834,7 +848,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(0)
 
         // Give AI time to make its move
-        testDispatcher.scheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
 
         // Check that AI made a move (some cell other than 0 should be filled with O)
         val aiMoveMade = useCase.cells.value.any { cell ->
@@ -847,14 +861,14 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun aiMakesNoMoveAfterRestartClicked() = runTest {
+    fun aiMakesNoMoveAfterRestartClicked() = runTest(testDispatcher) {
         useCase.restoreGameState(
             GameState(
                 cells = listOfEmptyCells(),
                 gameResult = null,
                 currentPlayer = X,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -863,7 +877,7 @@ class GameUseCaseShould {
         useCase.restartGame()
 
         // Give AI time to make its move
-        testDispatcher.scheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
 
         // Check that AI made a move (some cell other than 0 should be filled with O)
         val aiMoveMade = useCase.cells.value.all { cell ->
@@ -876,14 +890,14 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun aiMakesNoMoveAfterRePlayClicked() = runTest {
+    fun aiMakesNoMoveAfterRePlayClicked() = runTest(testDispatcher) {
         useCase.restoreGameState(
             GameState(
                 cells = listOfEmptyCells(),
                 gameResult = null,
                 currentPlayer = X,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -892,7 +906,7 @@ class GameUseCaseShould {
         useCase.replayGame()
 
         // Give AI time to make its move
-        testDispatcher.scheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
 
         // Check that AI made a move (some cell other than 0 should be filled with O)
         val aiMoveMade = useCase.cells.value.all { cell ->
@@ -905,7 +919,7 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun aiDoesNotMoveWhenGameEnds() = runTest {
+    fun aiDoesNotMoveWhenGameEnds() = runTest(testDispatcher) {
         val winningCells = listOfEmptyCells().toMutableList().apply {
             this[0] = this[0].copy(value = X)
             this[1] = this[1].copy(value = X)
@@ -917,7 +931,7 @@ class GameUseCaseShould {
                 gameResult = null,
                 currentPlayer = X,
                 scores = ScoresState(0, 0, 0),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -925,7 +939,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(2)
 
         // Give time for any potential AI move
-        delay(AI_MOVE_DELAY_IN_MILLIS + 100)
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
 
         // Game should be over, AI shouldn't move
         assertTrue(useCase.gameResult.value is EndWithWinner)
@@ -943,7 +957,7 @@ class GameUseCaseShould {
                 gameResult = null,
                 currentPlayer = O,
                 scores = ScoresState(1, 1, 1),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
@@ -958,7 +972,7 @@ class GameUseCaseShould {
         // Current player should be starter
         assertEquals(X, useCase.currentPlayer.value)
         // Game mode should be preserved
-        assertEquals(PLAYER_VS_AI, useCase.gameMode.value)
+        assertEquals(GameMode.PlayWithAI(), useCase.gameMode.value)
     }
 
     @Test
@@ -979,7 +993,7 @@ class GameUseCaseShould {
                 gameResult = Draw,
                 currentPlayer = X,
                 scores = ScoresState(1, 2, 3),
-                gameMode = PLAYER_VS_AI
+                gameMode = GameMode.PlayWithAI()
             )
         )
 
