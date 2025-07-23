@@ -14,7 +14,7 @@ fi
 
 if [[ " ${args[*]} " != *"--no-unit"* ]]; then
   echo "Running Unit Tests...."
-  ./gradlew test
+  ./gradlew allTest
 fi
 
 if [[ " ${args[*]} " != *"--no-ui"* ]]; then

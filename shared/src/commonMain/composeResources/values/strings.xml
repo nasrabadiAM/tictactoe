@@ -1,0 +1,7 @@
+<resources>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_normal">Normal</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="play_with_a_friend">Play with a friend</string>
+    <string name="play_with_ai">Play with AI</string>
+</resources>
