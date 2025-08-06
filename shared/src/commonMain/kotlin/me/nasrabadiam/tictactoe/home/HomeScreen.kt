@@ -126,7 +126,7 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun GameButtons(
+fun GameButtons(
     modifier: Modifier = Modifier,
     sendEvent: (HomeEvent) -> Unit,
     buttonsSpace: @Composable () -> Unit
