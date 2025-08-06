@@ -162,7 +162,6 @@ fun GameButtons(
                         text = PLAY_WITH_A_FRIEND_TEXT
                     )
                 }
-
             }
             buttonsSpace()
             Button(
@@ -189,10 +188,8 @@ fun GameButtons(
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
-
             }
         }
-
     }
 }
 

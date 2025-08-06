@@ -6,11 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.curvedText
+import androidx.wear.tooling.preview.devices.WearDevices
 import me.nasrabadiam.tictactoe.game.model.Player
 import me.nasrabadiam.tictactoe.game.ui.GameEvent
 import me.nasrabadiam.tictactoe.game.ui.GameEvent.CellClicked
@@ -41,29 +43,31 @@ private fun GameScreenContent(
     Scaffold(
         modifier = modifier,
         timeText = {
+            val xScoreText = "(X: ${state.scores.xScore})"
+            val oScoreText = "(O: ${state.scores.oScore})"
             TimeText(
                 startLinearContent = {
                     Text(
-                        text = "(O: ${state.scores.oScore})",
-                        fontWeight = state.currentPlayer.getFontWeight(state.currentPlayer),
+                        text = oScoreText,
+                        fontWeight = state.currentPlayer.getFontWeightOfPlayer(Player.O),
                     )
                 },
                 startCurvedContent = {
                     curvedText(
-                        text = "(O: ${state.scores.oScore})",
-                        fontWeight = state.currentPlayer.getFontWeight(state.currentPlayer),
+                        text = oScoreText,
+                        fontWeight = state.currentPlayer.getFontWeightOfPlayer(Player.O),
                     )
                 },
                 endCurvedContent = {
                     curvedText(
-                        text = "(X: ${state.scores.xScore})",
-                        fontWeight = state.currentPlayer.getFontWeight(state.currentPlayer),
+                        text = xScoreText,
+                        fontWeight = state.currentPlayer.getFontWeightOfPlayer(Player.X),
                     )
                 },
                 endLinearContent = {
                     Text(
-                        text = "(X: ${state.scores.xScore})",
-                        fontWeight = state.currentPlayer.getFontWeight(state.currentPlayer),
+                        text = xScoreText,
+                        fontWeight = state.currentPlayer.getFontWeightOfPlayer(Player.X),
                     )
                 }
             )
@@ -81,7 +85,17 @@ private fun GameScreenContent(
     }
 }
 
-private fun Player.getFontWeight(currentPlayer: Player): FontWeight {
-    return if (currentPlayer == this) FontWeight.Bold else FontWeight.Normal
+private fun Player.getFontWeightOfPlayer(player: Player): FontWeight {
+    return if (player == this) FontWeight.Bold else FontWeight.Normal
 }
 
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.SQUARE, showSystemUi = true)
+@Preview(device = WearDevices.RECT, showSystemUi = true)
+@Composable
+fun WearGameScreenPreView() {
+    TacTrixTheme {
+        GameScreenContent(state = GameState(), sendEvent = {})
+    }
+}

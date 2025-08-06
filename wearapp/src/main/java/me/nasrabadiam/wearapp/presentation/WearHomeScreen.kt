@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
+import androidx.wear.tooling.preview.devices.WearDevices
 import me.nasrabadiam.tictactoe.home.GameButtons
 import me.nasrabadiam.tictactoe.home.HomeEvent
+import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 
 @Composable
 fun WearHomeScreen(
@@ -38,5 +41,16 @@ fun WearHomeScreen(
             )
             Spacer(modifier = Modifier.weight(1f))
         }
+    }
+}
+
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.SQUARE, showSystemUi = true)
+@Preview(device = WearDevices.RECT, showSystemUi = true)
+@Composable
+fun WearHomeScreenPreView() {
+    TacTrixTheme {
+        WearHomeScreen(homeEvent = {})
     }
 }

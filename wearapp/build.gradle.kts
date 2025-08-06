@@ -17,8 +17,6 @@ android {
         targetSdk = extra.get("targetSdk") as Int
         versionCode = extra.get("versionCode") as Int
         versionName = extra.get("versionName") as String
-
-
     }
 
     buildTypes {
@@ -64,6 +62,7 @@ dependencies {
 
     implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
+    implementation(libs.ui.tooling.preview)
 
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.foundation)
