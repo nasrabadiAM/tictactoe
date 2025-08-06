@@ -12,11 +12,8 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import me.nasrabadiam.tictactoe.GameWindowSizeClass
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.ui.GameScreen
 import me.nasrabadiam.tictactoe.game.ui.GameViewModel
-import me.nasrabadiam.tictactoe.getWindowSizeClass
 import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import me.tatarka.inject.annotations.Inject
 
@@ -35,7 +32,6 @@ internal fun TacTrixWearApp(gameUseCase: () -> GameUseCase) {
     val gameViewModel: (SavedStateHandle) -> GameViewModel = {
         GameViewModel(gameUseCase.invoke(), savedStateHandle = it)
     }
-    val windowSizeClass = getWindowSizeClass()
 
     val navController = rememberSwipeDismissableNavController()
     SwipeDismissableNavHost(
@@ -44,7 +40,7 @@ internal fun TacTrixWearApp(gameUseCase: () -> GameUseCase) {
         startDestination = HOME_SCREEN_ROUTE,
     ) {
         homeScreen(navController)
-        gameScreen(gameViewModel, windowSizeClass)
+        gameScreen(gameViewModel)
     }
 }
 
@@ -60,11 +56,10 @@ private fun NavGraphBuilder.homeScreen(
 
 private fun NavGraphBuilder.gameScreen(
     gameViewModel: (SavedStateHandle) -> GameViewModel,
-    windowSizeClass: GameWindowSizeClass
 ) {
     composable(GAME_SCREEN_ROUTE) {
         val viewModel = viewModel { gameViewModel(createSavedStateHandle()) }
-        GameScreen(viewModel, windowSizeClass)
+        WearGameScreen(viewModel)
     }
 }
 

@@ -132,11 +132,14 @@ fun GameButtons(
     modifier: Modifier = Modifier,
     buttonsSpace: @Composable () -> Unit = {},
 ) {
-    BoxWithConstraints {
+    BoxWithConstraints(modifier = modifier) {
         val buttonWidth = (maxWidth * 0.6f).coerceAtLeast(60.dp)
-        Column {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
             Button(
-                modifier = modifier
+                modifier = Modifier
                     .semantics { contentDescription = PLAY_WITH_A_FRIEND_TEXT }
                     .widthIn(buttonWidth),
                 colors = ButtonDefaults.buttonColors().copy(
@@ -163,7 +166,7 @@ fun GameButtons(
             }
             buttonsSpace()
             Button(
-                modifier = modifier
+                modifier = Modifier
                     .semantics { contentDescription = PLAY_SOLO_TEXT + COMING_SOON_TEXT }
                     .widthIn(min = buttonWidth),
                 onClick = { TODO("Not Implemented yet!") },
