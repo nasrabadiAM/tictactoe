@@ -12,7 +12,7 @@ android {
     compileSdk = extra.get("compileSdk") as Int
 
     defaultConfig {
-        applicationId = "$appId.waer"
+        applicationId = "$appId.wear"
         minSdk = 30
         targetSdk = extra.get("targetSdk") as Int
         versionCode = extra.get("versionCode") as Int
