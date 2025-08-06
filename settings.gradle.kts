@@ -31,4 +31,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TicTacToe"
 include(":androidApp")
+include(":wearapp")
 include(":shared")

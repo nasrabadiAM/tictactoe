@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -148,67 +149,73 @@ internal fun GameResultBox(
         visibleState = gameResultState,
         enter = fadeIn(tweenAnimationSpec) + scaleIn(tweenAnimationSpec)
     ) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-
-            Box(modifier = Modifier
-                .padding(16.dp)
-                .layout { measurable, constraints ->
-                    // Determine the minimum dimension for square layout
-                    val minDimension = minOf(constraints.maxWidth, constraints.maxHeight) / 2
-                    val placeable = measurable.measure(
-                        constraints.copy(
-                            maxWidth = minDimension,
-                            minWidth = minDimension,
-                            maxHeight = minDimension,
-                            minHeight = minDimension,
-                        )
-                    )
-                    layout(minDimension, minDimension) {
-                        val topOffset = placeable.height * FIXED_OFFSET_FACTOR
-                        placeable.place(x = 0, y = topOffset.toInt())
-                    }
-                }
+        BoxWithConstraints {
+            Column(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                val cellColor = MaterialTheme.colorScheme.onSurface
-                when (gameResult) {
-                    Draw -> {
-                        Row(Modifier) {
-                            OCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
-                            XCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
+
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .layout { measurable, constraints ->
+                            // Determine the minimum dimension for square layout
+                            val minDimension =
+                                minOf(constraints.maxWidth, constraints.maxHeight) / 2
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = minDimension,
+                                    minWidth = minDimension,
+                                    maxHeight = minDimension,
+                                    minHeight = minDimension,
+                                )
+                            )
+                            layout(minDimension, minDimension) {
+                                val topOffset = placeable.height * FIXED_OFFSET_FACTOR
+                                placeable.place(x = 0, y = topOffset.toInt())
+                            }
+                        }
+                ) {
+                    val cellColor = MaterialTheme.colorScheme.onSurface
+                    when (gameResult) {
+                        Draw -> {
+                            Row(Modifier) {
+                                OCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
+                                XCell(modifier = Modifier.weight(0.5f), cellColor = cellColor)
+                            }
+                        }
+
+                        is EndWithWinner -> {
+                            when (gameResult.player) {
+                                X -> XCell(cellColor = cellColor)
+                                O -> OCell(cellColor = cellColor)
+                            }
                         }
                     }
+                }
 
-                    is EndWithWinner -> {
-                        when (gameResult.player) {
-                            X -> XCell(cellColor = cellColor)
-                            O -> OCell(cellColor = cellColor)
-                        }
+                val resultText = when (gameResult) {
+                    Draw -> "Draw!"
+                    is EndWithWinner -> "Winner!"
+                }
+
+                Text(
+                    text = resultText,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .padding(4.dp)
+                )
+                if (this@BoxWithConstraints.maxHeight > 220.dp) {
+                    Button(
+                        onClick = onReplayClicked,
+                        modifier = Modifier.padding(12.dp)
+                    ) {
+                        Text("Again")
                     }
                 }
-            }
-
-            val resultText = when (gameResult) {
-                Draw -> "Draw!"
-                is EndWithWinner -> "Winner!"
-            }
-
-            Text(
-                text = resultText,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .padding(4.dp)
-            )
-            Button(
-                onClick = onReplayClicked,
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Text("Again")
             }
         }
     }
