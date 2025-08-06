@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -72,7 +73,7 @@ private fun VerticalHomeScreen(
         Spacer(modifier = Modifier.weight(1f))
         GameButtons(
             sendEvent = sendEvent,
-            buttonsSpace = { Spacer(modifier = Modifier.weight(0.2f)) })
+            buttonsSpace = { Spacer(modifier = Modifier.height(16.dp)) })
         Spacer(modifier = Modifier.weight(1f))
     }
 }
@@ -127,55 +128,68 @@ private fun AppLogo(modifier: Modifier = Modifier) {
 
 @Composable
 fun GameButtons(
-    modifier: Modifier = Modifier,
     sendEvent: (HomeEvent) -> Unit,
-    buttonsSpace: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    buttonsSpace: @Composable () -> Unit = {},
 ) {
-    Button(
-        modifier = modifier
-            .semantics { contentDescription = PLAY_WITH_A_FRIEND_TEXT }
-            .widthIn(220.dp),
-        colors = ButtonDefaults.buttonColors().copy(
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
-        onClick = {
-            sendEvent.invoke(PlayWithAFriend)
+    BoxWithConstraints {
+        val buttonWidth = (maxWidth * 0.6f).coerceAtLeast(60.dp)
+        Column {
+            Button(
+                modifier = modifier
+                    .semantics { contentDescription = PLAY_WITH_A_FRIEND_TEXT }
+                    .widthIn(buttonWidth),
+                colors = ButtonDefaults.buttonColors().copy(
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                onClick = {
+                    sendEvent.invoke(PlayWithAFriend)
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.semantics(mergeDescendants = true) {},
+                    imageVector = Icons.Rounded.Group,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null
+                )
+                if (buttonWidth > 120.dp) {
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = PLAY_WITH_A_FRIEND_TEXT
+                    )
+                }
+
+            }
+            buttonsSpace()
+            Button(
+                modifier = modifier
+                    .semantics { contentDescription = PLAY_SOLO_TEXT + COMING_SOON_TEXT }
+                    .widthIn(min = buttonWidth),
+                onClick = { TODO("Not Implemented yet!") },
+                enabled = false
+            ) {
+                Icon(
+                    modifier = Modifier.semantics(mergeDescendants = true) {},
+                    imageVector = Icons.Rounded.Person,
+                    contentDescription = null
+                )
+                if (buttonWidth > 120.dp) {
+
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = PLAY_SOLO_TEXT
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 2.dp),
+                        text = COMING_SOON_TEXT,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+            }
         }
-    ) {
-        Icon(
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-            imageVector = Icons.Rounded.Group,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            contentDescription = null
-        )
-        Text(
-            modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_WITH_A_FRIEND_TEXT
-        )
-    }
-    buttonsSpace()
-    Button(
-        modifier = modifier
-            .semantics { contentDescription = PLAY_SOLO_TEXT + COMING_SOON_TEXT }
-            .widthIn(min = 220.dp),
-        onClick = { TODO("Not Implemented yet!") },
-        enabled = false
-    ) {
-        Icon(
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-            imageVector = Icons.Rounded.Person,
-            contentDescription = null
-        )
-        Text(
-            modifier = Modifier.padding(start = 8.dp),
-            text = PLAY_SOLO_TEXT
-        )
-        Text(
-            modifier = Modifier.padding(start = 2.dp),
-            text = COMING_SOON_TEXT,
-            style = MaterialTheme.typography.labelSmall
-        )
+
     }
 }
 
