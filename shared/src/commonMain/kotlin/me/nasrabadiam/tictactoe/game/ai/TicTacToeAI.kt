@@ -9,13 +9,12 @@ import kotlinx.coroutines.launch
 import me.nasrabadiam.tictactoe.di.Named
 import me.nasrabadiam.tictactoe.game.model.AIDifficulty
 import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
-import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.model.WiningOrientation
+import me.nasrabadiam.tictactoe.game.model.evaluateBoard
 import me.nasrabadiam.tictactoe.test.mock.Mockable
 import me.tatarka.inject.annotations.Inject
 import kotlin.random.Random
@@ -25,8 +24,8 @@ import kotlin.random.Random
 class TicTacToeAI(
     @Named("default") private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    // private val scope = CoroutineScope(defaultDispatcher + SupervisorJob())
-    // private var aiMoveJob: Job? = null
+    private val scope = CoroutineScope(defaultDispatcher + SupervisorJob())
+    private var aiMoveJob: Job? = null
 
     data class Move(val index: Int, val score: Int)
 
@@ -41,14 +40,14 @@ class TicTacToeAI(
         difficulty: AIDifficulty,
         aiMoveCallback: (aiMove: Int) -> Unit,
     ) {
-        // aiMoveJob?.cancel()
+        aiMoveJob?.cancel()
 
-        // aiMoveJob = scope.launch {
+        aiMoveJob = scope.launch {
             delay(AI_MOVE_DELAY_IN_MILLIS)
 
             val aiMove = getBestMove(cells, Player.O, difficulty)
             aiMoveCallback(aiMove)
-        // }
+        }
     }
 
     /**
@@ -194,7 +193,8 @@ class TicTacToeAI(
     }
 
     fun dispose() {
-        // aiMoveJob?.cancel()
+        aiMoveJob?.cancel()
+        aiMoveJob = null
     }
 
     /**
@@ -306,39 +306,7 @@ class TicTacToeAI(
         }
     }
 
-    /**
-     * Evaluate the current board state for terminal conditions
-     */
-    @Suppress("ReturnCount")
-    private fun evaluateBoard(cells: List<Cell>): GameResult? {
-        // Check all winning patterns
-        WINNING_PATTERNS.forEach { pattern ->
-            val values = pattern.cells.map { cells[it].value }
-            val player = values.firstOrNull()
-            if (player != null && values.all { it == player }) {
-                return GameResult.EndWithWinner(
-                    player = player,
-                    winningOrientation = pattern.orientation,
-                    winningIndex = pattern.index
-                )
-            }
-        }
-
-        // Check for draw
-        if (cells.all { it.value != null }) {
-            return GameResult.Draw
-        }
-
-        return null // Game still ongoing
-    }
-
     companion object {
-        // Reuse the winning patterns from GameUseCase
-        private data class WinPattern(
-            val cells: List<Int>,
-            val orientation: WiningOrientation,
-            val index: Int
-        )
 
         private const val DEFAULT_MOVE_INDEX = -1
         private const val DEFAULT_SCORE = 0
@@ -349,30 +317,5 @@ class TicTacToeAI(
         private const val EASY_MOVE_STRATEGIC_CHANCE = 0.2f
         private const val LIMITED_MAX_DEPTH = 4
         private const val DEPTH_PENALTY_REWARD_VALUE = 10
-
-        private val WINNING_PATTERNS = buildList {
-
-            // Rows (0-2)
-            repeat(BOARD_SIZE) { row ->
-                val cells = (0 until BOARD_SIZE).map { col -> row * BOARD_SIZE + col }
-                add(WinPattern(cells, WiningOrientation.ROW, row))
-            }
-
-            // Columns (0-2)
-            repeat(BOARD_SIZE) { col ->
-                val cells = (0 until BOARD_SIZE).map { row -> row * BOARD_SIZE + col }
-                add(WinPattern(cells, WiningOrientation.COLUMN, col))
-            }
-
-            // Main diagonal (top-left to bottom-right)
-            val mainDiagonal = (0 until BOARD_SIZE).map { i -> i * BOARD_SIZE + i }
-            add(WinPattern(mainDiagonal, WiningOrientation.CROSS, 0))
-
-            // Anti-diagonal (top-right to bottom-left)
-            val antiDiagonal = (0 until BOARD_SIZE).map { i ->
-                i * BOARD_SIZE + (BOARD_SIZE - 1 - i)
-            }
-            add(WinPattern(antiDiagonal, WiningOrientation.CROSS, 1))
-        }
     }
 }

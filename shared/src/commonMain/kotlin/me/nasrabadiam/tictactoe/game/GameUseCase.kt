@@ -6,14 +6,13 @@ import kotlinx.coroutines.flow.update
 import me.nasrabadiam.tictactoe.di.Named
 import me.nasrabadiam.tictactoe.game.ai.TicTacToeAI
 import me.nasrabadiam.tictactoe.game.model.AIDifficulty
-import me.nasrabadiam.tictactoe.game.model.BOARD_SIZE
 import me.nasrabadiam.tictactoe.game.model.Cell
 import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameMode.PlayWithAI
 import me.nasrabadiam.tictactoe.game.model.GameMode.PlayWithFriend
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.Player
-import me.nasrabadiam.tictactoe.game.model.WiningOrientation
+import me.nasrabadiam.tictactoe.game.model.evaluateBoard
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.DrawCount
 import me.nasrabadiam.tictactoe.game.ui.GameState
@@ -164,32 +163,16 @@ class GameUseCase(
     }
 
     private fun checkGameResultAndNotifyIfChanged() {
-        checkForWinner()?.let { winner ->
-            updateWinnerScore(winner.player)
-            _gameResult.update { winner }
-            changePlayerTurn()
-        } ?: run {
-            if (hasNotAnyEmptyCell()) {
+        evaluateBoard(_cells.value)?.let { result ->
+            if (result is GameResult.EndWithWinner) {
+                updateWinnerScore(result.player)
+                _gameResult.update { result }
+                changePlayerTurn()
+            } else if (result is GameResult.Draw) {
                 _drawCount.update { drawCount.value + 1 }
                 _gameResult.update { GameResult.Draw }
             }
         }
-    }
-
-    private fun checkForWinner(): GameResult.EndWithWinner? {
-        val cells = _cells.value
-        WINNING_PATTERNS.forEachIndexed { _, pattern ->
-            val values = pattern.cells.map { cells[it].value }
-            val player = values.firstOrNull()
-            if (player != null && values.all { it == player }) {
-                return GameResult.EndWithWinner(
-                    player = player,
-                    winningOrientation = pattern.orientation,
-                    winningIndex = pattern.index
-                )
-            }
-        }
-        return null
     }
 
     private fun updateWinnerScore(winner: Player) {
@@ -197,48 +180,6 @@ class GameUseCase(
             _xScore.update { xScore.value + 1 }
         } else {
             _oScore.update { oScore.value + 1 }
-        }
-    }
-
-    private fun hasNotAnyEmptyCell(): Boolean {
-        return cellsList.any { it.value == null }.not()
-    }
-
-    companion object {
-        private data class WinPattern(
-            val cells: List<Int>,
-            val orientation: WiningOrientation,
-            val index: Int
-        )
-
-        private val WINNING_PATTERNS = buildList {
-            // Rows (0-2)
-            repeat(BOARD_SIZE) { row ->
-                val cells = (0 until BOARD_SIZE).map { col ->
-                    row * BOARD_SIZE + col
-                }
-                add(WinPattern(cells, WiningOrientation.ROW, row))
-            }
-
-            // Columns (0-2)
-            repeat(BOARD_SIZE) { col ->
-                val cells = (0 until BOARD_SIZE).map { row ->
-                    row * BOARD_SIZE + col
-                }
-                add(WinPattern(cells, WiningOrientation.COLUMN, col))
-            }
-
-            // Main diagonal (top-left to bottom-right)
-            val mainDiagonal = (0 until BOARD_SIZE).map { i ->
-                i * BOARD_SIZE + i
-            }
-            add(WinPattern(mainDiagonal, WiningOrientation.CROSS, 0))
-
-            // Anti-diagonal (top-right to bottom-left)
-            val antiDiagonal = (0 until BOARD_SIZE).map { i ->
-                i * BOARD_SIZE + (BOARD_SIZE - 1 - i)
-            }
-            add(WinPattern(antiDiagonal, WiningOrientation.CROSS, 1))
         }
     }
 }

@@ -10,7 +10,6 @@ import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -238,7 +237,6 @@ class TicTacToeAIShould {
     }
 
     @Test
-    @Ignore
     fun cancelPreviousMoveWhenNewMoveScheduled() = runTest(testDispatcher) {
         val cells1 = listOfEmptyCells()
         val cells2 = listOfEmptyCells().toMutableList().apply {
@@ -271,7 +269,6 @@ class TicTacToeAIShould {
     }
 
     @Test
-    @Ignore
     fun disposeProperlyCleanupResources() = runTest(testDispatcher) {
         val cells = listOfEmptyCells()
         var callbackExecuted = false

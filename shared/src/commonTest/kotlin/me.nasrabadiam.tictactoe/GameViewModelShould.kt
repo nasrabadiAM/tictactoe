@@ -30,7 +30,6 @@ import me.nasrabadiam.tictactoe.game.ui.GameViewModel
 import me.nasrabadiam.tictactoe.test.mock.Mockable
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -73,10 +72,10 @@ class GameViewModelShould {
     }
 
     @Test
-    @Ignore
     fun callRestartGameWhenRestartEventReceived() = runTest {
 
         gameViewModel.handleEvent(GameEvent.RestartClicked)
+        testScheduler.advanceUntilIdle()
         verifySuspend(exactly(1)) {
             gameUseCase.restartGame()
         }

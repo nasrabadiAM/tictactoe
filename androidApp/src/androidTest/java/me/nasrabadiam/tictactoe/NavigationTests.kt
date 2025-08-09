@@ -19,16 +19,17 @@ class NavigationTests {
     private val gameUseCase: GameUseCase = createGameComponents().gameUseCase
 
     @Test
-    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInTwoPlayerMode(): Unit = with(composeRule) {
-        setContent { App(gameUseCase = { gameUseCase }) }
-        val playWithAFriendButton =
-            onNode(hasText(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
-        playWithAFriendButton.performClick()
-        playWithAFriendButton.assertDoesNotExist()
+    fun whenClickedOnPlayWithAFriendShouldOpenGameScreenInTwoPlayerMode(): Unit =
+        with(composeRule) {
+            setContent { App(gameUseCase = { gameUseCase }) }
+            val playWithAFriendButton =
+                onNode(hasText(PLAY_WITH_A_FRIEND_BUTTON_TEXT))
+            playWithAFriendButton.performClick()
+            playWithAFriendButton.assertDoesNotExist()
 
-        // assert there is a restart button
-        onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
-    }
+            // assert there is a restart button
+            onNodeWithText(RESTART_GAME_BUTTON_TEXT).assertIsDisplayed()
+        }
 
     @Test
     fun whenAppOpensShouldShowHomeRoute(): Unit = with(composeRule) {
