@@ -1,9 +1,8 @@
 package me.nasrabadiam.tictactoe
 
 import androidx.lifecycle.SavedStateHandle
-import dev.mokkery.MockMode.original
+import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
-import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
@@ -49,10 +48,12 @@ class GameViewModelShould {
         ticTacToeAI = TicTacToeAI(
             defaultDispatcher = testDispatcher
         )
-        gameUseCase = mock<GameUseCase>(original) {
+        gameUseCase = mock<GameUseCase>(MockMode.original) {
             every { currentPlayer.onEach(any()) } calls { MutableStateFlow(Player.X) }
             everySuspend { replayGame() } calls {}
-            every { ai } returns ticTacToeAI
+            everySuspend { restartGame() } calls {}
+            everySuspend { clickOnCell(any()) } calls {}
+            every { restoreGameState(any()) } calls {}
         }
         gameViewModel = GameViewModel(
             gameUseCase,
@@ -143,18 +144,13 @@ class GameViewModelShould {
 
     @Test
     fun callCellClickedInAIModeWhenCellClickedEventReceived() = runTest(testDispatcher) {
-        val gameUseCase = mock<GameUseCase>(original) {
-            every { currentPlayer.onEach(any()) } calls { MutableStateFlow(Player.X) }
-            everySuspend { replayGame() } calls {}
-            every { ai } returns ticTacToeAI
-        }
         val aiGameViewModel = GameViewModel(
             gameUseCase,
             SavedStateHandle(),
             Game(GameMode.PlayWithAI())
         )
-
         aiGameViewModel.handleEvent(GameEvent.CellClicked(5))
+
         testScheduler.advanceUntilIdle()
         verifySuspend(exactly(1)) {
             gameUseCase.clickOnCell(5)

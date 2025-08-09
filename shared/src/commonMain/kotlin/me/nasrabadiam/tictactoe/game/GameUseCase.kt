@@ -1,5 +1,6 @@
 package me.nasrabadiam.tictactoe.game
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -27,14 +28,13 @@ class GameUseCase(
     @Named("boardCellCount")
     private val boardSize: Int,
     private val starterPlayer: Player,
-    internal val ai: TicTacToeAI,
+    @get:VisibleForTesting internal val ai: TicTacToeAI,
 ) {
 
     private val _cells: MutableStateFlow<List<Cell>> =
         MutableStateFlow(listOfEmptyCells(boardSize))
 
     val cells: StateFlow<List<Cell>> = _cells
-    private val cellsList get() = _cells.value.toMutableList()
 
     private val _gameResult: MutableStateFlow<GameResult?> = MutableStateFlow(null)
     val gameResult: StateFlow<GameResult?> = _gameResult
