@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -13,8 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import me.nasrabadiam.tictactoe.game.model.AIDifficulty
+import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import tictactoe.shared.generated.resources.Res
 import tictactoe.shared.generated.resources.difficulty_easy
 import tictactoe.shared.generated.resources.difficulty_hard
@@ -34,6 +39,7 @@ fun DifficultyDialogScreen(
                     MaterialTheme.colorScheme.surface,
                     MaterialTheme.shapes.medium,
                 )
+                .verticalScroll(rememberScrollState())
                 .padding(vertical = 40.dp, horizontal = 24.dp),
         ) {
             Button(
@@ -85,5 +91,14 @@ fun DifficultyDialogScreen(
                 )
             }
         }
+    }
+}
+
+@Preview()
+@Composable
+fun WearGameScreenPreView() {
+    TacTrixTheme {
+        val navController = rememberNavController()
+        DifficultyDialogScreen(navController, {})
     }
 }
