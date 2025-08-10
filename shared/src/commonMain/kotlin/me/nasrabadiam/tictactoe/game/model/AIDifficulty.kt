@@ -6,34 +6,28 @@ import me.nasrabadiam.tictactoe.util.Decoder
 import me.nasrabadiam.tictactoe.util.Encoder
 
 @Serializable
-enum class Player {
-    X, O;
+enum class AIDifficulty {
+    EASY,
+    NORMAL,
+    HARD;
 
-    private fun encode(): String {
+    fun encode(): String {
         return Encoder.encodeToString(serializer(), this)
     }
 
     fun saveState(savedStateHandle: SavedStateHandle) {
-        savedStateHandle[PLAYER_KEY] = this.encode()
-    }
-
-    fun opposite(): Player {
-        return when (this) {
-            X -> O
-            O -> X
-        }
+        savedStateHandle[AI_DIFFICULTY_KEY] = this.encode()
     }
 
     companion object {
-
-        fun getState(savedStateHandle: SavedStateHandle): Player {
-            return decode(savedStateHandle.get<String>(PLAYER_KEY)) ?: X
+        fun getState(savedStateHandle: SavedStateHandle, default: AIDifficulty): AIDifficulty {
+            return decode(savedStateHandle.get<String>(AI_DIFFICULTY_KEY)) ?: default
         }
 
-        private fun decode(input: String?): Player? {
+        fun decode(input: String?): AIDifficulty? {
             return Decoder.decodeString(serializer(), input)
         }
 
-        private const val PLAYER_KEY = "player"
+        private const val AI_DIFFICULTY_KEY = "ai_difficulty"
     }
 }

@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import me.nasrabadiam.tictactoe.ApplicationComponent
 import me.nasrabadiam.tictactoe.create
+import me.nasrabadiam.tictactoe.di.component.GameComponents
+import me.nasrabadiam.tictactoe.di.component.createGameComponents
 import me.nasrabadiam.tictactoe.di.scopes.ActivityScope
 import me.nasrabadiam.tictactoe.game.GameUseCase
 import me.nasrabadiam.wearapp.TacTrixWearApplication
@@ -34,6 +36,7 @@ fun ApplicationComponent.Companion.from(activity: Activity): ApplicationComponen
 @ActivityScope
 abstract class WearMainActivityComponent(
     @get:Provides val activity: ComponentActivity,
+    @Component val gameComponents: GameComponents = createGameComponents(),
     @Component val applicationComponent: ApplicationComponent = ApplicationComponent.from(activity)
 ) {
 

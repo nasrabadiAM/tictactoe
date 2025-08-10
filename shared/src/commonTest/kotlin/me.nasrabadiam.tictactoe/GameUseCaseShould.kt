@@ -1,39 +1,69 @@
 package me.nasrabadiam.tictactoe
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import me.nasrabadiam.tictactoe.game.GameUseCase
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.COLUMN
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.CROSS
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.ROW
+import me.nasrabadiam.tictactoe.game.ai.TicTacToeAI
+import me.nasrabadiam.tictactoe.game.model.AI_MOVE_DELAY_IN_MILLIS
 import me.nasrabadiam.tictactoe.game.model.Cell
+import me.nasrabadiam.tictactoe.game.model.DEFAULT_BOARD_CELL_COUNT
+import me.nasrabadiam.tictactoe.game.model.GameMode
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
-import me.nasrabadiam.tictactoe.game.model.Player
+import me.nasrabadiam.tictactoe.game.model.Player.O
+import me.nasrabadiam.tictactoe.game.model.Player.X
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.COLUMN
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.CROSS
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.ROW
 import me.nasrabadiam.tictactoe.game.model.utlis.getCellIndex
 import me.nasrabadiam.tictactoe.game.model.utlis.listOfEmptyCells
 import me.nasrabadiam.tictactoe.game.ui.GameState
 import me.nasrabadiam.tictactoe.game.ui.ScoresState
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GameUseCaseShould {
+    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
 
-    private val useCase = GameUseCase()
+    private lateinit var useCase: GameUseCase
+
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        useCase = GameUseCase(
+            boardSize = DEFAULT_BOARD_CELL_COUNT,
+            starterPlayer = X,
+            ai = TicTacToeAI(defaultDispatcher = testDispatcher),
+        )
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun updateItemValueWhenClicked() = runTest {
         val index = 0
         useCase.clickOnCell(index)
         val clickedItem = useCase.cells.value[index]
-        assertEquals(Player.X, clickedItem.value)
+        assertEquals(X, clickedItem.value)
     }
 
     @Test
     fun changePlayerTurnItemValueWhenClicked() = runTest {
         val index = 0
         useCase.clickOnCell(index)
-        assertEquals(Player.O, useCase.currentPlayer.value)
+        assertEquals(O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -43,8 +73,8 @@ class GameUseCaseShould {
             useCase.clickOnCell(index)
         }
         val clickedCell = useCase.cells.value[index]
-        assertEquals(Player.X, clickedCell.value)
-        assertEquals(Player.O, useCase.currentPlayer.value)
+        assertEquals(X, clickedCell.value)
+        assertEquals(O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -52,28 +82,36 @@ class GameUseCaseShould {
         val index = 8
         useCase.clickOnCell(index)
         val clickedItem = useCase.cells.value[index]
-        assertEquals(Player.X, clickedItem.value)
+        assertEquals(X, clickedItem.value)
     }
 
     @Test
     fun changePlayerTurnItemValueWhenClickedAndStarterIsO() = runTest {
         val index = 0
-        val useCase = GameUseCase(starterPlayer = Player.O)
+        val useCase = GameUseCase(
+            boardSize = DEFAULT_BOARD_CELL_COUNT,
+            starterPlayer = O,
+            ai = TicTacToeAI(defaultDispatcher = testDispatcher),
+        )
         useCase.clickOnCell(index)
-        assertEquals(Player.X, useCase.currentPlayer.value)
+        assertEquals(X, useCase.currentPlayer.value)
     }
 
     @Test
     fun doNothingWhenCellsIsEmpty() = runTest {
         val index = 0
-        val useCase = GameUseCase(boardSize = 0)
+        val useCase = GameUseCase(
+            boardSize = 0,
+            starterPlayer = X,
+            ai = TicTacToeAI(defaultDispatcher = testDispatcher),
+        )
         useCase.clickOnCell(index)
         val cells = useCase.cells.value
         assertTrue(
             cells.isEmpty(),
             "Cells must be empty, but it's not.",
         )
-        assertEquals(Player.X, useCase.currentPlayer.value)
+        assertEquals(X, useCase.currentPlayer.value)
     }
 
     /**
@@ -93,7 +131,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = COLUMN,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -114,7 +152,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = COLUMN,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -135,7 +173,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = xColumn)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = COLUMN,
                 winningIndex = 2
             ), useCase.gameResult.value
@@ -159,7 +197,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = ROW,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -180,7 +218,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = ROW,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -201,7 +239,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = xRow, col = 2)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = ROW,
                 winningIndex = 2
             ), useCase.gameResult.value
@@ -224,7 +262,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = CROSS,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -244,7 +282,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.X,
+                player = X,
                 winningOrientation = CROSS,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -269,7 +307,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = COLUMN,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -291,7 +329,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = COLUMN,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -313,7 +351,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = oColumn)) // X
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = COLUMN,
                 winningIndex = 2
             ), useCase.gameResult.value
@@ -338,7 +376,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = ROW,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -360,7 +398,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = ROW,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -382,7 +420,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = oRow, col = 2)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = ROW,
                 winningIndex = 2
             ), useCase.gameResult.value
@@ -406,7 +444,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = 2)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = CROSS,
                 winningIndex = 0
             ), useCase.gameResult.value
@@ -427,7 +465,7 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 2, col = 0)) // O
         assertEquals(
             EndWithWinner(
-                player = Player.O,
+                player = O,
                 winningOrientation = CROSS,
                 winningIndex = 1
             ), useCase.gameResult.value
@@ -512,14 +550,14 @@ class GameUseCaseShould {
 
         val currentPlayer = useCase.currentPlayer.value
         assertTrue(
-            currentPlayer == Player.X,
+            currentPlayer == X,
             "Current Player must be restart to starter player, " +
                 "when we restart the game but it is -> currentPlayer=$currentPlayer",
         )
     }
 
     @Test
-    fun emitXScoreWhenItWins() {
+    fun emitXScoreWhenItWins() = runTest {
         val xColumn = 1
         useCase.clickOnCell(getCellIndex(row = 0, col = xColumn)) // X
         useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
@@ -532,7 +570,7 @@ class GameUseCaseShould {
     }
 
     @Test
-    fun emitOScoreWhenItWins() {
+    fun emitOScoreWhenItWins() = runTest {
         useCase.clickOnCell(getCellIndex(row = 0, col = 2)) // X
         useCase.clickOnCell(getCellIndex(row = 0, col = 0)) // O
 
@@ -612,7 +650,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.O, useCase.currentPlayer.value)
+        assertEquals(O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -628,7 +666,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.X, useCase.currentPlayer.value)
+        assertEquals(X, useCase.currentPlayer.value)
     }
 
     @Test
@@ -649,7 +687,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.O, useCase.currentPlayer.value)
+        assertEquals(O, useCase.currentPlayer.value)
     }
 
     @Test
@@ -682,7 +720,7 @@ class GameUseCaseShould {
 
         useCase.replayGame()
 
-        assertEquals(Player.X, useCase.currentPlayer.value)
+        assertEquals(X, useCase.currentPlayer.value)
     }
     // //////
     // Turn change Tests
@@ -691,21 +729,22 @@ class GameUseCaseShould {
     @Test
     fun restoreGameStateWhenRestoreGameCalled() = runTest {
         val cells = listOfEmptyCells().toMutableList().apply {
-            this[0] = this[0].copy(value = Player.X)
+            this[0] = this[0].copy(value = X)
         }
         val gameResult = EndWithWinner(
-            player = Player.O,
+            player = O,
             winningOrientation = CROSS,
             winningIndex = 0
         )
-        val currentPlayer = Player.O
+        val currentPlayer = O
 
         useCase.restoreGameState(
             GameState(
                 cells = cells,
                 gameResult = gameResult,
                 currentPlayer = currentPlayer,
-                scores = ScoresState(1, 2, 3)
+                scores = ScoresState(1, 2, 3),
+                gameMode = GameMode.PlayWithFriend,
             )
         )
 
@@ -733,5 +772,240 @@ class GameUseCaseShould {
         useCase.clickOnCell(getCellIndex(row = 1, col = 2)) // Cell 5 clicked but nothing happen
 
         assertEquals(Cell(index = 5), useCase.cells.value[5])
+    }
+
+    @Test
+    fun restoreGameStateWithAIMode() = runTest {
+        val cells = listOfEmptyCells().toMutableList().apply {
+            this[0] = this[0].copy(value = X)
+            this[4] = this[4].copy(value = O)
+        }
+        val gameState = GameState(
+            cells = cells,
+            gameResult = null,
+            currentPlayer = X,
+            scores = ScoresState(0, 0, 0),
+            gameMode = GameMode.PlayWithAI()
+        )
+
+        useCase.restoreGameState(gameState)
+
+        assertEquals(GameMode.PlayWithAI(), useCase.gameMode.value)
+        assertEquals(cells, useCase.cells.value)
+        assertEquals(X, useCase.currentPlayer.value)
+    }
+
+    @Test
+    fun preventAIPlayerClicksInAIMode() = runTest {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells(),
+                gameResult = null,
+                currentPlayer = O,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Try to click when it's AI's turn (Player.O)
+        useCase.clickOnCell(0)
+
+        // Cell should remain empty since AI moves aren't allowed via click
+        assertEquals(null, useCase.cells.value[0].value)
+    }
+
+    @Test
+    fun allowHumanPlayerClicksInAIMode() = runTest {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells(),
+                gameResult = null,
+                currentPlayer = X,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Human player (X) should be able to click
+        useCase.clickOnCell(0)
+
+        assertEquals(X, useCase.cells.value[0].value)
+    }
+
+    @Test
+    fun aiMakesValidMoveAfterHumanMove() = runTest(testDispatcher) {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells(),
+                gameResult = null,
+                currentPlayer = X,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Human makes first move
+        useCase.clickOnCell(0)
+
+        // Give AI time to make its move
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+
+        // Check that AI made a move (some cell other than 0 should be filled with O)
+        val aiMoveMade = useCase.cells.value.any { cell ->
+            cell.value == O && cell.index != 0
+        }
+        assertTrue(
+            aiMoveMade,
+            "AI should have made a move after human move, cells=${useCase.cells.value}"
+        )
+    }
+
+    @Test
+    fun aiMakesNoMoveAfterRestartClicked() = runTest(testDispatcher) {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells(),
+                gameResult = null,
+                currentPlayer = X,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Human makes first move
+        useCase.clickOnCell(0)
+        useCase.restartGame()
+
+        // Give AI time to make its move
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+
+        // Check that AI made a move (some cell other than 0 should be filled with O)
+        val aiMoveMade = useCase.cells.value.all { cell ->
+            cell.value != O
+        }
+        assertTrue(
+            aiMoveMade,
+            "AI should have not made a move after restart clicked, cells=${useCase.cells.value}"
+        )
+    }
+
+    @Test
+    fun aiMakesNoMoveAfterRePlayClicked() = runTest(testDispatcher) {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells(),
+                gameResult = null,
+                currentPlayer = X,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Human makes first move
+        useCase.clickOnCell(0)
+        useCase.replayGame()
+
+        // Give AI time to make its move
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+
+        // Check that AI made a move (some cell other than 0 should be filled with O)
+        val aiMoveMade = useCase.cells.value.all { cell ->
+            cell.value != O
+        }
+        assertTrue(
+            aiMoveMade,
+            "AI should have not made a move after restart clicked, cells=${useCase.cells.value}"
+        )
+    }
+
+    @Test
+    fun aiDoesNotMoveWhenGameEnds() = runTest(testDispatcher) {
+        val winningCells = listOfEmptyCells().toMutableList().apply {
+            this[0] = this[0].copy(value = X)
+            this[1] = this[1].copy(value = X)
+        }
+
+        useCase.restoreGameState(
+            GameState(
+                cells = winningCells,
+                gameResult = null,
+                currentPlayer = X,
+                scores = ScoresState(0, 0, 0),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        // Human wins the game
+        useCase.clickOnCell(2)
+
+        // Give time for any potential AI move
+        testScheduler.advanceTimeBy(AI_MOVE_DELAY_IN_MILLIS + 1)
+
+        // Game should be over, AI shouldn't move
+        assertTrue(useCase.gameResult.value is EndWithWinner)
+        assertEquals(X, (useCase.gameResult.value as EndWithWinner).player)
+    }
+
+    @Test
+    fun restartGameWithAIModeStartsCorrectly() = runTest {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells().toMutableList().apply {
+                    this[0] = this[0].copy(value = X)
+                    this[4] = this[4].copy(value = O)
+                },
+                gameResult = null,
+                currentPlayer = O,
+                scores = ScoresState(1, 1, 1),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        useCase.restartGame()
+
+        // All cells should be empty
+        assertTrue(useCase.cells.value.all { it.value == null })
+        // Scores should be reset
+        assertEquals(0, useCase.xScore.value)
+        assertEquals(0, useCase.oScore.value)
+        assertEquals(0, useCase.drawCount.value)
+        // Current player should be starter
+        assertEquals(X, useCase.currentPlayer.value)
+        // Game mode should be preserved
+        assertEquals(GameMode.PlayWithAI(), useCase.gameMode.value)
+    }
+
+    @Test
+    fun replayGameWithAIModePreservesScores() = runTest {
+        useCase.restoreGameState(
+            GameState(
+                cells = listOfEmptyCells().toMutableList().apply {
+                    this[0] = this[0].copy(value = X)
+                    this[1] = this[4].copy(value = O)
+                    this[2] = this[4].copy(value = X)
+                    this[3] = this[4].copy(value = X)
+                    this[4] = this[4].copy(value = X)
+                    this[5] = this[4].copy(value = O)
+                    this[6] = this[4].copy(value = O)
+                    this[7] = this[4].copy(value = X)
+                    this[8] = this[4].copy(value = O)
+                },
+                gameResult = Draw,
+                currentPlayer = X,
+                scores = ScoresState(1, 2, 3),
+                gameMode = GameMode.PlayWithAI()
+            )
+        )
+
+        useCase.replayGame()
+
+        // All cells should be empty
+        assertTrue(useCase.cells.value.any { it.value == null })
+        // Scores should be preserved
+        assertEquals(1, useCase.xScore.value)
+        assertEquals(2, useCase.oScore.value)
+        assertEquals(3, useCase.drawCount.value)
+        // Game result should be reset
+        assertEquals(null, useCase.gameResult.value)
     }
 }

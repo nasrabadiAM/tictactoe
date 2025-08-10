@@ -25,13 +25,11 @@ import me.nasrabadiam.tictactoe.ui.theme.TacTrixTheme
 fun WearGameScreen(
     gameViewModel: GameViewModel,
 ) {
-    TacTrixTheme {
-        val state = gameViewModel.state.collectAsState()
-        GameScreenContent(
-            state = state.value,
-            sendEvent = gameViewModel::handleEvent,
-        )
-    }
+    val state = gameViewModel.state.collectAsState()
+    GameScreenContent(
+        state = state.value,
+        sendEvent = gameViewModel::handleEvent,
+    )
 }
 
 @Composable

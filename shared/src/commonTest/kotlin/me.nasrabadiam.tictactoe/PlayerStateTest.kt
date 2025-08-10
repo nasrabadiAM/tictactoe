@@ -39,4 +39,16 @@ class PlayerStateTest {
         assertEquals(Player.X, player)
         assertFalse(savedStateHandle.contains("player"))
     }
+
+    @Test
+    fun testPlayerXOppositeReturnsO() {
+        val result = Player.X.opposite()
+        assertEquals(Player.O, result)
+    }
+
+    @Test
+    fun testPlayerOOppositeReturnsX() {
+        val result = Player.O.opposite()
+        assertEquals(Player.X, result)
+    }
 }

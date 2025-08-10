@@ -4,9 +4,7 @@ import BackgroundTasks
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
-    lazy var applicationComponent: InjectApplicationComponent = InjectApplicationComponent(
-        dummyProvider: { "Dummy iOS" }
-    )
+    lazy var applicationComponent: InjectApplicationComponent = InjectApplicationComponent()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         return true

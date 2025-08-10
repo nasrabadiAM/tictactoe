@@ -35,14 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.COLUMN
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.CROSS
-import me.nasrabadiam.tictactoe.game.GameUseCase.Orientation.ROW
 import me.nasrabadiam.tictactoe.game.model.GameResult
 import me.nasrabadiam.tictactoe.game.model.GameResult.Draw
 import me.nasrabadiam.tictactoe.game.model.GameResult.EndWithWinner
 import me.nasrabadiam.tictactoe.game.model.Player.O
 import me.nasrabadiam.tictactoe.game.model.Player.X
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.COLUMN
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.CROSS
+import me.nasrabadiam.tictactoe.game.model.WiningOrientation.ROW
 import me.nasrabadiam.tictactoe.ui.squareWrapContentLayout
 import me.nasrabadiam.tictactoe.ui.theme.transparent
 
